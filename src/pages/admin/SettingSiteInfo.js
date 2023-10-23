@@ -14,6 +14,7 @@ const SettingSiteInfo = () => {
     const popup = useSelector((state)=>state.popup);
     const [confirm, setConfirm] = useState(false);
 
+    const [info, setInfo] = useState({});
     const [siteName, setSiteName] = useState("");
     const [webTitle, setWebTitle] = useState("");
     const [ceo, setCeo] = useState("");
@@ -33,13 +34,13 @@ const SettingSiteInfo = () => {
     },[popup.confirmPop]);
 
 
-    //회원프로필정보 가져오기
+    //사이트정보 가져오기
     const getInfo = () => {
         axios.get(`${site_info.replace(":site_id","likeweb")}`)
         .then((res)=>{
             if(res.status === 200){
-                let data = res.data;
-                console.log(data)
+                let data = res.data.data;
+                setInfo(data);
             }
         })
         .catch((error) => {
@@ -58,6 +59,23 @@ const SettingSiteInfo = () => {
     useEffect(()=>{
         getInfo();
     },[]);
+
+
+    useEffect(()=>{
+        if(Object.keys(info).length > 0){
+            setSiteName(info.c_site_name || "");
+            setWebTitle(info.c_web_title || "");
+            setCeo(info.c_ceo || "");
+            setTel(info.c_tel || "");
+            setNum(info.c_num || "");
+            //통신판매번호
+            setEmail(info.c_email || "");
+            setAddress(info.c_address || "");
+            setFax(info.c_fax || "");
+            setManager(info.c_manager || "");
+        }
+    },[info]);
+
 
 
     //인풋값 변경시

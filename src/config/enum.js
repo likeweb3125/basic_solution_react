@@ -1,4 +1,4 @@
-const api_uri = "http://api.likeweb.co.kr:3000/v1/";
+const api_uri = "http://api.likeweb.co.kr/v1/";
 
 exports.enum_api_uri = {
     api_uri: `${api_uri}`,
