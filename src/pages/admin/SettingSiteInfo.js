@@ -10,36 +10,34 @@ import ConfirmPop from "../../components/popup/ConfirmPop";
 
 const SettingSiteInfo = () => {
     const site_info = enum_api_uri.site_info;
+    const site_info_modify = enum_api_uri.site_info_modify;
     const dispatch = useDispatch();
     const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
+    const [cancelConfirm, setCancelConfirm] = useState(false);
     const [confirm, setConfirm] = useState(false);
-
     const [info, setInfo] = useState({});
-    const [siteName, setSiteName] = useState("");
-    const [webTitle, setWebTitle] = useState("");
-    const [ceo, setCeo] = useState("");
-    const [tel, setTel] = useState("");
-    const [num, setNum] = useState("");
-    const [email, setEmail] = useState("");
-    const [address, setAddress] = useState("");
-    const [fax, setFax] = useState("");
-    const [manager, setManager] = useState("");
+    const [error, setError] = useState({});
 
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
+            setCancelConfirm(false);
         }
     },[popup.confirmPop]);
 
 
     //사이트정보 가져오기
     const getInfo = () => {
-        axios.get(`${site_info.replace(":site_id","likeweb")}`)
+        axios.get(`${site_info.replace(":site_id",user.siteId)}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
+                    data.site_id = user.siteId;
                 setInfo(data);
             }
         })
@@ -56,6 +54,7 @@ const SettingSiteInfo = () => {
     };
 
     
+    //맨처음 사이트정보 가져오기
     useEffect(()=>{
         getInfo();
     },[]);
@@ -63,19 +62,9 @@ const SettingSiteInfo = () => {
 
     useEffect(()=>{
         if(Object.keys(info).length > 0){
-            setSiteName(info.c_site_name || "");
-            setWebTitle(info.c_web_title || "");
-            setCeo(info.c_ceo || "");
-            setTel(info.c_tel || "");
-            setNum(info.c_num || "");
-            //통신판매번호
-            setEmail(info.c_email || "");
-            setAddress(info.c_address || "");
-            setFax(info.c_fax || "");
-            setManager(info.c_manager || "");
+            setInfo(info);
         }
     },[info]);
-
 
 
     //인풋값 변경시
@@ -83,34 +72,90 @@ const SettingSiteInfo = () => {
         const id = e.currentTarget.id;
         const val = e.currentTarget.value;
 
-        if(id == "siteName"){
-            setSiteName(val);
+        let newInfo = {...info};
+            newInfo[id] = val;
+            
+        setInfo(newInfo);
+
+        if(id == "c_site_name" && val.length > 0){
+            let newError = {...error};
+                newError.c_site_name = false;
+            setError(newError);
         }
-        if(id == "webTitle"){
-            setWebTitle(val);
-        }
-        if(id == "ceo"){
-            setCeo(val);
-        }
-        if(id == "tel"){
-            setTel(val);
-        }
-        if(id == "num"){
-            setNum(val);
-        }
-        if(id == "email"){
-            setEmail(val);
-        }
-        if(id == "address"){
-            setAddress(val);
-        }
-        if(id == "fax"){
-            setFax(val);
-        }
-        if(id == "manager"){
-            setManager(val);
+        if(id == "c_b_title" && val.length > 0){
+            let newError = {...error};
+                newError.c_b_title = false;
+            setError(newError);
         }
     };
+
+
+    //저장버튼 클릭시
+    const saveBtnClickHandler = () => {
+        let newError = { ...error };
+
+        if (!info.c_site_name) {
+            newError.c_site_name = true;
+        }
+        if (!info.c_b_title) {
+            newError.c_b_title = true;
+        }
+
+        setError(newError);
+
+        if (!newError.c_site_name && !newError.c_b_title) {
+            saveHandler();
+        }
+    };
+
+
+    //사이트정보 저장하기
+    const saveHandler = () => {
+        const body = info;
+        axios.put(`${site_info_modify}`, body, 
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'사이트정보가 저장되었습니다.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //취소버튼 클릭시
+    const cancelBtnClickHandler = () => {
+        dispatch(confirmPop({
+            confirmPop:true,
+            confirmPopTit:'알림',
+            confirmPopTxt:'작성 중인 내용을 취소하시겠습니까?',
+            confirmPopBtn:2,
+        }));
+        setCancelConfirm(true);
+    };
+    
+
+    //취소하기 사이트정보 다시 가져오기
+    const cancelHandler = () => {
+        getInfo();
+    };
+    
 
     return(<>
         <div className="page_admin_setting">
@@ -140,11 +185,13 @@ const SettingSiteInfo = () => {
                                         placeholder={`사이트이름을 입력해주세요.`}
                                         countShow={true}
                                         countMax={16}
-                                        count={siteName.length}
-                                        value={siteName}
+                                        count={info.c_site_name ? info.c_site_name.length : 0}
+                                        value={info.c_site_name || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`siteName`}
+                                        id={`c_site_name`}
+                                        className={error.c_site_name ? "wrong_input" : ""}
                                     />
+                                    {error.c_site_name && <em className="txt_err">사이트이름을 입력해주세요.</em>}
                                 </td>
                                 <td></td>
                                 <th>웹 브라우저 타이틀</th>
@@ -154,10 +201,10 @@ const SettingSiteInfo = () => {
                                         placeholder={`웹 브라우저 타이틀을 입력해주세요.`}
                                         countShow={true}
                                         countMax={16}
-                                        count={webTitle.length}
-                                        value={webTitle}
+                                        count={info.c_web_title ? info.c_web_title.length : 0}
+                                        value={info.c_web_title || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`webTitle`}
+                                        id={`c_web_title`}
                                     />
                                 </td>
                             </tr>
@@ -167,9 +214,9 @@ const SettingSiteInfo = () => {
                                     <InputBox 
                                         type={`text`}
                                         placeholder={`대표자를 입력해주세요.`}
-                                        value={ceo}
+                                        value={info.c_ceo || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`ceo`}
+                                        id={`c_ceo`}
                                     />
                                 </td>
                                 <td></td>
@@ -178,9 +225,9 @@ const SettingSiteInfo = () => {
                                     <InputBox 
                                         type={`text`}
                                         placeholder={`대표전화를 입력해주세요.`}
-                                        value={tel}
+                                        value={info.c_tel || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`tel`}
+                                        id={`c_tel`}
                                     />
                                 </td>
                             </tr>
@@ -190,17 +237,21 @@ const SettingSiteInfo = () => {
                                     <InputBox 
                                         type={`text`}
                                         placeholder={`사업자번호를 입력해주세요.`}
-                                        value={num}
+                                        value={info.c_num || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`num`}
+                                        id={`c_num`}
                                     />
                                 </td>
                                 <td></td>
                                 <th>통신판매번호</th>
                                 <td>
-                                    <div className="input_box">
-                                        <input type="text" placeholder="통신판매번호를 입력해주세요."/>
-                                    </div>
+                                    <InputBox 
+                                        type={`text`}
+                                        placeholder={`통신판매번호를 입력해주세요.`}
+                                        value={info.c_num2 || ""}
+                                        onChangeHandler={onInputChangeHandler}
+                                        id={`c_num2`}
+                                    />
                                 </td>
                             </tr>
                             <tr>
@@ -209,9 +260,9 @@ const SettingSiteInfo = () => {
                                     <InputBox 
                                         type={`text`}
                                         placeholder={`이메일을 입력해주세요.`}
-                                        value={email}
+                                        value={info.c_email || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`email`}
+                                        id={`c_email`}
                                     />
                                 </td>
                                 <td></td>
@@ -220,9 +271,9 @@ const SettingSiteInfo = () => {
                                     <InputBox 
                                         type={`text`}
                                         placeholder={`주소를 입력해주세요.`}
-                                        value={address}
+                                        value={info.c_address || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`address`}
+                                        id={`c_address`}
                                     />
                                 </td>
                             </tr>
@@ -232,9 +283,9 @@ const SettingSiteInfo = () => {
                                     <InputBox 
                                         type={`text`}
                                         placeholder={`FAX 번호를 입력해주세요.`}
-                                        value={fax}
+                                        value={info.c_fax || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`fax`}
+                                        id={`c_fax`}
                                     />
                                 </td>
                                 <td></td>
@@ -243,9 +294,9 @@ const SettingSiteInfo = () => {
                                     <InputBox 
                                         type={`text`}
                                         placeholder={`개인정보관리책임자를 입력해주세요.`}
-                                        value={manager}
+                                        value={info.c_manager || ""}
                                         onChangeHandler={onInputChangeHandler}
-                                        id={`manager`}
+                                        id={`c_manager`}
                                     />
                                 </td>
                             </tr>
@@ -274,31 +325,49 @@ const SettingSiteInfo = () => {
                             <tr>
                                 <th>브라우저 타이틀 <i>*</i></th>
                                 <td>
-                                    <div className="input_box">
-                                        <input type="text" placeholder="브라우저 타이틀을 입력해주세요."/>
-                                    </div>
+                                    <InputBox 
+                                        type={`text`}
+                                        placeholder={`브라우저 타이틀을 입력해주세요.`}
+                                        value={info.c_b_title || ""}
+                                        onChangeHandler={onInputChangeHandler}
+                                        id={`c_b_title`}
+                                        className={error.c_b_title ? "wrong_input" : ""}
+                                    />
+                                    {error.c_b_title && <em className="txt_err">브라우저 타이틀을 입력해주세요.</em>}
                                 </td>
                                 <td></td>
                                 <th>메타설명</th>
                                 <td>
-                                    <div className="input_box">
-                                        <input type="text" placeholder="메타설명을 입력해주세요."/>
-                                    </div>
+                                    <InputBox 
+                                        type={`text`}
+                                        placeholder={`메타설명을 입력해주세요.`}
+                                        value={info.c_meta || ""}
+                                        onChangeHandler={onInputChangeHandler}
+                                        id={`c_meta`}
+                                    />
                                 </td>
                             </tr>
                             <tr>
                                 <th>메타 태그</th>
                                 <td>
-                                    <div className="input_box">
-                                        <input type="text" placeholder="메타 태그를 입력해주세요."/>
-                                    </div>
+                                    <InputBox 
+                                        type={`text`}
+                                        placeholder={`메타 태그를 입력해주세요.`}
+                                        value={info.c_meta_tag || ""}
+                                        onChangeHandler={onInputChangeHandler}
+                                        id={`c_meta_tag`}
+                                    />
                                 </td>
                                 <td></td>
                                 <th>메타 분류</th>
                                 <td>
-                                    <div className="input_box">
-                                        <input type="text" placeholder="메타 분류를 입력해주세요."/>
-                                    </div>
+                                    <InputBox 
+                                        type={`text`}
+                                        placeholder={`메타 분류를 입력해주세요.`}
+                                        value={info.c_meta_type || ""}
+                                        onChangeHandler={onInputChangeHandler}
+                                        id={`c_meta_type`}
+                                    />
                                 </td>
                             </tr>
                         </tbody>
@@ -306,13 +375,16 @@ const SettingSiteInfo = () => {
                 </div>
             </div>
             <div className="form_btn_wrap">
-                <button type="button" className="btn_type3">취소</button>
-                <button type="button" className="btn_type4">등록</button>
+                <button type="button" className="btn_type3" onClick={cancelBtnClickHandler}>취소</button>
+                <button type="button" className="btn_type4" onClick={saveBtnClickHandler}>저장</button>
             </div>
         </div>
 
+        {/* 취소 confirm팝업 */}
+        {cancelConfirm && <ConfirmPop onClickHandler={cancelHandler} />}
+
         {/* confirm팝업 */}
-        {/* {confirm && <ConfirmPop />} */}
+        {confirm && <ConfirmPop />}
     </>);
 };
 

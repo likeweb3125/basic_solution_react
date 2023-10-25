@@ -1,478 +1,391 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Formik } from "formik";
-
+import axios from "axios";
+import { enum_api_uri } from "../../config/enum";
+import * as CF from "../../config/function";
 import { currentPage } from "../../store/commonSlice";
-
+import { confirmPop } from "../../store/popupSlice";
+import { pageNo, pageNoChange, checkedList } from "../../store/etcSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
+import ConfirmPop from "../../components/popup/ConfirmPop";
+import Pagination from "../../components/component/admin/Pagination";
 
 
 const Board = (props) => {
     const dispatch = useDispatch();
+    const board_list = enum_api_uri.board_list;
+    const board_move = enum_api_uri.board_move;
+    const board_delt = enum_api_uri.board_delt;
+    const notice_setting = enum_api_uri.notice_setting;
     const common = useSelector((state)=>state.common);
+    const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
+    const etc = useSelector((state)=>state.etc);
+    const [confirm, setConfirm] = useState(false);
+    const [notiSettingConfirm, setNotiSettingConfirm] = useState(false);
+    const [moveConfirm, setMoveConfirm] = useState(false);
+
     const [boardTit, setBoardTit] = useState("");
-    const [valSearch, setValSearch] = useState("");
+    const [searchTxt, setSearchTxt] = useState("");
+    const [category, setCategory] = useState(null);
+    const [boardData, setBoardData] = useState({});
+    const [limit, setLimit] = useState(10);
+    const [searchType, setSearchType] = useState("제목만");
+    const [moveSelect, setMoveSelect] = useState("");
+    const [notiSetData, setNotiSetData] = useState({});
+    const [checkList, setCheckList] = useState([]);
+    const [checkedNum, setCheckedNum] = useState(0);
+
+
+    // Confirm팝업 닫힐때
+    useEffect(()=>{
+        if(popup.confirmPop === false){
+            setConfirm(false);
+            setNotiSettingConfirm(false);
+            setMoveConfirm(false);
+        }
+    },[popup.confirmPop]);
 
 
     //페이지 제목 가져오기
     useEffect(()=>{
         setBoardTit(props.tit);
+
+        //게시판 바뀔때마다 현재게시판 category번호 가져오기
+        if(props.tit){
+            const idx = common.boardMenu.findIndex((item)=>item.c_name === props.tit);
+            const num = common.boardMenu[idx].category
+            setCategory(num);
+        }
     },[props.tit]);
 
 
+    //게시판정보 가져오기
+    const getBoardData = (page) => {
+        let search;
+        if(searchType == "제목만"){
+            search = "title";
+        }else if(searchType == "제목 + 내용"){
+            search = "titlecontents";
+        }else if(searchType == "작성자"){
+            search = "name";
+        } 
+
+        axios.get(`${board_list.replace(":category",category).replace(":limit",limit)}?page=${page ? page : 1}&search=${search}${searchTxt.length > 0 ? "&searchtxt="+searchTxt : ""}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                setBoardData(data);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+    
+    //제목 셀렉트박스 변경시, limit 값 변경시 게시판정보 가져오기
+    useEffect(()=>{
+        if(category != null){
+            getBoardData();
+        }
+    },[category,limit]);
+
+
     //제목 셀렉트박스 변경시 페이지변경
-    const titSelectChangeHandler = (val) => {
+    const titSelectChangeHandler = (e) => {
+        const val = e.currentTarget.value;
         setBoardTit(val);
 
-        let idx = common.boardMenu.indexOf(val);
+        let idx = common.boardMenu.findIndex((item) => item.c_name === val);
             idx = idx + 1;
         dispatch(currentPage(`board1_${idx}`));
     };
 
 
-    //검색어 input값 변경시
-    const onSearchChangeHandler = (e) => {
-        const val = e.currentTarget.value;
-        setValSearch(val);
+    //페이지네이션 클릭으로 페이지변경시
+    useEffect(()=>{
+        if(etc.pageNoChange){
+            getBoardData(etc.pageNo);
+
+            dispatch(pageNoChange(false));
+        }
+    },[etc.pageNo,etc.pageNoChange]);
+
+
+
+    //공지설정 or 해제하기버튼 클릭시
+    const notiSettingBtnClickHandler = (data) => {
+        setNotiSetData(data);
+        const notice = data.b_notice;
+        let txt;
+        if(notice == "1"){
+            txt = '해제';
+        }else{
+            txt = '설정';
+        }
+        dispatch(confirmPop({
+            confirmPop:true,
+            confirmPopTit:'알림',
+            confirmPopTxt:'해당 게시글을 공지 '+txt+'하시겠습니까?',
+            confirmPopBtn:2,
+        }));
+        setNotiSettingConfirm(true);
     };
 
 
+    //공지설정 or 해제하기
+    const notiSettingHandler = () => {
+        let set;
+        if(notiSetData.b_notice == "1"){
+            set = "0";
+        }else{
+            set = "1";
+        }
 
-    return(
+        const body = {
+            notice: set, // 1 설정 , 0 해제
+            idx: notiSetData.idx,
+            category: notiSetData.category
+        };
+        axios.put(`${notice_setting}`, body,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                //현재페이지 게시판정보 가져오기 
+                getBoardData(etc.pageNo);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //맨처음 리스트 idx값만 배열로 (전체 체크박스리스트 만들기)
+    useEffect(()=>{
+        if(boardData.hasOwnProperty("board_list")){
+            const list = boardData.board_list.map((item) => item.idx).filter(Boolean);
+            setCheckList([...list]);
+        }
+    },[boardData]);
+
+
+    //전체선택 체크박스 체크시
+    const allCheckHandler = (checked) => {
+        if(checked){
+            dispatch(checkedList([...checkList]));
+        }else{
+            dispatch(checkedList([]));
+        }
+    };
+
+
+    //체크박스 변경시 체크된 수 변경
+    useEffect(()=>{
+        const num = etc.checkedList.length;
+        setCheckedNum(num);
+    },[etc.checkedList]);
+    
+
+    //게시글 이동버튼 클릭시
+    const moveBtnClickHandler = () => {
+        if(checkedNum > 0 && moveSelect){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'해당 게시글을 '+moveSelect+' 게시판으로 이동하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+            setMoveConfirm(true);
+        }else if(checkedNum === 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'게시글을 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(!moveSelect){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'이동시킬 게시판을 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    };
+
+
+    //게시글 이동하기
+    const moveHandler = () => {
+        const body = {
+            idx: etc.checkedList,
+            category: category
+        };
+        axios.put(`${board_move}`, body,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                //현재페이지 게시판정보 가져오기 
+                getBoardData(etc.pageNo);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    }
+
+
+    return(<>
         <div className="page_admin_board">
-        <div className="content_box">
-            <div className="tit">
-                <h3>
-                    <b>{boardTit}</b>
-                    <SelectBox 
-                        class="tit_select"
-                        list={common.boardMenu}
-                        selected={boardTit}
-                        onChangeHandler={(e)=>{
-                            titSelectChangeHandler(e.currentTarget.value);
-                        }}
-                        selHidden={true}
-                    />
-                </h3>
-                <strong>총 20개</strong>
-            </div>
-            <div className="board_section">
-                <div className="form_search_wrap">
-                    <Formik
-                        initialValues={{
-                            limit: "10개씩",
-                        }}
-                        // validationSchema={validationSchema}
-                        // onSubmit={submit}
-                    >
-                        {({values, handleChange, handleBlur, errors, touched, setFieldValue, handleReset, resetForm}) => (
-                            <form>
-                                <div className="search_wrap">
-                                    <SelectBox 
-                                        class="select_type3 search_row_select"
-                                        list={["10개씩","15개씩","30개씩","50개씩"]}
-                                        selected={values.limit}
-                                        onChangeHandler={handleChange}
-                                        name="limit"
-                                        selHidden={true}
-                                    />
-                                    <div className="search_box">
-                                        <SelectBox 
-                                            class="select_type3"
-                                            list={["제목만","제목 + 내용","작성자"]}
-                                            // selected={values.j_address}
-                                            // onChangeHandler={handleChange}
-                                            // name="j_address"
-                                            selHidden={true}
-                                        />
-                                        <SearchInput 
-                                            placeholder="검색어를 입력해주세요."
-                                            onChangeHandler={onSearchChangeHandler}
-                                            value={valSearch}
-                                            onClickHandler={()=>{}}
-                                        />
-                                    </div>
-                                </div>
-                            </form>
-                        )}
-                    </Formik>
+            <div className="content_box">
+                <div className="tit">
+                    <h3>
+                        <b>{boardTit}</b>
+                        <SelectBox 
+                            class="tit_select"
+                            list={common.boardMenu}
+                            selected={boardTit}
+                            onChangeHandler={(e)=>{
+                                titSelectChangeHandler(e);
+                            }}
+                            selHidden={true}
+                            objectSel={true}
+                        />
+                    </h3>
+                    <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
                 </div>
-                <div className="board_table_util">
-                    <div className="chk_area">
-                        <div className="chk_box2">
-                            <input type="checkbox" id="chkAll" className="blind"/>
-                            <label htmlFor="chkAll">전체선택</label>
+                <div className="board_section">
+                    <div className="form_search_wrap">
+                        <div className="search_wrap">
+                            <SelectBox 
+                                class="select_type3 search_row_select"
+                                list={[10,15,30,50]}
+                                selected={limit}
+                                onChangeHandler={(e)=>{
+                                    const val = e.currentTarget.value;
+                                    setLimit(val);
+                                }}
+                                selHidden={true}
+                                limitSel={true}
+                            />
+                            <div className="search_box">
+                                <SelectBox 
+                                    class="select_type3"
+                                    list={["제목만","제목 + 내용","작성자"]}
+                                    selected={searchType}
+                                    onChangeHandler={(e)=>{
+                                        const val = e.currentTarget.value;
+                                        setSearchType(val);
+                                    }}
+                                    selHidden={true}
+                                />
+                                <SearchInput 
+                                    placeholder="검색어를 입력해주세요."
+                                    onChangeHandler={(e)=>{
+                                        const val = e.currentTarget.value;
+                                        setSearchTxt(val);
+                                    }}
+                                    value={searchTxt}
+                                    onSearchHandler={getBoardData}
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div className="util_wrap">
-                        <span>선택한 게시글</span>
-                        <span>총 <b>0</b>개</span>
-                        <SelectBox 
-                            class="select_type3"
-                            list={["1:1 문의하기"]}
-                            // selected={values.j_address}
-                            // onChangeHandler={handleChange}
-                            // name="j_address"
-                            selHidden={true}
+                    <div className="board_table_util">
+                        <div className="chk_area">
+                            <div className="chk_box2">
+                                <input type="checkbox" id="chkAll" className="blind"
+                                    onChange={(e)=>{allCheckHandler(e.currentTarget.checked)}} 
+                                    checked={checkList.length > 0 && checkList.length === etc.checkedList.length && checkList.every(item => etc.checkedList.includes(item))}
+                                />
+                                <label htmlFor="chkAll">전체선택</label>
+                            </div>
+                        </div>
+                        <div className="util_wrap">
+                            <span>선택한 게시글</span>
+                            <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>개</span>
+                            <SelectBox 
+                                class="select_type3"
+                                list={boardData.board_Name}
+                                selected={moveSelect}
+                                onChangeHandler={(e)=>{
+                                    const val = e.currentTarget.value;
+                                    setMoveSelect(val);
+                                }}
+                                selHidden={true}
+                                objectSel={true}
+                            />
+                            <span>(으)로</span>
+                            <button type="button" className="btn_type8" onClick={moveBtnClickHandler}>이동</button>
+                            <em>※ 게시판 유형이 동일할 시에만 게시글 이동이 가능합니다.</em>
+                        </div>
+                        <div className="util_right">
+                            <button type="button" className="btn_type9">삭제</button>
+                        </div>
+                    </div>
+                    <TableWrap 
+                        class="tbl_wrap1"
+                        colgroup={["80px","10%","auto","12%","9%","13%","13%"]}
+                        thList={["","번호","제목","게시판 유형","작성자","작성일시","공지 설정"]}
+                        tdList={boardData.board_list}
+                        type={"board"}
+                        onNotiSettingHandler={notiSettingBtnClickHandler}
+                    />
+                    {boardData.board_list && boardData.board_list.length > 0 &&
+                        <Pagination 
+                            currentPage={boardData.current_page} //현재페이지 번호
+                            startPage={boardData.start_page} //시작페이지 번호 
+                            endPage={boardData.end_page} //보이는 끝페이지 번호 
+                            lastPage={boardData.last_page} //총페이지 끝
                         />
-                        <span>(으)로</span>
-                        <button type="button" className="btn_type8">이동</button>
-                        <em>※ 게시판 유형이 동일할 시에만 게시글 이동이 가능합니다.</em>
+                    }
+                    <div className="board_btn_wrap">
+                        <a href="#" className="btn_type4">작성하기</a>                                        
                     </div>
-                    <div className="util_right">
-                        <button type="button" className="btn_type9">삭제</button>
-                    </div>
-                </div>
-                <TableWrap 
-                    class="tbl_wrap1"
-                    colgroup={["80px","10%","auto","12%","9%","13%","13%"]}
-                    thList={["","번호","제목","게시판 유형","작성자","작성일시","공지 설정"]}
-                    tdList={[1,2,3,4,5]}
-                    type={"notice"}
-                />
-                <div className="tbl_wrap1">
-                    <table>
-                        <caption>게시판 테이블</caption>
-                        <colgroup>
-                            <col style={{width: "80px"}}/>
-                            <col style={{width: "10%"}}/>
-                            <col style={{width: "auto"}}/>
-                            <col style={{width: "12%"}}/>
-                            <col style={{width: "9%"}}/>
-                            <col style={{width: "13%"}}/>
-                            <col style={{width: "13%"}}/>
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>번호</th>
-                                <th>제목</th>
-                                <th>게시판 유형</th>
-                                <th>작성자</th>
-                                <th>작성일시</th>
-                                <th>공지 설정</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk11" className="blind"/>
-                                        <label htmlFor="chk11">선택</label>
-                                    </div>
-                                </td>
-                                <td>공지</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                        <b>(1)</b>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    {/* <button type="button" className="btn_type10 on">공지 설정</button> */}
-                                    <button type="button" className="btn_type10 on">공지 해제</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>20</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>19</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>18</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>17</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>16</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>15</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>14</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>13</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>12</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div className="chk_box2">
-                                        <input type="checkbox" id="chk12" className="blind"/>
-                                        <label htmlFor="chk12">선택</label>
-                                    </div>
-                                </td>
-                                <td>11</td>
-                                <td>
-                                    <div className="txt_left">
-                                        <span>
-                                            <a href="#">문의드립니다.</a>
-                                        </span>
-                                    </div>
-                                </td>
-                                <td>일반</td>
-                                <td>
-                                    <a href="#">김은비</a>
-                                </td>
-                                <td>
-                                    <span className="txt_light">2018.10.10 10:20</span>
-                                </td>
-                                <td>
-                                    <button type="button" className="btn_type10">공지 설정</button>
-                                    {/* <button type="button" className="btn_type10 on">공지 해제</button> */}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div className="paging">
-                    <a href="#" className="btn_prev btn_paging">이전</a>
-                    <strong>1</strong>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#" className="btn_next btn_paging">다음</a>
-                </div>
-                <div className="board_btn_wrap">
-                    <a href="#" className="btn_type4">작성하기</a>                                        
                 </div>
             </div>
         </div>
-    </div>
-    );
+
+        {/* 게시글 이동 confirm팝업 */}
+        {moveConfirm && <ConfirmPop onClickHandler={moveHandler} />}
+
+        {/* 게시글 공지설정 or 해제 confirm팝업 */}
+        {notiSettingConfirm && <ConfirmPop onClickHandler={notiSettingHandler} />}
+
+        {/* confirm팝업 */}
+        {confirm && <ConfirmPop />}
+    </>);
 };
 
 export default Board;

@@ -13,6 +13,7 @@ const InputBox = (props) => {
                 onChange={props.onChangeHandler}
                 id={props.id}
                 maxLength={props.countMax}
+                className={props.className}
             />
         </div>
 

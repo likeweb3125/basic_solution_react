@@ -1,14 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import * as CF from "../../../config/function";
+import { enum_api_uri } from "../../../config/enum";
 import { currentPage, boardMenu } from "../../../store/commonSlice";
+import { confirmPop } from "../../../store/popupSlice";
+import ConfirmPop from "../../popup/ConfirmPop";
 
 
 const Header = () => {
     const dispatch = useDispatch();
+    const board_menu_list = enum_api_uri.board_menu_list;
     const common = useSelector((state)=>state.common);
+    const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
     const [menuOn, setMenuOn] = useState(null);
     const [boardHeight, setBoardHeight] = useState(0);
     const [boardList, setBoardList] = useState([]);
+    const [confirm, setConfirm] = useState(false);
     const menuRef = useRef();
     const boardRef = useRef();
     const board1Ref = useRef();
@@ -19,16 +28,43 @@ const Header = () => {
     const statsRef = useRef();
 
 
+    // Confirm팝업 닫힐때
+    useEffect(()=>{
+        if(popup.confirmPop === false){
+            setConfirm(false);
+        }
+    },[popup.confirmPop]);
+
+
+    //게시판관리 - 게시글관리리스트 가져오기
+    const getBoardMenuList = () => {
+        axios.get(`${board_menu_list}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                setBoardList(data);
+
+                //게시판관리 - 게시글관리리스트 store 에 저장
+                dispatch(boardMenu(data));
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
 
 
     useEffect(()=>{
-        //게시판관리 - 게시글관리리스트 가져오기
-        const list = ["공지사항","자유 게시판","1:1문의","FAQ","갤러리 게시판"];
-        // const list = [];
-        setBoardList(list);
-
-        //게시판관리 - 게시글관리리스트 store 에 저장
-        dispatch(boardMenu(list));
+        getBoardMenuList();
     },[]);
 
 
@@ -105,7 +141,7 @@ const Header = () => {
 
 
 
-    return(
+    return(<>
         <header id="header" className="header">
             <div className="menu_header">
                 <div className="logo_wrap">
@@ -147,7 +183,7 @@ const Header = () => {
                                                                 setMenuOn(`board1_${idx}`);
                                                             }}
                                                         >
-                                                            <span>{cont}</span>
+                                                            <span>{cont.c_name}</span>
                                                         </li>
                                                     );
                                                 })}
@@ -227,7 +263,10 @@ const Header = () => {
                 </div>
             </div>
         </header>
-    );
+
+        {/* confirm팝업 */}
+        {confirm && <ConfirmPop />}
+    </>);
 };
 
 export default Header;

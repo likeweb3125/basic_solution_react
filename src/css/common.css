@@ -16,6 +16,7 @@
 .txt_color2 {font-weight: 500; color: var(--admin-color3) !important;}
 .txt_color3 {font-weight: 500; color: var(--admin-color5) !important;}
 .txt_color4 {font-weight: 500; color: var(--admin-color4) !important;}
+.ellipsis {display: block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%;}
 
 .tab_wrap .tab_inner {padding-top: 10px;}
 /* 탭메뉴 스타일 */
@@ -183,24 +184,17 @@ table td .txt_light {font-size: 14px; color: #999;}
 .pop_display .pop_btn_wrap .btn_box {display: flex; column-gap: 10px;}
 .pop_display .btn_pop_close {position: absolute; right: 40px; top: 30px; background: url('../images/ic_pop_close.svg') no-repeat 50% 50%/20px; width: 30px; height: 30px; text-align: left; text-indent: -9999px;}
 
-
-.pop_wrap{position: fixed;width: 100%;height: 100%;top: 0;left: 0;z-index: 900;display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-pack: center; -ms-flex-pack: center;-webkit-justify-content: center; justify-content: center;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
-.pop_wrap .dim{position: absolute;width: 100%;height:100%;top: 0;left: 0;background: rgba(0,0,0,0.6);}
-.pop_wrap>.pop_cont{position: relative;width: 440px;border-radius: 16px;background: #fff;padding: 24px 20px;}
-.pop_wrap>.pop_cont.pop_cont2{width: 570px;padding: 32px;}
-.pop_wrap>.pop_cont.pop_cont3{width: 720px;padding: 32px;}
-.pop_wrap>.pop_cont.pop_cont4{width: 850px;padding: 32px;}
-.pop_wrap>.pop_cont.pop_gray{background: #F8F8F8;}
-.pop_wrap .pop_tit {padding-bottom: 16px;}
-.pop_wrap .pop_tit .btn_close{width: 32px;height: 32px;background: url('../images/ic_pop_close.svg') no-repeat center;font-size: 0;text-indent: -9999px;}
-.pop_wrap .btn_box .txt{font-size: 14px;color: #999;}
-.pop_wrap .btn_box .txt>strong{font-weight: 400;}
-.pop_wrap .btn_box .txt span{color: #373D49;padding-left: 5px;}
-.pop_wrap .btn_box2 button{width: 153px;}
-.pop_wrap .btn_box2 button:nth-child(2){margin-left: 8px;}
-
 /* 공통 컨펌팝업 */
-.confirm_pop .bottom_btn_box button{width: calc(50% - 5px);}
+.confirm_pop{position: fixed;width: 100%;height: 100%;top: 0;left: 0;z-index: 999;display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-pack: center; -ms-flex-pack: center;-webkit-justify-content: center; justify-content: center;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
+.confirm_pop .dim{position: absolute;width: 100%;height:100%;top: 0;left: 0;background: rgba(0,0,0,0.6);}
+.confirm_pop>.pop_cont{position: relative;width: 440px;border-radius: 16px;background: #fff;padding: 24px 20px;}
+.confirm_pop>.pop_cont>.txt{font-size: 16px;color: #222;text-align: center;padding-bottom:30px;}
+.confirm_pop .pop_tit {padding-bottom: 16px;color: #222;}
+.confirm_pop .pop_tit p{font-size: 24px;font-weight: 500;}
+.confirm_pop .pop_tit .btn_close{position: absolute; right: 20px; top: 24px;width: 32px;height: 32px;background: url('../images/ic_pop_close.svg') no-repeat center;font-size: 0;text-indent: -9999px;}
+.confirm_pop .btn_box button{width: 100%;min-width: auto;}
+.confirm_pop .btn_box2 {display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-pack: justify; -ms-flex-pack: justify;-webkit-justify-content: space-between; justify-content: space-between;}
+.confirm_pop .btn_box2 button{width: calc(50% - 5px);min-width: auto;}
 
 
 /* 팝업 카테고리 탭 내용 */
@@ -224,8 +218,8 @@ table td .txt_light {font-size: 14px; color: #999;}
 
 /* 페이징 */
 .paging {text-align: center; position: relative; padding-top: 30px; display: flex; justify-content: center;}
-.paging a {width: 32px; height: 32px; line-height: 30px; border: 1px solid transparent; display: inline-block; vertical-align: top; margin: 0 6px; font-size: 18px; font-weight: 500; color: #222;}
-.paging strong {width: 32px; height: 32px; line-height: 30px; border: 1px solid transparent; display: inline-block; vertical-align: top; margin: 0 6px; border-radius: 5px; background: #192030; font-size: 18px; font-weight: 500; color: #fff;}
+.paging button {width: 32px; height: 32px; line-height: 30px; border: 1px solid transparent; display: inline-block; vertical-align: top; margin: 0 6px; font-size: 18px; font-weight: 500; color: #222;}
+.paging button.on {border-radius: 5px; background: #192030;color: #fff;}
 .paging .btn_paging {text-indent: -9999px; text-align: left; position: relative;}
 .paging .btn_paging:after {content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: url('../images/ic_paging_arrow.svg') no-repeat 50% 50%/8px;}
 .paging .btn_paging.btn_prev {margin: 0 10px 0 0;}

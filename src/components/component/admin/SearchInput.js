@@ -7,9 +7,15 @@ const SearchInput = (props) => {
                     placeholder={props.placeholder}
                     onChange={props.onChangeHandler}
                     value={props.value}
+                    onKeyDown={(e)=>{
+                        if(e.key === "Enter") {
+                            e.preventDefault();
+                            props.onSearchHandler();
+                        }
+                    }}
                 />
             </div>
-            <button type="button" className="btn_search" onClickHandler={props.onClickHandler}>검색하기</button>
+            <button type="button" className="btn_search" onClick={props.onSearchHandler}>검색하기</button>
         </div>
     );
 };

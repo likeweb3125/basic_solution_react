@@ -6,11 +6,13 @@ import sessionStorage from 'redux-persist/es/storage/session';
 import user from './userSlice';
 import common from './commonSlice';
 import popup from './popupSlice';
+import etc from './etcSlice';
 
 const reducers = combineReducers({
   user: user.reducer,
   common: common.reducer,
   popup: popup.reducer,
+  etc: etc.reducer,
 });
 
 const persistConfig = {

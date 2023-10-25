@@ -16,6 +16,7 @@ const Layout = (props) => {
     const dispatch = useDispatch();
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const [locationList, setLocationList] = useState([]);
     const [boardTit, setBoardTit] = useState("");
 
@@ -36,8 +37,8 @@ const Layout = (props) => {
         else if(page.includes("board1_")){
             let idx = page.replace("board1_","");
                 idx = idx-1;
-            setLocationList(["게시판 관리","게시글 관리",common.boardMenu[idx]]);
-            setBoardTit(common.boardMenu[idx]);
+            setLocationList(["게시판 관리","게시글 관리",common.boardMenu[idx].c_name]);
+            setBoardTit(common.boardMenu[idx].c_name);
         }
 
         //환경설정 - 사이트정보
@@ -82,7 +83,7 @@ const Layout = (props) => {
                                     {popup.notiPop && <NotiPop />}
                                 </div>
                                 <div className="log_util">
-                                    <strong><b>박성훈</b> 님</strong>
+                                    <strong><b>{user.loginUser.m_name}</b> 님</strong>
                                     <button type="button" className="btn_logout">로그아웃</button>
                                 </div>
                             </div>

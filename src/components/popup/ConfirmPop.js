@@ -30,24 +30,26 @@ const ConfirmPop = (props) => {
     return createPortal(
         <>
             {popup.confirmPop &&
-                <div className="pop_wrap confirm_pop">
+                <div className="confirm_pop">
                     <div className="dim"></div>
                     <div className="pop_cont">
                         <div className="pop_tit flex_between">
-                            <p className="f_24"><strong>{popup.confirmPopTit}</strong></p>
+                            <p>{popup.confirmPopTit}</p>
                             <button type="button" className="btn_close" onClick={closePopHandler}>닫기버튼</button>
                         </div>
-                        <p className="tx_c bm30">{popup.confirmPopTxt}</p>
+                        <p className="txt">{popup.confirmPopTxt}</p>
                         {popup.confirmPopBtn === 1 &&
-                            <button type="button" className="btn" onClick={closePopHandler}>확인</button>
+                            <div className="btn_box">
+                                <button type="button" className="btn_type4" onClick={closePopHandler}>확인</button>
+                            </div>
                         }
                         {popup.confirmPopBtn === 2 &&
-                            <div className="bottom_btn_box flex_between">
-                                <button type="button" className="btn" onClick={()=>{
+                            <div className="btn_box2">
+                                <button type="button" className="btn_type4" onClick={()=>{
                                     props.onClickHandler();
                                     closePopHandler();
                                 }}>확인</button>
-                                <button type="button" className="btn2" onClick={closePopHandler}>취소</button>
+                                <button type="button" className="btn_type3" onClick={closePopHandler}>취소</button>
                             </div>
                         }
                     </div>
