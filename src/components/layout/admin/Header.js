@@ -76,13 +76,18 @@ const Header = () => {
 
     //현재페이지 메뉴 on
     useEffect(()=>{
-        setMenuOn(common.currentPage);
+        let page = null;
+
+        if(Object.keys(common.currentPage).length > 0 && common.currentPage.page){
+            page = common.currentPage.page;
+        }
+        setMenuOn(page);
     },[common.currentPage]);
 
 
     //메뉴 on 변경시 슬라이드애니메이션 
     useEffect(() => {
-        // console.log(menuOn);
+        console.log(menuOn);
 
         if(menuOn === "menu" || menuOn === "menu1") {
             menuRef.current.style.height = `${menuRef.current.scrollHeight}px`;
@@ -145,7 +150,7 @@ const Header = () => {
         <header id="header" className="header">
             <div className="menu_header">
                 <div className="logo_wrap">
-                    <h1 className="logo" onClick={()=>{dispatch(currentPage(null))}}>
+                    <h1 className="logo" onClick={()=>{dispatch(currentPage({}))}}>
                         <a href="/console" rel="noopener noreferrer">Lorem ipsum</a>
                     </h1>
                     <span>Likeweb Company Dashboard</span>
@@ -153,12 +158,12 @@ const Header = () => {
                 <div className="menu_wrap">
                     <nav>
                         <ul className="admin_gnb">
-                            <li className={menuOn === "menu" || menuOn === "menu1" ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("menu") ? "on" : ""}>
                                 <button type="button" className="admin_menu" onClick={()=>{setMenuOn("menu")}}><span>메뉴 관리</span></button>
                                 <ul className="depth2" ref={menuRef}>
                                     <li className={menuOn === "menu1" ? "on" : ""} 
                                         onClick={()=>{
-                                            dispatch(currentPage("menu1"));
+                                            dispatch(currentPage({page:"menu1"}));
                                             setMenuOn("menu1");
                                         }}
                                     >
@@ -166,11 +171,12 @@ const Header = () => {
                                     </li>
                                 </ul>
                             </li>
-                            <li className={`${menuOn === "board" || menuOn === "board1" || menuOn === "board2" || menuOn === "board2_1" ? "on" : ""}${boardList.map((_, i) => (menuOn === `board1_${i + 1}` ? `on` : "")).join("")}`}>
+                            <li className={menuOn && menuOn.includes("board") ? "on" : ""}>
                                 <button type="button" className="admin_board" onClick={()=>{setMenuOn("board")}}><span>게시판 관리</span></button>
                                 <ul className="depth2" ref={boardRef}>
                                     {boardList.length > 0 &&
-                                        <li className={`is_depth${menuOn === "board1" ? " on" : ""}${boardList.map((_, i) => (menuOn === `board1_${i + 1}` ? ` on` : "")).join("")}`}>
+                                        // <li className={`is_depth${menuOn === "board1" ? " on" : ""}${boardList.map((_, i) => (menuOn === `board1_${i + 1}` ? ` on` : "")).join("")}`}>
+                                        <li className={`is_depth${menuOn && menuOn.includes("board1") ? " on" : ""}`}>
                                             <button type="button" className="menu" onClick={()=>{setMenuOn("board1")}}>게시글 관리</button>
                                             <ul className="depth3" ref={board1Ref}>
                                                 {boardList.map((cont,i)=>{
@@ -179,7 +185,7 @@ const Header = () => {
                                                         <li key={i}
                                                             className={menuOn === `board1_${idx}` ? "on" : ""} 
                                                             onClick={()=>{
-                                                                dispatch(currentPage(`board1_${idx}`));
+                                                                dispatch(currentPage({page:`board1_${idx}`}));
                                                                 setMenuOn(`board1_${idx}`);
                                                             }}
                                                         >
@@ -190,12 +196,12 @@ const Header = () => {
                                             </ul>
                                         </li>
                                     }
-                                    <li className={`is_depth${menuOn === "board2" || menuOn === "board2_1" ? " on" :""}`}>
+                                    <li className={`is_depth${menuOn && menuOn.includes("board2") ? " on" :""}`}>
                                         <button type="button" className="menu" onClick={()=>{setMenuOn("board2")}}>댓글 관리</button>
                                         <ul className="depth3" ref={board2Ref}>
                                             <li className={menuOn === "board2_1" ? "on" : ""} 
                                                 onClick={()=>{
-                                                    dispatch(currentPage("board2_1"));
+                                                    dispatch(currentPage({page:"board2_1"}));
                                                     setMenuOn("board2_1");
                                                 }}
                                             >
@@ -205,49 +211,49 @@ const Header = () => {
                                     </li>
                                 </ul>
                             </li>
-                            <li className={menuOn === "member" || menuOn === "member1" || menuOn === "member2" ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("member") ? "on" : ""}>
                                 <button type="button" className="admin_member" onClick={()=>{setMenuOn("member")}}><span>회원 관리</span></button>
                                 <ul className="depth2" ref={memberRef}>
-                                    <li className={menuOn === "member1" ? "on" : ""} onClick={()=>{dispatch(currentPage("member1"))}}>
+                                    <li className={menuOn === "member1" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"member1"}))}}>
                                         <button className="menu">회원 관리</button>
                                     </li>
-                                    <li className={menuOn === "member2" ? "on" : ""} onClick={()=>{dispatch(currentPage("member2"))}}>
+                                    <li className={menuOn === "member2" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"member2"}))}}>
                                         <button className="menu">관리자 관리</button>
                                     </li>
                                 </ul>
                             </li>
-                            <li className={menuOn === "design" || menuOn === "design1" || menuOn === "design2" ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("design") ? "on" : ""}>
                                 <button type="button" className="admin_design" onClick={()=>{setMenuOn("design")}}><span>디자인 관리</span></button>
                                 <ul className="depth2" ref={designRef}>
-                                    <li className={menuOn === "design1" ? "on" : ""} onClick={()=>{dispatch(currentPage("design1"))}}>
+                                    <li className={menuOn === "design1" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"design1"}))}}>
                                         <button className="menu">메인 배너 관리</button>
                                     </li>
-                                    <li className={menuOn === "design2" ? "on" : ""} onClick={()=>{dispatch(currentPage("design2"))}}>
+                                    <li className={menuOn === "design2" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"design2"}))}}>
                                         <button className="menu">팝업 관리</button>
                                     </li>
                                 </ul>
                             </li>
-                            <li className={menuOn === "setting" || menuOn === "setting1" || menuOn === "setting2" || menuOn === "setting3" ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("setting") ? "on" : ""}>
                                 <button type="button" className="admin_setting" onClick={()=>{setMenuOn("setting")}}><span>환경설정</span></button>
                                 <ul className="depth2" ref={settingRef}>
-                                    <li className={menuOn === "setting1" ? "on" : ""} onClick={()=>{dispatch(currentPage("setting1"))}}>
+                                    <li className={menuOn === "setting1" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"setting1"}))}}>
                                         <button className="menu">사이트정보</button>
                                     </li>
-                                    <li className={menuOn === "setting2" ? "on" : ""} onClick={()=>{dispatch(currentPage("setting2"))}}>
+                                    <li className={menuOn === "setting2" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"setting2"}))}}>
                                         <button className="menu">운영정책 설정</button>
                                     </li>
-                                    <li className={menuOn === "setting3" ? "on" : ""} onClick={()=>{dispatch(currentPage("setting3"))}}>
+                                    <li className={menuOn === "setting3" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"setting3"}))}}>
                                         <button className="menu">회원 등급 관리</button>
                                     </li>
                                 </ul>
                             </li>
-                            <li className={menuOn === "stats" || menuOn === "stats1" || menuOn === "stats2" ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("stats") ? "on" : ""}>
                                 <button type="button" className="admin_stats" onClick={()=>{setMenuOn("stats")}}><span>통계관리</span></button>
                                 <ul className="depth2" ref={statsRef}>
-                                    <li className={menuOn === "stats1" ? "on" : ""} onClick={()=>{dispatch(currentPage("stats1"))}}>
+                                    <li className={menuOn === "stats1" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"stats1"}))}}>
                                         <button className="menu">전체 통계</button>
                                     </li>
-                                    <li className={menuOn === "stats2" ? "on" : ""} onClick={()=>{dispatch(currentPage("stats2"))}}>
+                                    <li className={menuOn === "stats2" ? "on" : ""} onClick={()=>{dispatch(currentPage({page:"stats22"}))}}>
                                         <button className="menu">접속자 이력 통계</button>
                                     </li>
                                 </ul>

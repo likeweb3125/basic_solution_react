@@ -9,7 +9,7 @@ exports.enum_api_uri = {
     //게시판
     board_list: `${api_uri}board/:category/:limit`,
     board_move: `${api_uri}board/move`,
-    board_delt: `${api_uri}board/`,
+    board_modify: `${api_uri}board/`,
     notice_setting: `${api_uri}board/notice`,
 
 
@@ -22,7 +22,7 @@ exports.enum_api_uri = {
     main_connector_list: `${api_uri}admin/first/connector-list/:limit`,
     board_menu_list: `${api_uri}admin/first/board-name`,
     alarm_list: `${api_uri}admin/first/alarm-cnt/:follow`,
-    alarm: `${api_uri}admin/first/alarm-read-delete/:follow`,
+    alarm_modify: `${api_uri}admin/first/alarm-read-delete/`,
 
 
     

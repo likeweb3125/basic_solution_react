@@ -8,6 +8,8 @@ import NotiPop from "../../popup/admin/NotiPop";
 import Main from "../../../pages/admin/Main";
 import MenuCategory from "../../../pages/admin/MenuCategory";
 import Board from "../../../pages/admin/Board";
+import BoardDetail from "../../../pages/admin/BoardDetail";
+import BoardWrite from "../../../pages/admin/BoardWrite";
 
 import SettingSiteInfo from "../../../pages/admin/SettingSiteInfo";
 import SettingPolicy from "../../../pages/admin/SettingPolicy";
@@ -23,7 +25,12 @@ const Layout = (props) => {
 
     //현재페이지에 따라 page_inner 변경
     useEffect(()=>{
-        const page = common.currentPage;
+        console.log(common.currentPage)
+        let page = null;
+
+        if(Object.keys(common.currentPage).length > 0 && common.currentPage.page){
+            page = common.currentPage.page;
+        }
 
         //메인
         if(page === null){
@@ -49,6 +56,8 @@ const Layout = (props) => {
         else if(page === "setting2"){
             setLocationList(["환경설정","시스템 운영정책"]);
         }
+
+        
 
     },[common.currentPage]);
 
@@ -92,13 +101,15 @@ const Layout = (props) => {
                     {/* //상단 */}
                     <section className="admin_section">
                         <div className="page_inner">
-                            {common.currentPage === null ? <Main /> //메인페이지
-                                : common.currentPage === "menu1" ? <MenuCategory /> //메뉴관리 - 카테고리관리
-                                : common.currentPage.includes("board1_") ? <Board tit={boardTit} /> //게시판관리 - 게시글관리 (모든 페이지)
+                            {!common.currentPage.page ? <Main /> //메인페이지
+                                : common.currentPage.page === "menu1" ? <MenuCategory /> //메뉴관리 - 카테고리관리
+                                : common.currentPage.page.includes("board1_") && !common.currentPage.detail && !common.currentPage.write ? <Board tit={boardTit} /> //게시판관리 - 게시글관리 (모든 페이지 리스트)
+                                : common.currentPage.page.includes("board1_") && common.currentPage.detail && !common.currentPage.write ? <BoardDetail tit={boardTit} /> //게시판관리 - 게시글관리 (모든 페이지 상세)
+                                : common.currentPage.page.includes("board1_") && !common.currentPage.detail && common.currentPage.write ? <BoardWrite tit={boardTit} /> //게시판관리 - 게시글관리 (모든 페이지 작성or수정)
 
 
-                                : common.currentPage === "setting1" ? <SettingSiteInfo /> //환경설정 - 사이트정보
-                                : common.currentPage === "setting2" && <SettingPolicy /> //환경설정 - 운영정책설정
+                                : common.currentPage.page === "setting1" ? <SettingSiteInfo /> //환경설정 - 사이트정보
+                                : common.currentPage.page === "setting2" && <SettingPolicy /> //환경설정 - 운영정책설정
                             }      
                         </div>
                     </section>

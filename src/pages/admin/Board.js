@@ -14,11 +14,11 @@ import ConfirmPop from "../../components/popup/ConfirmPop";
 import Pagination from "../../components/component/admin/Pagination";
 
 
-const Board = (props) => {
+const BoardList = (props) => {
     const dispatch = useDispatch();
     const board_list = enum_api_uri.board_list;
     const board_move = enum_api_uri.board_move;
-    const board_delt = enum_api_uri.board_delt;
+    const board_modify = enum_api_uri.board_modify;
     const notice_setting = enum_api_uri.notice_setting;
     const common = useSelector((state)=>state.common);
     const popup = useSelector((state)=>state.popup);
@@ -27,6 +27,7 @@ const Board = (props) => {
     const [confirm, setConfirm] = useState(false);
     const [notiSettingConfirm, setNotiSettingConfirm] = useState(false);
     const [moveConfirm, setMoveConfirm] = useState(false);
+    const [deltConfirm, setDeltConfirm] = useState(false);
 
     const [boardTit, setBoardTit] = useState("");
     const [searchTxt, setSearchTxt] = useState("");
@@ -46,6 +47,7 @@ const Board = (props) => {
             setConfirm(false);
             setNotiSettingConfirm(false);
             setMoveConfirm(false);
+            setDeltConfirm(false);
         }
     },[popup.confirmPop]);
 
@@ -230,7 +232,7 @@ const Board = (props) => {
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
-                confirmPopTxt:'이동시킬 게시판을 선택해주세요.',
+                confirmPopTxt:'이동할 게시판을 선택해주세요.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -264,6 +266,59 @@ const Board = (props) => {
             setConfirm(true);
         });
     }
+
+
+    //게시글 삭제버튼 클릭시
+    const deltBtnClickHandler = () => {
+        if(checkedNum > 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'해당 게시글을 삭제하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+            setDeltConfirm(true);
+        }else if(checkedNum === 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'게시글을 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    };
+
+
+    // 게시글 삭제하기
+    const deltHandler = () => {
+        const body = {
+            idx: etc.checkedList,
+            category: category
+        };
+        axios.delete(`${board_modify}`,
+            {
+                data: body,
+                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                //현재페이지 게시판정보 가져오기 
+                getBoardData(etc.pageNo);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
 
 
     return(<>
@@ -351,7 +406,7 @@ const Board = (props) => {
                             <em>※ 게시판 유형이 동일할 시에만 게시글 이동이 가능합니다.</em>
                         </div>
                         <div className="util_right">
-                            <button type="button" className="btn_type9">삭제</button>
+                            <button type="button" className="btn_type9" onClick={deltBtnClickHandler}>삭제</button>
                         </div>
                     </div>
                     <TableWrap 
@@ -371,7 +426,14 @@ const Board = (props) => {
                         />
                     }
                     <div className="board_btn_wrap">
-                        <a href="#" className="btn_type4">작성하기</a>                                        
+                        <button className="btn_type4"
+                            onClick={()=>{
+                                let page = {...common.currentPage};
+                                    page.detail = false;
+                                    page.write = true;
+                                dispatch(currentPage(page));
+                            }}
+                        >작성하기</button>                                        
                     </div>
                 </div>
             </div>
@@ -379,6 +441,9 @@ const Board = (props) => {
 
         {/* 게시글 이동 confirm팝업 */}
         {moveConfirm && <ConfirmPop onClickHandler={moveHandler} />}
+
+        {/* 게시글 삭제 confirm팝업 */}
+        {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
 
         {/* 게시글 공지설정 or 해제 confirm팝업 */}
         {notiSettingConfirm && <ConfirmPop onClickHandler={notiSettingHandler} />}
@@ -388,4 +453,4 @@ const Board = (props) => {
     </>);
 };
 
-export default Board;
+export default BoardList;

@@ -62,6 +62,8 @@ table td .txt_light {font-size: 14px; color: #999;}
 .tbl_wrap1 td .tbl_bold {color: #222;}
 .tbl_wrap1 td a {color: inherit;}
 .tbl_wrap1 td a:hover {text-decoration: underline; text-underline-position: from-font;}
+.tbl_wrap1 td button.link {color: inherit;font-size: inherit;width: 100%; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; display: block;}
+.tbl_wrap1 td button.link:hover {text-decoration: underline; text-underline-position: from-font;}
 .tbl_wrap1 .answer_status {font-weight: 500;}
 .tbl_wrap1 .answer_status.on {color: var(--admin-color1);}
 .tbl_wrap1.tbl_wrap1_1 tbody tr {background: none;}

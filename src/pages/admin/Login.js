@@ -69,7 +69,7 @@ const Login = () => {
                 dispatch(siteId("likeweb"));
 
                 //관리자단 현재페이지 메인으로 변경
-                dispatch(currentPage(null));
+                dispatch(currentPage({}));
 
                 //관리자단 메인으로 페이지이동
                 navigate('/console');

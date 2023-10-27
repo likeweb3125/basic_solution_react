@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const common = createSlice({
     name: "common", //state 이름
     initialState: {
-        currentPage:null,
+        currentPage:{},
         boardMenu:[],
     },
     reducers:{

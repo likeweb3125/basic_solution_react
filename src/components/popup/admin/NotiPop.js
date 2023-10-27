@@ -11,7 +11,7 @@ const NotiPop = (props) => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const alarm_list = enum_api_uri.alarm_list;
-    const alarm = enum_api_uri.alarm;
+    const alarm_modify = enum_api_uri.alarm_modify;
     const [confirm, setConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [tab, setTab] = useState("all");
@@ -66,7 +66,10 @@ const NotiPop = (props) => {
 
     //알림 전체읽기 처리
     const readHandler = () => {
-        axios.get(`${alarm.replace(":follow","read")}`,
+        const body = {
+            follow:"read"
+        };
+        axios.put(`${alarm_modify}`, body,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -95,7 +98,7 @@ const NotiPop = (props) => {
 
 
     //읽은알림 삭제버튼 클릭시
-    const deltBtnClickHandler = () => {
+    const deltAllBtnClickHandler = () => {
         dispatch(confirmPop({
             confirmPop:true,
             confirmPopTit:'알림',
@@ -106,9 +109,12 @@ const NotiPop = (props) => {
     };
 
 
-    //읽은알림 삭제하기
-    const deltHandler = () => {
-        axios.get(`${alarm.replace(":follow","delete")}`,
+    //읽은알림 전체삭제하기
+    const deltAllHandler = () => {
+        const body = {
+            follow:"delete"
+        };
+        axios.put(`${alarm_modify}`, body,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -128,6 +134,36 @@ const NotiPop = (props) => {
         });
     };
 
+
+    //알림 삭제하기
+    const deltHandler = (idx,flg) => {
+        const body = {
+            follow:"delete",
+            idx:idx,
+            flg:flg
+        };
+        axios.put(`${alarm_modify}`, body,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getAlarmList();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+
     return(<>
         <div className="pop_noti">
             <h5>알림</h5>
@@ -146,7 +182,7 @@ const NotiPop = (props) => {
                                     <button type="button" onClick={readHandler}>전체 읽기</button>
                                 </li>
                                 <li>
-                                    <button type="button" onClick={deltBtnClickHandler}>읽은 알림 삭제</button>
+                                    <button type="button" onClick={deltAllBtnClickHandler}>읽은 알림 삭제</button>
                                 </li>
                             </ul>
                         }
@@ -166,7 +202,7 @@ const NotiPop = (props) => {
                                             </strong>
                                             <i>{date}</i>
                                         </div>
-                                        <button type="button" className="btn_noti_remove">알림 삭제</button>
+                                        <button type="button" className="btn_noti_remove" onClick={()=>{deltHandler(cont.idx,cont.follow)}}>알림 삭제</button>
                                     </li>
                                 );
                             })}
@@ -179,7 +215,7 @@ const NotiPop = (props) => {
         </div>
 
         {/* 알림삭제 confirm팝업 */}
-        {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
+        {deltConfirm && <ConfirmPop onClickHandler={deltAllHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

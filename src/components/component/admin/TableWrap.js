@@ -1,10 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import * as CF from "../../../config/function";
 import { checkedList } from "../../../store/etcSlice";
+import { currentPage } from "../../../store/commonSlice";
 
 
 const TableWrap = (props) => {
     const dispatch = useDispatch();
+    const common = useSelector((state)=>state.common);
     const etc = useSelector((state)=>state.etc);
 
     
@@ -103,14 +105,21 @@ const TableWrap = (props) => {
                                         <td>
                                             <div className="txt_left">
                                                 <span>
-                                                    <a href="#">{cont.b_title}</a>
+                                                    <button className="link"
+                                                        onClick={()=>{
+                                                            let page = {...common.currentPage};
+                                                                page.detail = true;
+                                                                page.write = false;
+                                                            dispatch(currentPage(page));
+                                                        }}
+                                                    >{cont.b_title}</button>
                                                 </span>
                                                 {cont.comment_count > 0 && <b>({CF.MakeIntComma(cont.comment_count)})</b>}
                                             </div>
                                         </td>
                                         <td>{type}</td>
                                         <td>
-                                            <a href="#">{cont.m_name}</a>
+                                            <button className="link">{cont.m_name}</button>
                                         </td>
                                         <td>
                                             <span className="txt_light">{cont.b_reg_date}</span>
