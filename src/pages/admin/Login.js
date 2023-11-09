@@ -5,7 +5,6 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { loginUser, siteId } from "../../store/userSlice";
-import { currentPage } from "../../store/commonSlice";
 import { confirmPop } from "../../store/popupSlice";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 
@@ -68,9 +67,6 @@ const Login = () => {
                 //siteId store 에 저장 (고정값)
                 dispatch(siteId("likeweb"));
 
-                //관리자단 현재페이지 메인으로 변경
-                dispatch(currentPage({}));
-
                 //관리자단 메인으로 페이지이동
                 navigate('/console');
             }
@@ -88,11 +84,6 @@ const Login = () => {
             setConfirm(true);
         });
     };
-
-
-    useEffect(()=>{
-        console.log(error)
-    },[error]);
 
 
     return(<>

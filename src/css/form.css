@@ -126,10 +126,10 @@ input::-webkit-search-results-decoration {display: none;}
 
 
 /* 파일 */
-.input_file + .file_txt {position: absolute; left: 0; top: 0; max-width: calc(100% - 90px); padding: 10px 0;}
-.input_file + .file_txt li {padding: 0 12px; position: relative;}
-.input_file + .file_txt span {line-height: 28px; display: block; padding: 0 0 0 30px; font-size: 16px; color: #222; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
-.input_file + .file_txt .btn_file_remove {position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_file_remove.svg') no-repeat 50% 50%/100%; text-indent: -9999px; text-align: left;}
+.file_txt {position: absolute; left: 0; top: 0; max-width: calc(100% - 90px); padding: 10px 0;}
+.file_txt li {padding: 0 12px; position: relative;}
+.file_txt span {line-height: 28px; display: block; padding: 0 0 0 30px; font-size: 16px; color: #222; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
+.file_txt .btn_file_remove {position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_file_remove.svg') no-repeat 50% 50%/100%; text-indent: -9999px; text-align: left;}
 .file_box1 .input_file {height: 50px; position: relative; border: 1px solid #ddd; border-radius: 5px; background: #fff;}
 .file_box1 .input_file input[type="file"] + label {height: 100%; display: block; position: relative; cursor: pointer;}
 .file_box1 .input_file input[type="file"] + label strong {position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: 1px solid #ddd; border-radius: 5px; background: #f8f8f8; line-height: 30px; padding: 0 12px; font-size: 14px; font-weight: 400; color: #666;}
@@ -146,7 +146,7 @@ input::-webkit-search-results-decoration {display: none;}
 .file_box2 .input_file input[type="file"] + label strong {position: absolute; left: 0; top: 0; border: 1px solid #ddd; border-radius: 5px; background: #f8f8f8; line-height: 30px; padding: 0 12px; font-size: 14px; font-weight: 400; color: #666;}
 .file_box2 .input_file input[type="file"] + label b {line-height: 48px; display: flex; justify-content: center; align-items: center; position: relative; font-size: 16px; font-weight: 400; color: #999; border: 1px solid #ddd; border-radius: 5px;}
 .file_box2 .input_file input[type="file"] + label b:before {content: ''; width: 25px; height: 24px; background: url('../images/ic_file.svg') no-repeat 50% 50%/100%; margin-right: 4px;}
-.file_box2 .input_file + .file_txt {position: static; max-width: 100%; border: 1px solid #ddd; border-radius: 5px;}
+.file_box2 .file_txt {position: static; max-width: 100%; border: 1px solid #ddd; border-radius: 5px;}
 
 
 /* SELECT TAG */

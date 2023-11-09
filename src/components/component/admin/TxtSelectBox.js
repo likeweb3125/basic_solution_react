@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 
-const SelectBox = (props) => {
+const TxtSelectBox = (props) => {
     const [list, setList] = useState([]);
 
     useEffect(()=>{
@@ -10,6 +10,13 @@ const SelectBox = (props) => {
 
     return(
         <div className={props.class}>
+            <div className="txt_select">
+                {props.limitSel ?
+                    <span>{props.selected ? props.selected+"개씩" : "선택"}</span>
+                    :<span>{props.selected ? props.selected : "선택"}</span>
+                }
+                {props.objectSel === "level_list" && <em>{"lv."+props.selectedLevel}</em>}
+            </div>
             <select 
                 value={props.selected}
                 onChange={props.onChangeHandler}
@@ -20,7 +27,10 @@ const SelectBox = (props) => {
                     return(
                         props.objectSel === "board_title" ? //게시판관리 - 게시글들 제목일때
                             <option value={val.c_name} key={i} data-category={val.category}>{val.c_name}</option>
-                        :   <option value={val} key={i}>{val}{props.limitSel && "개씩"}</option>
+                        :   props.objectSel === "level_list" ? //회원등급 리스트일때
+                            <option value={val.l_name} key={i} data-level={val.l_level}>{val.l_name}</option>
+                        :   
+                            <option value={val} key={i}>{val}{props.limitSel && "개씩"}</option>
                     );
                 })}
             </select>
@@ -28,4 +38,4 @@ const SelectBox = (props) => {
     );
 };
 
-export default SelectBox;
+export default TxtSelectBox;

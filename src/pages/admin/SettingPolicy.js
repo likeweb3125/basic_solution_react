@@ -1,17 +1,37 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Formik } from "formik";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { confirmPop } from "../../store/popupSlice";
-import InputBox from "../../components/component/admin/InputBox";
+import { confirmPop, adminPolicyPopWrite, adminPolicyPop, adminPolicyPopModify } from "../../store/popupSlice";
+import { pageNo, pageNoChange, checkedList } from "../../store/etcSlice";
+import SelectBox from "../../components/component/admin/SelectBox";
+import SearchInput from "../../components/component/admin/SearchInput";
+import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
+import Pagination from "../../components/component/admin/Pagination";
 
 
 const SettingPolicy = () => {
     const dispatch = useDispatch();
     const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
+    const etc = useSelector((state)=>state.etc);
+    const site_policy = enum_api_uri.site_policy;
+    const policy_use = enum_api_uri.policy_use;
     const [confirm, setConfirm] = useState(false);
+    const [useConfirm, setUseConfirm] = useState(false);
+    const [searchTxt, setSearchTxt] = useState("");
+    const [boardData, setBoardData] = useState({});
+    const [limit, setLimit] = useState(10);
+    const [searchType, setSearchType] = useState("제목만");
+    const [checkList, setCheckList] = useState([]);
+    const [checkedNum, setCheckedNum] = useState(0);
+    const [showBtn, setShowBtn] = useState(false);
+    const [hideBtn, setHideBtn] = useState(false);
+    const [use, setUse] = useState("");
 
 
 
@@ -19,8 +39,169 @@ const SettingPolicy = () => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
+            setUseConfirm(false);
         }
     },[popup.confirmPop]);
+
+
+     //게시판정보 가져오기
+     const getBoardData = (page) => {
+        let search;
+        if(searchType == "제목만"){
+            search = "title";
+        }else if(searchType == "제목 + 내용"){
+            search = "titlecontents";
+        }else if(searchType == "작성자"){
+            search = "name";
+        } 
+
+        axios.get(`${site_policy.replace(":limit",limit)}?page=${page ? page : 1}&search=${search}${searchTxt.length > 0 ? "&searchtxt="+searchTxt : ""}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                setBoardData(data);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //limit 값 변경시 게시판정보 가져오기
+    useEffect(()=>{
+        getBoardData();
+    },[limit]);
+
+
+    //페이지네이션 클릭으로 페이지변경시
+    useEffect(()=>{
+        if(etc.pageNoChange){
+            getBoardData(etc.pageNo);
+
+            dispatch(pageNoChange(false));
+        }
+    },[etc.pageNo,etc.pageNoChange]);
+
+
+    //맨처음 리스트 idx값만 배열로 (전체 체크박스리스트 만들기)
+    useEffect(()=>{
+        if(boardData.hasOwnProperty("policy_list")){
+            const list = boardData.policy_list.map((item) => item.idx).filter(Boolean);
+            setCheckList([...list]);
+        }
+    },[boardData]);
+
+
+    //전체선택 체크박스 체크시
+    const allCheckHandler = (checked) => {
+        if(checked){
+            dispatch(checkedList([...checkList]));
+        }else{
+            dispatch(checkedList([]));
+        }
+    };
+
+
+    //체크박스 변경시 
+    useEffect(()=>{
+        //체크된 수 변경
+        const list = boardData.policy_list;
+        const list2 = etc.checkedList;
+        const num = etc.checkedList.length;
+        setCheckedNum(num);
+
+        //체크된 리스트에 따라 노출,중단 버튼 on,off
+        if(list && list2){
+            const newList = list.filter((item)=>list2.includes(item.idx));
+            const hasYValue = newList.some(item => item.p_use_yn === "Y");
+            const hasNValue = newList.some(item => item.p_use_yn === "N");
+            if(hasYValue){
+                setHideBtn(true);
+            }else{
+                setHideBtn(false);
+            }
+            if(hasNValue){
+                setShowBtn(true);
+            }else{
+                setShowBtn(false);
+            }
+        }
+    },[etc.checkedList]);
+
+
+    //노출,중단버튼 클릭시
+    const btnClickHandler = (use) => {
+        let txt = "";
+        if(use){
+            txt = "노출";
+            setUse("Y");
+        }else{
+            txt = "중단";
+            setUse("N");
+        }
+        dispatch(confirmPop({
+            confirmPop:true,
+            confirmPopTit:'알림',
+            confirmPopTxt: '해당 운영정책을 '+ txt +'하시겠습니까?',
+            confirmPopBtn:2,
+        }));
+        setUseConfirm(true);
+    };
+
+
+    //운영정책 노출,중단하기
+    const useHandler = () => {
+        const body = {
+            idx:etc.checkedList,
+            p_use_yn:use
+        };
+        axios.post(policy_use, body, 
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getBoardData();
+                dispatch(checkedList([]));
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //운영정책 상세내용 변경시 게시판리스트정보 가져오기
+    useEffect(()=>{
+        if(popup.adminPolicyPopModify){
+            dispatch(adminPolicyPopModify(false));
+            getBoardData();
+        }
+    },[popup.adminPolicyPopModify]);
+
+
+    //작성하기 버튼클릭시 작성팝업 띄우기
+    const writeBtnClickHandler = () => {
+        dispatch(adminPolicyPopWrite(true));
+        dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:null}));
+    };
+
 
 
     return(<>
@@ -30,180 +211,99 @@ const SettingPolicy = () => {
                     <h3>
                         <b>운영정책</b>
                     </h3>
-                    <strong>총 5개</strong>
+                    <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">
                         <div className="search_wrap">
-                            <div className="select_type3 search_row_select">
-                                <select name="" id="" title="행 개수">
-                                    <option value="">10개씩</option>
-                                    <option value="">15개씩</option>
-                                    <option value="">30개씩</option>
-                                    <option value="">50개씩</option>
-                                </select>
-                            </div>
+                            <SelectBox 
+                                class="select_type3 search_row_select"
+                                list={[10,15,30,50]}
+                                selected={limit}
+                                onChangeHandler={(e)=>{
+                                    const val = e.currentTarget.value;
+                                    setLimit(val);
+                                }}
+                                selHidden={true}
+                                limitSel={true}
+                            />
                             <div className="search_box">
-                                <div className="select_type3">
-                                    <select name="" id="" title="검색 범위">
-                                        <option value="">제목만</option>
-                                        <option value="">제목 + 내용</option>
-                                    </select>
-                                </div>
-                                <div className="search_input">
-                                    <div className="input_box">
-                                        <input type="text" placeholder="검색어를 입력해주세요."/>
-                                    </div>
-                                    <button type="button" className="btn_search">검색하기</button>
-                                </div>
+                                <SelectBox 
+                                    class="select_type3"
+                                    list={["제목만","제목 + 내용"]}
+                                    selected={searchType}
+                                    onChangeHandler={(e)=>{
+                                        const val = e.currentTarget.value;
+                                        setSearchType(val);
+                                    }}
+                                    selHidden={true}
+                                />
+                                <SearchInput 
+                                    placeholder="검색어를 입력해주세요."
+                                    onChangeHandler={(e)=>{
+                                        const val = e.currentTarget.value;
+                                        setSearchTxt(val);
+                                    }}
+                                    value={searchTxt}
+                                    onSearchHandler={()=>getBoardData()}
+                                />
                             </div>
                         </div>
                     </div>
                     <div className="board_table_util">
                         <div className="chk_area">
                             <div className="chk_box2">
-                                <input type="checkbox" id="chkAll" className="blind"/>
-                                <label for="chkAll">전체선택</label>
+                                <input type="checkbox" id="chkAll" className="blind"
+                                    onChange={(e)=>{allCheckHandler(e.currentTarget.checked)}} 
+                                    checked={checkList.length > 0 && checkList.length === etc.checkedList.length && checkList.every(item => etc.checkedList.includes(item))}
+                                />
+                                <label htmlFor="chkAll">전체선택</label>
                             </div>
                         </div>
                         <div className="util_wrap">
                             <span>선택한 운영정책</span>
-                            <span>총 <b>0</b>명</span>
+                            <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>개</span>
                             <div className="btn_box">
-                                {/* <button type="button" className="btn_type18">노출</button> */}
-                                <button type="button" className="btn_type18 on">노출</button>
-                                <button type="button" className="btn_type19">중단</button>
-                                {/* <button type="button" className="btn_type19 on">중단</button> */}
+                                <button type="button" disabled={showBtn ? false : true} className={`btn_type18${showBtn ? " on" : ""}`} 
+                                    onClick={()=>{
+                                        btnClickHandler(true);
+                                    }}
+                                >노출</button>
+                                <button type="button" disabled={hideBtn ? false : true} className={`btn_type19${hideBtn ? " on" : ""}`} 
+                                    onClick={()=>{
+                                        btnClickHandler(false);
+                                    }}
+                                >중단</button>
                             </div>
                         </div>
                         <div className="util_right">
                             <button type="button" className="btn_type9">삭제</button>
                         </div>
                     </div>
-                    <div className="tbl_wrap1 tbl_wrap1_1">
-                        <table>
-                            <caption>게시판 테이블</caption>
-                            <colgroup>
-                                <col style={{width: "80px"}}/>
-                                <col style={{width: "9%"}}/>
-                                <col style={{width: "auto"}}/>
-                                <col style={{width: "18%"}}/>
-                                <col style={{width: "12%"}}/>
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>구분</th>
-                                    <th>제목</th>
-                                    <th>작성일시</th>
-                                    <th>사용여부</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div className="chk_box2">
-                                            <input type="checkbox" id="chk11" className="blind"/>
-                                            <label for="chk11">선택</label>
-                                        </div>
-                                    </td>
-                                    <td>5</td>
-                                    <td>
-                                        <a href="#">이용약관</a>
-                                    </td>
-                                    <td>
-                                        <span className="txt_light">2018.10.10 10:20</span>
-                                    </td>
-                                    <td>
-                                        <em className="txt_color1">노출</em>
-                                        {/* <em className="txt_color2">중단</em> */}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div className="chk_box2">
-                                            <input type="checkbox" id="chk11" className="blind"/>
-                                            <label for="chk11">선택</label>
-                                        </div>
-                                    </td>
-                                    <td>4</td>
-                                    <td>
-                                        <a href="#">개인정보 수집 및 이용</a>
-                                    </td>
-                                    <td>
-                                        <span className="txt_light">2018.10.10 10:20</span>
-                                    </td>
-                                    <td>
-                                        <em className="txt_color1">노출</em>
-                                        {/* <em className="txt_color2">중단</em> */}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div className="chk_box2">
-                                            <input type="checkbox" id="chk11" className="blind"/>
-                                            <label for="chk11">선택</label>
-                                        </div>
-                                    </td>
-                                    <td>3</td>
-                                    <td>
-                                        <a href="#">개인정보 제3자 제공</a>
-                                    </td>
-                                    <td>
-                                        <span className="txt_light">2018.10.10 10:20</span>
-                                    </td>
-                                    <td>
-                                        <em className="txt_color1">노출</em>
-                                        {/* <em className="txt_color2">중단</em> */}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div className="chk_box2">
-                                            <input type="checkbox" id="chk11" className="blind"/>
-                                            <label for="chk11">선택</label>
-                                        </div>
-                                    </td>
-                                    <td>2</td>
-                                    <td>
-                                        <a href="#">개인정보 취급위탁</a>
-                                    </td>
-                                    <td>
-                                        <span className="txt_light">2018.10.10 10:20</span>
-                                    </td>
-                                    <td>
-                                        <em className="txt_color1">노출</em>
-                                        {/* <em className="txt_color2">중단</em> */}
-                                    </td>
-                                </tr>
-                                <tr className="disabled">
-                                    <td>
-                                        <div className="chk_box2">
-                                            <input type="checkbox" id="chk11" className="blind"/>
-                                            <label for="chk11">선택</label>
-                                        </div>
-                                    </td>
-                                    <td>1</td>
-                                    <td>
-                                        <a href="#">비회원 정보수집 동의</a>
-                                    </td>
-                                    <td>
-                                        <span className="txt_light">2018.10.10 10:20</span>
-                                    </td>
-                                    <td>
-                                        {/* <em className="txt_color1">노출</em> */}
-                                        <em className="txt_color2">중단</em>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <TableWrap 
+                        class="tbl_wrap1 tbl_wrap1_1"
+                        colgroup={["80px","9%","auto","18%","12%"]}
+                        thList={["","구분","제목","작성일시","사용여부"]}
+                        tdList={boardData.policy_list}
+                        type={"policy"}
+                    />
+                    {boardData.policy_list && boardData.policy_list.length > 0 &&
+                        <Pagination 
+                            currentPage={boardData.current_page} //현재페이지 번호
+                            startPage={boardData.start_page} //시작페이지 번호 
+                            endPage={boardData.end_page} //보이는 끝페이지 번호 
+                            lastPage={boardData.last_page} //총페이지 끝
+                        />
+                    }
                     <div className="form_btn_wrap">
-                        <a href="#" className="btn_type4">작성</a>                                        
+                        <button type="button" className="btn_type4" onClick={writeBtnClickHandler}>작성</button>                                        
                     </div>
                 </div>
             </div>
         </div>
+
+        {/* 노출,중단하기 confirm팝업 */}
+        {useConfirm && <ConfirmPop onClickHandler={useHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

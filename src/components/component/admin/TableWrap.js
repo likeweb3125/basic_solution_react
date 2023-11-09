@@ -1,13 +1,16 @@
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import * as CF from "../../../config/function";
 import { checkedList } from "../../../store/etcSlice";
-import { currentPage } from "../../../store/commonSlice";
+import { adminPolicyPop } from "../../../store/popupSlice";
 
 
 const TableWrap = (props) => {
     const dispatch = useDispatch();
-    const common = useSelector((state)=>state.common);
     const etc = useSelector((state)=>state.etc);
+    const [colgroup, setColgroup] = useState([]);
+    const [thList, setThList] = useState([]);
 
     
     //체크박스 체크시
@@ -21,6 +24,30 @@ const TableWrap = (props) => {
         }
         dispatch(checkedList(newList));
     };
+
+
+
+    useEffect(()=>{
+        const list = props.colgroup;
+        
+        if(props.type == "board" && props.data.c_content_type === 7){
+            list.splice(2,0,"10%");
+        }
+
+        setColgroup(list);
+    },[props.colgroup]);
+
+
+
+    useEffect(()=>{
+        const list = props.thList;
+
+        if(props.type == "board" && props.data.c_content_type === 7){
+            list.splice(2,0,"답변상태");
+        }
+
+        setThList(list);
+    },[props.thList]);
     
 
     return(
@@ -28,7 +55,7 @@ const TableWrap = (props) => {
             {props.tdList && props.tdList.length > 0 ?
                 <table>
                     <colgroup>
-                        {props.colgroup.map((cont,i)=>{
+                        {colgroup.map((cont,i)=>{
                             return(<col key={i} style={{width: cont}}/>);
                         })}
                     </colgroup>
@@ -50,7 +77,7 @@ const TableWrap = (props) => {
                                         <td>
                                             <div className="txt_left">
                                                 <span>
-                                                    <a href="#" rel="noopener noreferrer">{cont.b_title}</a>
+                                                    <Link to={`/console/board/post/detail/${cont.category}/${cont.idx}`}>{cont.b_title}</Link>
                                                 </span>
                                             </div>
                                         </td>
@@ -102,17 +129,11 @@ const TableWrap = (props) => {
                                             </div>
                                         </td>
                                         <td>{cont.b_notice == "1" ? "공지" : cont.idx}</td>
+                                        {type == "문의" && <td>답변상태</td>}
                                         <td>
                                             <div className="txt_left">
                                                 <span>
-                                                    <button className="link"
-                                                        onClick={()=>{
-                                                            let page = {...common.currentPage};
-                                                                page.detail = true;
-                                                                page.write = false;
-                                                            dispatch(currentPage(page));
-                                                        }}
-                                                    >{cont.b_title}</button>
+                                                    <Link to={`/console/board/post/detail/${cont.category}/${cont.idx}`}>{cont.b_title}</Link>
                                                 </span>
                                                 {cont.comment_count > 0 && <b>({CF.MakeIntComma(cont.comment_count)})</b>}
                                             </div>
@@ -129,6 +150,44 @@ const TableWrap = (props) => {
                                                 className={`btn_type10${cont.b_notice == '1' ? " on" : ""}`}
                                                 onClick={()=>props.onNotiSettingHandler(cont)}
                                             >{`공지${cont.b_notice == '1' ? " 해제" : " 설정"}`}</button>
+                                        </td>
+                                    </tr>
+                                );
+                            }
+                            //환경설정 - 운영정책설정 일때
+                            if(props.type == "policy"){
+                                return(
+                                    <tr key={i} className={cont.p_use_yn == "Y" ? "" : "disabled"}>
+                                        <td>
+                                            <div className="chk_box2">
+                                                <input type="checkbox" id={`check_${cont.idx}`} className="blind"
+                                                    value={cont.idx}
+                                                    onChange={(e) => {
+                                                        const isChecked = e.currentTarget.checked;
+                                                        const value = e.currentTarget.value;
+                                                        checkHandler(isChecked, value);
+                                                    }}
+                                                    checked={etc.checkedList.includes(cont.idx)}
+                                                />
+                                                <label htmlFor={`check_${cont.idx}`}>선택</label>
+                                            </div>
+                                        </td>
+                                        <td>{cont.idx}</td>
+                                        <td>
+                                            <button type="button" className="link" 
+                                                onClick={()=>{
+                                                    dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:cont.idx}));
+                                                }}>
+                                                <span>{cont.p_title}</span>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <span className="txt_light">{cont.p_reg_date}</span>
+                                        </td>
+                                        <td>
+                                            {cont.p_use_yn == "Y" ? <em className="txt_color1">노출</em>
+                                                :   <em className="txt_color2">중단</em>
+                                            }
                                         </td>
                                     </tr>
                                 );

@@ -3,7 +3,7 @@
 /* ADMIN CSS */
 body,input,select,textarea,button,table {
     font-family: 'Pretendard Variable', 'Pretendard', 'Noto Sans KR', '맑은 고딕', 'malgun gothic', 'Apple SD Gothic Neo',sans-serif;
-    font-size: 14px;
+    /* font-size: 14px; */
 	word-break: keep-all;
 	word-wrap: break-word;
 	/* letter-spacing: -0.05em; */
@@ -67,8 +67,8 @@ body,input,select,textarea,button,table {
 
 /* 메뉴 2차 */
 .admin_gnb .depth3 {height: 0;overflow: hidden;transition: 0.2s ease-in-out;}
-.admin_gnb .depth3 > li > span {display: block; padding: 5px 0 5px 48px; font-size: 16px; font-weight: 500; color: #878b93;cursor: pointer;}
-.admin_gnb .depth3 > li.on > span {color: rgba(255, 255, 255, 0.8);}
+.admin_gnb .depth3 > li > a {display: block; padding: 5px 0 5px 48px; font-size: 16px; font-weight: 500; color: #878b93;cursor: pointer;}
+.admin_gnb .depth3 > li.on > a {color: rgba(255, 255, 255, 0.8);}
 .body_admin #header .help_link {padding: 0 20px 130px;}
 .body_admin #header .help_link a {display: flex; align-items: center; justify-content: space-between; position: relative; line-height: 22px; padding: 20px 12px 20px 48px; border: 1px solid rgba(221, 221, 221, 0.4); border-radius: 5px;}
 .body_admin #header .help_link a:before {content: ''; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_help.svg') no-repeat 50% 50%/100%;}
@@ -129,11 +129,11 @@ body,input,select,textarea,button,table {
 .pop_noti .list_noti .cate {width: 48px; font-size: 18px; font-weight: 500; color: var(--admin-color1);}
 .pop_noti .list_noti .txt_wrap {width: calc(100% - 48px); padding: 0 40px 0 16px;}
 .pop_noti .list_noti .txt_wrap a {display: block;}
-.pop_noti .list_noti .txt_wrap em {display: block; font-size: 16px; color: #666;}
+.pop_noti .list_noti .txt_wrap em {display: block; font-size: 16px; color: #666;font-style: normal;}
 .pop_noti .list_noti .txt_wrap strong {display: block;}
 .pop_noti .list_noti .txt_wrap strong b {font-size: 18px; font-weight: 600; color: #222; margin-right: 8px;}
 .pop_noti .list_noti .txt_wrap strong span {font-size: 18px; font-weight: 400; color: #222;}
-.pop_noti .list_noti .txt_wrap i {display: block; font-size: 16px; color: #999;}
+.pop_noti .list_noti .txt_wrap i {display: block; font-size: 16px; color: #999;font-style: normal;}
 .pop_noti .list_noti .btn_noti_remove {position: absolute; right: 0; top: 0; width: 20px; height: 20px; background: url('../images/ic_noti_remove.svg') no-repeat 100% 0/12px; text-indent: -9999px;}
 .pop_noti .btn_noti_close {position: absolute; right: 40px; top: 30px; width: 30px; height: 30px; text-indent: -9999px; background: url('../images/ic_pop_close.svg') no-repeat 50% 50%/20px;}
 
@@ -168,7 +168,7 @@ body,input,select,textarea,button,table {
 .admin_section .tit {display: flex; align-items: center; position: relative;}
 .admin_section .tit h3 {font-size: 24px; font-weight: 600; color: #222; position: relative; line-height: 30px; padding: 10px 0;}
 .admin_section .tit h3 b {font-size: inherit; font-weight: inherit; color: inherit;}
-.admin_section .tit h3 i {margin-left: 10px; font-size: 16px; font-weight: 400; color: #666;}
+.admin_section .tit h3 i {margin-left: 10px; font-size: 16px; font-weight: 400; color: #666;font-style: normal;}
 .admin_section .tit p {margin-left: 10px; font-size: 18px; font-weight: 500; color: #666;}
 .admin_section .tit p b {font-weight: inherit; color: #222;}
 .admin_section .tit .btn_sync {margin-left: 5px;}
@@ -276,14 +276,14 @@ body,input,select,textarea,button,table {
 .board_table_util .util_wrap {display: flex; align-items: center; column-gap: 12px;}
 .board_table_util .util_wrap span {font-size: 18px; font-weight: 500; color: #222; line-height: 50px;}
 .board_table_util .util_wrap span b {font-size: inherit; font-weight: inherit; color: var(--admin-color1);}
-.board_table_util .util_wrap em {font-size: 12px; color: #666;}
+.board_table_util .util_wrap em {font-size: 12px; color: #666;font-style: normal;}
 .board_table_util .util_wrap .select_type3 {width: 240px;}
 .board_table_util .util_wrap .btn_box {display: flex; column-gap: 4px;}
 .admin_section .board_section .board_btn_wrap {position: absolute; right: 0; bottom: -1%;}
 .admin_section .board_section .btn_list_wrap {text-align: center;}
 .admin_section .board_section .user_level {display: flex; align-items: center; justify-content: center; column-gap: 4px;}
 .admin_section .board_section .user_level strong {font-size: 16px; font-weight: 400; color: #222;}
-.admin_section .board_section .user_level em {font-size: 12px; font-weight: 700; color: var(--admin-color1);}
+.admin_section .board_section .user_level em {font-size: 12px; font-weight: 700; color: var(--admin-color1);font-style: normal;}
 
 
 /* 게시판 단체문자 */
@@ -304,15 +304,17 @@ body,input,select,textarea,button,table {
 .board_view .board_tit .board_info li:last-of-type {margin-right: 0; padding-right: 0;}
 .board_view .board_tit .board_info li:last-of-type:after {display: none;}
 .board_view .board_tit .board_info strong {display: block; font-size: inherit; font-weight: inherit; color: inherit;}
-.board_view .board_tit .board_info em {display: block; font-size: 18px; font-weight: inherit; color: inherit;}
+.board_view .board_tit .board_info em {display: block; font-size: 18px; font-weight: inherit; color: inherit;font-style: normal;}
 .board_view .board_tit .board_info span {display: block; font-size: inherit; font-weight: inherit; color: inherit;}
 .board_view .board_tit .board_info .view_cnt {padding-left: 30px; position: relative; font-size: 18px;}
 .board_view .board_tit .board_info .view_cnt:before {content: ''; width: 24px; height: 24px; position: absolute; left: 0; top: 50%; transform: translateY(-50%); background: url('../images/ic_view_cnt.svg') no-repeat 50% 50%/100%;}
-.board_view .board_con .con {padding: 30px 5px 45px; min-height: 200px; font-size: 18px; color: #666;}
+.board_view .board_con {border-bottom: 1px solid #222;}
+.board_view .board_con .con {padding: 30px 5px 45px; min-height: 200px; /*font-size: 18px; color: #666;*/}
 .board_view .board_con .write_btn_wrap {padding-bottom: 40px; text-align: right; display: flex; justify-content: flex-end;}
-.board_view .file_section {padding: 25px 0; display: flex; align-items: center; border-top: 1px solid #ddd; border-bottom: 1px solid #222;}
+.board_view .file_section {padding: 25px 0; display: flex; border-top: 1px solid #ddd; }
 .board_view .file_section span {flex: 0 0 120px; font-size: 20px; font-weight: 500; color: #222; line-height: 30px;}
-.board_view .file_section a {font-size: 18px; color: #999; line-height: 30px; word-break: break-all;}
+.board_view .file_section a {font-size: 18px; color: #999; line-height: 30px; word-break: break-all;display: block;}
+.board_view .file_section button {font-size: 18px; color: #999; line-height: 30px; word-break: break-all;display: block;}
 .board_pagination {padding: 10px 20px; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; margin-top: 30px;}
 .board_pagination .pagination_box {display: flex; padding: 10px 0;}
 .board_pagination .pagination_box b {flex: 0 0 120px; line-height: 30px; font-size: 20px; font-weight: 500; color: #222; position: relative; padding-left: 24px;}
@@ -320,6 +322,19 @@ body,input,select,textarea,button,table {
 .board_pagination .pagination_box span {flex: 1; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-size: 18px; color: #999; line-height: 30px;}
 .board_pagination .pagination_box span a {display: inline-block; vertical-align: top; max-width: 100%; font-size: inherit; font-weight: inherit; color: inherit; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
 .board_pagination .pagination_box.board_next b:before {transform: translateY(-50%) rotateZ(180deg);}
+/* 문의게시판 답변 */
+.board_view .answer_box{padding: 25px 0;border-top: 1px solid #ddd;}
+.board_view .answer_box>li{padding-bottom: 25px;border-bottom: 1px solid #ddd;}
+.board_view .answer_box>li:nth-child(2){display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;border-bottom: none;padding-top: 25px;}
+.board_view .answer_box>li>p{font-size: 20px;font-weight: 500;color: #222;}
+.board_view .answer_box>li:nth-child(2)>p{width:180px;}
+.board_view .answer_box>li textarea{margin-top: 15px;}
+.board_view .answer_box>li ul{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-pack: justify; -ms-flex-pack: justify;-webkit-justify-content: space-between; justify-content: space-between;width: calc(100% - 180px);}
+.board_view .answer_box>li ul li{width: calc(50% - 12px);display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
+.board_view .answer_box>li ul li p{width: 70px;}
+.board_view .answer_box>li ul li .input_box{width: calc(100% - 70px);}
+
+
 
 /* 게시판 댓글 */
 .comment_section {padding: 30px 0;}
@@ -339,7 +354,7 @@ body,input,select,textarea,button,table {
 .comment_item .profile .comment_info li:last-of-type:after {display: none;}
 .comment_item .profile .comment_info strong {display: block; font-size: inherit; font-weight: 500; color: #222; position: relative;}
 .comment_item .profile .comment_info strong:before {content: ''; position: absolute; left: -40px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_profile.svg') no-repeat 50% 50%/100%;}
-.comment_item .profile .comment_info em {display: block; font-size: inherit; font-weight: inherit; color: inherit;}
+.comment_item .profile .comment_info em {display: block; font-size: inherit; font-weight: inherit; color: inherit;font-style: normal;}
 .comment_item .profile .comment_info button {display: block; font-size: 16px; font-weight: inherit; color: #666; text-decoration: underline; text-underline-position: from-font;;}
 .comment_item .con_comment {padding: 10px 0 15px; font-size: 18px; color: #222;}
 .comment_item .con_comment p {font-size: inherit; font-weight: inherit; color: inherit;}
@@ -427,7 +442,8 @@ body,input,select,textarea,button,table {
 
 
 /* 시스템 운영정책 팝업 */
-.pop_terms .popup {width: 800px;}
+.admin_pop_terms .popup {width: 800px;}
+.admin_pop_terms .edit_box .raw_editor{height: calc(100% - 66px);}
 
 
 /* 단체 메시지 발송 팝업 */
@@ -484,7 +500,7 @@ body,input,select,textarea,button,table {
 .charts_box .charts_tooltip span {display: block; font-family: 'Pretendard Variable', 'Pretendard', 'Noto Sans KR', '맑은 고딕', 'malgun gothic', 'Apple SD Gothic Neo', sans-serif; font-size: 12px;}
 .charts_box .charts_tooltip .tooltip_date {font-size: 12px; font-weight: 400; color: #fff; background: #192030; padding: 0 25px; line-height: 24px;}
 .charts_box .charts_tooltip .value_area {display: flex; align-items: center; justify-content: space-between; padding: 0 10px;}
-.charts_box .charts_tooltip .value_area i {font-size: 12px; font-weight: 400; color: #666; line-height: 24px;}
+.charts_box .charts_tooltip .value_area i {font-size: 12px; font-weight: 400; color: #666; line-height: 24px;font-style: normal;}
 .charts_box .charts_tooltip .value_area b {font-size: 12px; font-weight: 400; color: #222; line-height: 24px;}
 
 

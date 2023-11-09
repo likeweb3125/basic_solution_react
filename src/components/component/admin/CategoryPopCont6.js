@@ -1,0 +1,291 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import * as CF from "../../../config/function";
+import { enum_api_uri } from "../../../config/enum";
+import { confirmPop, adminCategoryPopData } from "../../../store/popupSlice";
+import InputBox from "./InputBox";
+import InputBox2 from "./InputBox2";
+import TxtSelectBox from "./TxtSelectBox";
+import ConfirmPop from "../../popup/ConfirmPop";
+import Editor from "../Editor";
+
+
+const CategoryPopCont6 = (props) => {
+    const dispatch = useDispatch();
+    const level_list = enum_api_uri.level_list;
+    const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
+    const [temStep, setTemStep] = useState(1);
+    const [confirm, setConfirm] = useState(false);
+    const [info, setInfo] = useState({});
+
+    const [levelList, setLevelList] = useState([]);
+    const [readSelect, setReadSelect] = useState("");
+    const [readLevel, setReadLevel] = useState(null);
+    const [writeSelect, setWriteSelect] = useState("");
+    const [writeLevel, setWriteLevel] = useState(null);
+    const [replySelect, setReplySelect] = useState("");
+    const [replyLevel, setReplyLevel] = useState(null);
+    const [commentSelect, setCommentSelect] = useState("");
+    const [commentLevel, setCommentLevel] = useState(null);
+    const [showRaw, setShowRaw] = useState(false);
+    const [rawHtml, setRawHtml] = useState('');
+    const [templateEditor, setTemplateEditor] = useState("");
+    const [templateText, setTemplateText] = useState("");
+
+
+    // Confirm팝업 닫힐때
+    useEffect(()=>{
+        if(popup.confirmPop === false){
+            setConfirm(false);
+        }
+    },[popup.confirmPop]);
+
+
+    useEffect(()=>{
+        console.log(props.info);
+        setInfo(props.info);
+        setReadLevel(props.info.b_read_lv);
+        setWriteLevel(props.info.b_write_lv);
+        setReplyLevel(props.info.b_reply_lv);
+        setCommentLevel(props.info.b_comment_lv);
+        setTemplateEditor(props.info.b_template_text);
+    },[props.info]);
+
+
+    useEffect(()=>{
+        //카테고리 값 변경시 adminCategoryPopData store 에 저장
+        dispatch(adminCategoryPopData(info));
+    },[info]);
+
+
+    //회원등급리스트 가져오기
+    const getLevelList = () => {
+        axios.get(level_list,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                const list = data.filter((item)=>item.l_name !== null);
+                setLevelList(list);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+    
+    //맨처음 회원등급리스트 가져오기
+    useEffect(()=>{
+        getLevelList();
+    },[]);
+
+
+    //회원등급리스트 값 있으면 각각 권한 셀렉트에 txt 값 넣기
+    useEffect(()=>{
+        if(levelList.length > 0){
+            const read = levelList.find(item=>item.l_level === props.info.b_read_lv);
+            const write = levelList.find(item=>item.l_level === props.info.b_write_lv);
+            const reply = levelList.find(item=>item.l_level === props.info.b_reply_lv);
+            const comment = levelList.find(item=>item.l_level === props.info.b_comment_lv);
+            setReadSelect(read.l_name);
+            setWriteSelect(write.l_name);
+            setReplySelect(reply.l_name);
+            setCommentSelect(comment.l_name);
+        }
+    },[levelList]);
+
+
+    //인풋값 변경시
+    const onInputChangeHandler = (e) => {
+        console.log(e)
+        const id = e.currentTarget.id;
+        const val = e.currentTarget.value;
+
+        let newData = {...info};
+            newData[id] = val;
+            
+        setInfo(newData);
+    };
+
+
+    //체크박스, 라디오 값 변경시
+    const onCheckChangeHandler = (checked, name, val) => {
+        let newData = {...info};
+
+        if(checked){
+            newData[name] = val;
+        }else{
+            newData[name] = "";
+        }
+        
+        setInfo(newData);
+    };
+
+
+    //셀렉트값 변경시
+    const onSelectChangeHandler = (name, val) => {
+        let newData = {...info};
+        const numericValue = parseInt(val, 10); // 문자열을 숫자로 변환
+
+        if (!isNaN(numericValue)) { // 숫자로 변환 가능한 경우
+            newData[name] = numericValue;
+        }else{
+            newData[name] = val;
+        }
+    
+        setInfo(newData);
+    };
+
+
+    //에디터내용 값
+    const onEditorChangeHandler = (e) => {
+        setTemplateEditor(e);
+    };
+
+
+    //에디터 HTML 버튼클릭시 textarea 보이기
+    const handleClickShowRaw = () => {
+        setShowRaw(!showRaw);
+    };
+
+
+    //에디터 HTML 버튼 토글
+    useEffect(()=>{
+        if (showRaw) {
+            setRawHtml(templateEditor);
+        }else {
+            setTemplateEditor(rawHtml);
+        }
+    },[showRaw]);
+
+
+    return(<>
+        <div className="tab_con tab_con5">
+            <div className="tab_inner">
+                <div className="form_pop_inner">
+                    <div className="form_inner">
+                        <div className="form_box">
+                            <div className="form_input">
+                                <h6>목록 갯수</h6>
+                                <div className="input_wrap">
+                                    <TxtSelectBox 
+                                        class="select_type1"
+                                        list={[10,15,30,50]}
+                                        // selected={limit || ""}
+                                        // onChangeHandler={(e)=>{
+                                        //     const val = e.currentTarget.value;
+                                        //     setLimit(val);
+                                        // }}
+                                        selHidden={true}
+                                        limitSel={true}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form_input">
+                                <h6>게시판 분류 사용여부</h6>
+                                <div className="input_wrap">
+                                    <div className="chk_rdo_wrap chk_rdo_wrap2">
+                                        <div className="chk_box1">
+                                            <input type="checkbox" id="check_split" className="blind"
+                                                // onChange={(e)=>{
+                                                //     const checked = e.currentTarget.checked;
+                                                //     onCheckChangeHandler(checked,"b_alarm","Y");
+                                                // }}
+                                                // checked={info.b_alarm && info.b_alarm == "Y" ? true : false}
+                                            />
+                                            <label htmlFor="check_split">체크 시 게시판 분류를 사용합니다.</label>
+                                        </div>
+                                        <button type="button" className="btn_right">분류 설정</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="form_box form_box2 form_border_box">
+                            <div className="form_input">
+                                <h6>게시판 상단 HTML</h6>
+                                <textarea 
+                                    style={{height:"150px"}}
+                                    value={info.b_top_html || ""}
+                                    onChange={onInputChangeHandler}
+                                    id={`b_top_html`}
+                                />
+                            </div>
+                        </div>
+                        <div className="form_box form_box2">
+                            <div className="form_input">
+                                <h6>게시글 템플릿 적용</h6>
+                                <div className="input_wrap">
+                                    <div className="chk_rdo_wrap chk_rdo_wrap2">
+                                        <div className="chk_box1">
+                                            <input type="checkbox" id="chkPop61" className="blind"/>
+                                            <input type="checkbox" id="check_tem" className="blind"
+                                                onChange={(e)=>{
+                                                    const checked = e.currentTarget.checked;
+                                                    onCheckChangeHandler(checked,"b_template","Y");
+                                                }}
+                                                checked={info.b_template && info.b_template == "Y" ? true : false}
+                                            />
+                                            <label htmlFor="check_tem">게시글 작성 시 템플릿 적용 가능</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                {info.b_template == "Y" &&
+                                    <div className="tab_wrap">
+                                        <ul className="tab_type2">
+                                            <li className={temStep === 1 ? "on" : ""}>
+                                                <button type="button" onClick={()=>setTemStep(1)}>CH에디터</button>
+                                            </li>
+                                            <li className={temStep === 2 ? "on" : ""}>
+                                                <button type="button" onClick={()=>setTemStep(2)}>Textarea</button>
+                                            </li>
+                                        </ul>
+                                        <div className="tab_inner">
+                                            {temStep === 1 ?
+                                                <div className="edit_box">
+                                                    <Editor 
+                                                        value={templateEditor}
+                                                        onChangeHandler={onEditorChangeHandler}
+                                                        onClickRaw={handleClickShowRaw}
+                                                    />
+                                                    {showRaw ? 
+                                                        <textarea
+                                                            value={rawHtml}
+                                                            onChange={(e) => setRawHtml(e.target.value)}
+                                                            className="raw_editor"
+                                                        />
+                                                        : null  
+                                                    }
+                                                </div>
+                                                :<textarea 
+                                                    style={{height:"350px"}}
+                                                    value={templateText || ""}
+                                                    onChange={(e)=>setTemplateText(e.currentTarget.value)}
+                                                />
+                                            } 
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/* confirm팝업 */}
+        {confirm && <ConfirmPop />}
+    </>);
+};
+
+export default CategoryPopCont6;

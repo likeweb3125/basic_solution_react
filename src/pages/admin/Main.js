@@ -6,6 +6,7 @@ import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
+import { Link } from "react-router-dom";
 
 
 const Main = () => {
@@ -16,11 +17,13 @@ const Main = () => {
     const dispatch = useDispatch();
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
+    const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
     const [boardCount, setBoardCount] = useState({});
     const [boardList, setBoardList] = useState([]);
     const [connectorCount, setConnectorCount] = useState({});
     const [connectorList, setConnectorList] = useState([]);
+    const [boardMore, setBoardMore] = useState(null);
 
 
     // Confirm팝업 닫힐때
@@ -135,6 +138,17 @@ const Main = () => {
         getConnectorList();
     },[]);
 
+    
+    useEffect(()=>{
+        //게시판 리스트있으면 최근게시판조회 더보기 버튼 보이기
+        if(common.boardMenu.length > 0){
+            const cate = common.boardMenu[0].category;
+            setBoardMore(cate);
+        }else{
+            setBoardMore(null);
+        }
+    },[common.boardMenu]);
+
 
     return(<>
         <div className="page_admin_main">
@@ -172,7 +186,7 @@ const Main = () => {
                             tdList={boardList}
                             type={"main_board"}
                         />
-                        <a href="#" rel="noopener noreferrer" className="btn_more">더보기</a>
+                        {boardMore !== null && <Link to={`/console/board/post/${boardMore}`} className="btn_more">더보기</Link>}
                     </div>
                 </div>
                 <div className="main_con">
@@ -210,7 +224,7 @@ const Main = () => {
                                     type={"main_connector"}
                                 />
                             </div>
-                            <a href="#" rel="noopener noreferrer" className="btn_more">더보기</a>
+                            {/* <a href="#" rel="noopener noreferrer" className="btn_more">더보기</a> */}
                         </div>
                     </div>
             </div>

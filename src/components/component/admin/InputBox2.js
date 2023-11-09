@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { NumericFormat, PatternFormat } from "react-number-format";
 
 
-const InputBox = (props) => {
+const InputBox2 = (props) => {
 
     return(
-        <div className="input_box">
-            {props.countShow && <span className="char_cnt">{`${props.count}/${props.countMax}`}</span>}
+        <div className="input_box input_box2">
+            {props.txt && <span>{props.txt}</span>}
             {props.numberOnly ? 
                 <NumericFormat 
                     thousandSeparator="," 
@@ -42,4 +42,4 @@ const InputBox = (props) => {
     );
 };
 
-export default InputBox;
+export default InputBox2;

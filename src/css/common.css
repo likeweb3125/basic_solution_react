@@ -17,6 +17,7 @@
 .txt_color3 {font-weight: 500; color: var(--admin-color5) !important;}
 .txt_color4 {font-weight: 500; color: var(--admin-color4) !important;}
 .ellipsis {display: block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%;}
+.tm30{margin-top: 30px;}
 
 .tab_wrap .tab_inner {padding-top: 10px;}
 /* 탭메뉴 스타일 */
@@ -62,7 +63,7 @@ table td .txt_light {font-size: 14px; color: #999;}
 .tbl_wrap1 td .tbl_bold {color: #222;}
 .tbl_wrap1 td a {color: inherit;}
 .tbl_wrap1 td a:hover {text-decoration: underline; text-underline-position: from-font;}
-.tbl_wrap1 td button.link {color: inherit;font-size: inherit;width: 100%; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; display: block;}
+.tbl_wrap1 td button.link {color: inherit;font-size: inherit;max-width: 100%;}
 .tbl_wrap1 td button.link:hover {text-decoration: underline; text-underline-position: from-font;}
 .tbl_wrap1 .answer_status {font-weight: 500;}
 .tbl_wrap1 .answer_status.on {color: var(--admin-color1);}
@@ -165,7 +166,7 @@ table td .txt_light {font-size: 14px; color: #999;}
 
 
 /* 팝업스타일 */
-.pop_display {position: fixed; left: 0; top: 0; width: 100%; height: 100vh; z-index: 10000;}
+.pop_display {position: fixed; left: 0; top: 0; width: 100%; height: 100vh; z-index: 999;}
 .pop_display .dimm {position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);}
 .pop_display .popup_wrap {position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
 .pop_display .popup {width: 1200px; z-index: 10; background: #f7f6fb; border-radius: 8px; position: relative; max-height: 95vh; overflow: auto;}
@@ -238,5 +239,20 @@ table td .txt_light {font-size: 14px; color: #999;}
 .date_input:after {content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_cal.svg') no-repeat 50% 50%/100%;}
 .date_input input {display: block; height: 100%; width: 100%; padding: 0 40px 0 70px; position: relative; z-index: 1;}
 .date_input span {position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 500; color: #222;}
+
+
+/* 에디터 */
+.edit_box{position: relative;}
+.edit_box .ql-snow .ql-tooltip{left: 0 !important;}
+.edit_box .ql-snow .ql-tooltip::before{content: "URL";}
+.edit_box .ql-snow .ql-tooltip[data-mode=link]::before{content: "URL";}
+.edit_box .ql-snow .ql-tooltip a.ql-action::after{content: "수정";}
+.edit_box .ql-snow .ql-tooltip.ql-editing a.ql-action::after{content: "저장";}
+.edit_box .ql-snow .ql-tooltip a.ql-remove::before{content: "삭제";}
+.edit_box .raw_editor{position: absolute;width: 100%;bottom: 0;left: 0;height: calc(100% - 43px);}
+.edit_box .ql-toolbar .btn_html{width: auto;}
+.edit_box .ql-editor{min-height: 300px;}
+.edit_box .ql-container{font-size: inherit;}
+
 
 

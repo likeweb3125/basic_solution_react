@@ -3,21 +3,26 @@ import { createSlice } from "@reduxjs/toolkit";
 const common = createSlice({
     name: "common", //state 이름
     initialState: {
-        currentPage:{},
         boardMenu:[],
+        boardSettingData:{},
+        alarm:false,
     },
     reducers:{
-        currentPage: (state, action) => {
-            state.currentPage = action.payload;
-        },
         boardMenu: (state, action) => {
             state.boardMenu = action.payload;
+        },
+        boardSettingData: (state, action) => {
+            state.boardSettingData = action.payload;
+        },
+        alarm: (state, action) => {
+            state.alarm = action.payload;
         },
     }
 });
 
 export const { 
-    currentPage,
     boardMenu,
+    boardSettingData,
+    alarm
 } = common.actions;
 export default common;

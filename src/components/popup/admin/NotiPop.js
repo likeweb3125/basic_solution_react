@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { notiPop, confirmPop } from "../../../store/popupSlice";
+import { adminNotiPop, confirmPop } from "../../../store/popupSlice";
+import { alarm } from "../../../store/commonSlice";
 import ConfirmPop from "../../popup/ConfirmPop";
 
 const NotiPop = (props) => {
@@ -30,7 +31,7 @@ const NotiPop = (props) => {
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(notiPop(false));
+        dispatch(adminNotiPop(false));
     };
 
 
@@ -64,10 +65,26 @@ const NotiPop = (props) => {
     },[tab]);
 
 
+    useEffect(()=>{
+        // list 배열 중에 a_read의 첫 번째 값이 "N"인 요소가 하나라도 있는지 확인
+        const hasUnread = list.some(item => item.a_read[0] === "N");
+
+        if (hasUnread) {
+            // "N"이 하나라도 있는 경우
+            dispatch(alarm(true));
+        } else {
+            // 모두 "N"이 아닌 경우
+            dispatch(alarm(false));
+        }
+    },[list]);
+
+
     //알림 전체읽기 처리
     const readHandler = () => {
         const body = {
-            follow:"read"
+            follow:"read",
+            idx:"",
+            flg:""
         };
         axios.put(`${alarm_modify}`, body,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
@@ -112,7 +129,9 @@ const NotiPop = (props) => {
     //읽은알림 전체삭제하기
     const deltAllHandler = () => {
         const body = {
-            follow:"delete"
+            follow:"delete",
+            idx:"",
+            flg:""
         };
         axios.put(`${alarm_modify}`, body,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}

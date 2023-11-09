@@ -39,7 +39,7 @@ const MenuListBox = (props) => {
     // 메뉴 카테고리 리스트
     useEffect(()=>{
         setList(props.list);
-        console.log(props.list);
+        // console.log(props.list);
 
         const idList = props.list.map((menu) => menu.id);
         // idList.unshift("menu0");

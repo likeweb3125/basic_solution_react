@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Formik } from "formik";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { currentPage } from "../../store/commonSlice";
-import { confirmPop } from "../../store/popupSlice";
+import { confirmPop, adminCategoryPop } from "../../store/popupSlice";
 import { pageNo, pageNoChange, checkedList } from "../../store/etcSlice";
+import { boardSettingData } from "../../store/commonSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
@@ -20,6 +21,7 @@ const BoardList = (props) => {
     const board_move = enum_api_uri.board_move;
     const board_modify = enum_api_uri.board_modify;
     const notice_setting = enum_api_uri.notice_setting;
+    const { board_category } = useParams();
     const common = useSelector((state)=>state.common);
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
@@ -28,10 +30,8 @@ const BoardList = (props) => {
     const [notiSettingConfirm, setNotiSettingConfirm] = useState(false);
     const [moveConfirm, setMoveConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
-
     const [boardTit, setBoardTit] = useState("");
     const [searchTxt, setSearchTxt] = useState("");
-    const [category, setCategory] = useState(null);
     const [boardData, setBoardData] = useState({});
     const [limit, setLimit] = useState(10);
     const [searchType, setSearchType] = useState("제목만");
@@ -39,6 +39,7 @@ const BoardList = (props) => {
     const [notiSetData, setNotiSetData] = useState({});
     const [checkList, setCheckList] = useState([]);
     const [checkedNum, setCheckedNum] = useState(0);
+    const navigate = useNavigate();
 
 
     // Confirm팝업 닫힐때
@@ -54,15 +55,12 @@ const BoardList = (props) => {
 
     //페이지 제목 가져오기
     useEffect(()=>{
-        setBoardTit(props.tit);
-
-        //게시판 바뀔때마다 현재게시판 category번호 가져오기
-        if(props.tit){
-            const idx = common.boardMenu.findIndex((item)=>item.c_name === props.tit);
-            const num = common.boardMenu[idx].category
-            setCategory(num);
+        if(board_category){
+            const idx = common.boardMenu.findIndex((item)=>item.category == board_category);
+            const txt = common.boardMenu[idx].c_name;
+            setBoardTit(txt);
         }
-    },[props.tit]);
+    },[board_category, common.boardMenu]);
 
 
     //게시판정보 가져오기
@@ -76,13 +74,17 @@ const BoardList = (props) => {
             search = "name";
         } 
 
-        axios.get(`${board_list.replace(":category",category).replace(":limit",limit)}?page=${page ? page : 1}&search=${search}${searchTxt.length > 0 ? "&searchtxt="+searchTxt : ""}`,
+        axios.get(`${board_list.replace(":category",board_category).replace(":limit",limit)}?page=${page ? page : 1}&search=${search}${searchTxt.length > 0 ? "&searchtxt="+searchTxt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
                 setBoardData(data);
+
+                const newData = {...data};
+                delete newData.board_list;
+                dispatch(boardSettingData(newData));
             }
         })
         .catch((error) => {
@@ -100,10 +102,10 @@ const BoardList = (props) => {
     
     //제목 셀렉트박스 변경시, limit 값 변경시 게시판정보 가져오기
     useEffect(()=>{
-        if(category != null){
+        if(board_category != null){
             getBoardData();
         }
-    },[category,limit]);
+    },[board_category,limit]);
 
 
     //제목 셀렉트박스 변경시 페이지변경
@@ -111,9 +113,8 @@ const BoardList = (props) => {
         const val = e.currentTarget.value;
         setBoardTit(val);
 
-        let idx = common.boardMenu.findIndex((item) => item.c_name === val);
-            idx = idx + 1;
-        dispatch(currentPage(`board1_${idx}`));
+        const category = e.target.options[e.target.selectedIndex].getAttribute("data-category");
+        navigate(`/console/board/post/${category}`);
     };
 
 
@@ -244,7 +245,7 @@ const BoardList = (props) => {
     const moveHandler = () => {
         const body = {
             idx: etc.checkedList,
-            category: category
+            category: board_category
         };
         axios.put(`${board_move}`, body,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
@@ -294,7 +295,7 @@ const BoardList = (props) => {
     const deltHandler = () => {
         const body = {
             idx: etc.checkedList,
-            category: category
+            category: board_category
         };
         axios.delete(`${board_modify}`,
             {
@@ -321,6 +322,11 @@ const BoardList = (props) => {
     };
 
 
+    useEffect(()=>{
+        console.log(boardData);
+    },[boardData]);
+
+
     return(<>
         <div className="page_admin_board">
             <div className="content_box">
@@ -335,10 +341,15 @@ const BoardList = (props) => {
                                 titSelectChangeHandler(e);
                             }}
                             selHidden={true}
-                            objectSel={true}
+                            objectSel={`board_title`}
                         />
                     </h3>
                     <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
+                    <button type="button" className="btn_type10" style={{marginLeft:"20px"}}
+                        onClick={()=>{
+                            dispatch(adminCategoryPop({adminCategoryPop:true,adminCategoryPopIdx:board_category}));
+                        }}
+                    >설정</button>
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">
@@ -372,7 +383,7 @@ const BoardList = (props) => {
                                         setSearchTxt(val);
                                     }}
                                     value={searchTxt}
-                                    onSearchHandler={getBoardData}
+                                    onSearchHandler={()=>getBoardData()}
                                 />
                             </div>
                         </div>
@@ -399,7 +410,7 @@ const BoardList = (props) => {
                                     setMoveSelect(val);
                                 }}
                                 selHidden={true}
-                                objectSel={true}
+                                objectSel={`board_title`}
                             />
                             <span>(으)로</span>
                             <button type="button" className="btn_type8" onClick={moveBtnClickHandler}>이동</button>
@@ -414,11 +425,12 @@ const BoardList = (props) => {
                         colgroup={["80px","10%","auto","12%","9%","13%","13%"]}
                         thList={["","번호","제목","게시판 유형","작성자","작성일시","공지 설정"]}
                         tdList={boardData.board_list}
+                        data={boardData}
                         type={"board"}
                         onNotiSettingHandler={notiSettingBtnClickHandler}
                     />
                     {boardData.board_list && boardData.board_list.length > 0 &&
-                        <Pagination 
+                        <Pagination   
                             currentPage={boardData.current_page} //현재페이지 번호
                             startPage={boardData.start_page} //시작페이지 번호 
                             endPage={boardData.end_page} //보이는 끝페이지 번호 
@@ -426,14 +438,7 @@ const BoardList = (props) => {
                         />
                     }
                     <div className="board_btn_wrap">
-                        <button className="btn_type4"
-                            onClick={()=>{
-                                let page = {...common.currentPage};
-                                    page.detail = false;
-                                    page.write = true;
-                                dispatch(currentPage(page));
-                            }}
-                        >작성하기</button>                                        
+                        <Link to={`/console/board/post/write/${board_category}`} className="btn_type4" >작성하기</Link>                                        
                     </div>
                 </div>
             </div>
