@@ -428,7 +428,7 @@ const BoardWrite = (props) => {
                                                             setNotice(0);
                                                         }
                                                     }}
-                                                    checked={notice === 1 ? true : false}
+                                                    checked={notice == 1 ? true : false}
                                                 />
                                                 <label htmlFor="chkNotice">체크 시 목록 최상단 노출</label>
                                             </div>

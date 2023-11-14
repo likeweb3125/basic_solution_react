@@ -438,7 +438,7 @@ const Board = () => {
                         />
                     }
                     <div className="board_btn_wrap">
-                        <Link to={`/console/board/post/write/${board_category}`} className="btn_type4" >작성하기</Link>                                        
+                        <Link to={`/console/board/post/write/${board_category}`} className="btn_type4">작성하기</Link>                                        
                     </div>
                 </div>
             </div>

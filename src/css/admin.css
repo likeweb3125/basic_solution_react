@@ -331,8 +331,8 @@ body,input,select,textarea,button,table {
 .board_view .answer_box>li textarea{margin-top: 15px;}
 .board_view .answer_box>li ul{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-pack: justify; -ms-flex-pack: justify;-webkit-justify-content: space-between; justify-content: space-between;width: calc(100% - 180px);}
 .board_view .answer_box>li ul li{width: calc(50% - 12px);display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
-.board_view .answer_box>li ul li p{width: 70px;}
-.board_view .answer_box>li ul li .input_box{width: calc(100% - 70px);}
+.board_view .answer_box>li ul li p{width: 90px;}
+.board_view .answer_box>li ul li .input_box{width: calc(100% - 90px);}
 
 
 

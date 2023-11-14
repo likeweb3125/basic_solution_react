@@ -77,6 +77,16 @@ const CategoryPop = () => {
                     data.c_content_type = data.c_content_type[0];
                 setInfo(data);
 
+                if(data.c_main_banner_file){
+                    setTitImg(data.c_main_banner_file);
+                }
+                if(data.c_menu_on_img){
+                    setMenuOnImg(data.c_menu_on_img);
+                }
+                if(data.c_menu_off_img){
+                    setMenuOffImg(data.c_menu_off_img);
+                }
+
                 setMenuUi(data.c_menu_ui);
                 setTab(data.c_content_type);
             }
@@ -106,6 +116,8 @@ const CategoryPop = () => {
     useEffect(()=>{
         //카테고리 값 변경시 adminCategoryPopData store 에 저장
         dispatch(adminCategoryPopData(info));
+
+        console.log(info);
     },[info]);
 
     
@@ -151,7 +163,7 @@ const CategoryPop = () => {
 
 
     useEffect(()=>{
-        console.log(popup.adminCategoryPopData);
+        // console.log(popup.adminCategoryPopData);
     },[popup.adminCategoryPopData]);
 
     
@@ -190,21 +202,42 @@ const CategoryPop = () => {
 
     useEffect(()=>{
         let newData = {...info};
-        newData.c_main_banner_file = titImgData;
+        if(titImgData != null){
+            titImgData.forEach((file) => {
+                newData.c_main_banner_file = file;
+            });
+        }else if(titImgData ==  null || titImg == null){
+            newData.c_main_banner_file = null;
+        }
         setInfo(newData);
-    },[titImgData]);
+    },[titImgData, titImg]);
+
 
     useEffect(()=>{
         let newData = {...info};
-        newData.c_menu_on_img = menuOnImgData;
+        if(menuOnImgData != null){
+            menuOnImgData.forEach((file) => {
+                newData.c_menu_on_img = file;
+            });
+        }else if(menuOnImgData ==  null || menuOnImg == null){
+            newData.c_menu_on_img = null;
+        }
         setInfo(newData);
-    },[menuOnImgData]);
+    },[menuOnImgData,menuOnImg]);
+
+
 
     useEffect(()=>{
         let newData = {...info};
-        newData.c_menu_off_img = menuOffImgData;
+        if(menuOffImgData != null){
+            menuOffImgData.forEach((file) => {
+                newData.c_menu_off_img = file;
+            });
+        }else if(menuOffImgData ==  null || menuOffImg == null){
+            newData.c_menu_off_img = null;
+        }
         setInfo(newData);
-    },[menuOffImgData]);
+    },[menuOffImgData,menuOffImg]);
 
 
 
@@ -223,6 +256,22 @@ const CategoryPop = () => {
                 confirmPop:true,
                 confirmPopTit:'알림',
                 confirmPopTxt: '메뉴 UI 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(info.c_menu_ui == "IMG" && menuOnImg == null){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '메뉴 ON 이미지를 등록해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(info.c_menu_ui == "IMG" && menuOffImg == null){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '메뉴 OFF 이미지를 등록해주세요.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -364,64 +413,67 @@ const CategoryPop = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="form_input">
-                                            <h6>메뉴 이미지 ON</h6>
-                                            <div className="input_wrap">
-                                                <div className="file_box1">
-                                                    <div {...getRootProps2({className: 'dropzone'})}>
-                                                        <div className="input_file">
-                                                            <input {...getInputProps2({className: 'blind'})} />
-                                                            <label>
-                                                                {menuOnImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
-                                                                <strong>파일선택</strong>
-                                                            </label>
+                                        {/* 메뉴 UI 이미지선택시에만 노출 */}
+                                        {info.c_menu_ui && info.c_menu_ui.includes("IMG") &&<>
+                                            <div className="form_input">
+                                                <h6>메뉴 이미지 ON</h6>
+                                                <div className="input_wrap">
+                                                    <div className="file_box1">
+                                                        <div {...getRootProps2({className: 'dropzone'})}>
+                                                            <div className="input_file">
+                                                                <input {...getInputProps2({className: 'blind'})} />
+                                                                <label>
+                                                                    {menuOnImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
+                                                                    <strong>파일선택</strong>
+                                                                </label>
+                                                            </div>
                                                         </div>
+                                                        {menuOnImg != null &&
+                                                            <ul className="file_txt">
+                                                                <li>
+                                                                    <span>{menuOnImg}</span>
+                                                                    <button type="button" className="btn_file_remove" 
+                                                                        onClick={()=>{
+                                                                            setMenuOnImg(null);
+                                                                            setMenuOnImgData(null);
+                                                                        }}
+                                                                    >파일삭제</button>
+                                                                </li>
+                                                            </ul>
+                                                        }
                                                     </div>
-                                                    {menuOnImg != null &&
-                                                        <ul className="file_txt">
-                                                            <li>
-                                                                <span>{menuOnImg}</span>
-                                                                <button type="button" className="btn_file_remove" 
-                                                                    onClick={()=>{
-                                                                        setMenuOnImg(null);
-                                                                        setMenuOnImgData(null);
-                                                                    }}
-                                                                >파일삭제</button>
-                                                            </li>
-                                                        </ul>
-                                                    }
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="form_input">
-                                            <h6>메뉴 이미지 OFF</h6>
-                                            <div className="input_wrap">
-                                                <div className="file_box1">
-                                                    <div {...getRootProps3({className: 'dropzone'})}>
-                                                        <div className="input_file">
-                                                            <input {...getInputProps3({className: 'blind'})} />
-                                                            <label>
-                                                                {menuOffImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
-                                                                <strong>파일선택</strong>
-                                                            </label>
+                                            <div className="form_input">
+                                                <h6>메뉴 이미지 OFF</h6>
+                                                <div className="input_wrap">
+                                                    <div className="file_box1">
+                                                        <div {...getRootProps3({className: 'dropzone'})}>
+                                                            <div className="input_file">
+                                                                <input {...getInputProps3({className: 'blind'})} />
+                                                                <label>
+                                                                    {menuOffImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
+                                                                    <strong>파일선택</strong>
+                                                                </label>
+                                                            </div>
                                                         </div>
+                                                        {menuOffImg != null &&
+                                                            <ul className="file_txt">
+                                                                <li>
+                                                                    <span>{menuOffImg}</span>
+                                                                    <button type="button" className="btn_file_remove" 
+                                                                        onClick={()=>{
+                                                                            setMenuOffImg(null);
+                                                                            setMenuOffImgData(null);
+                                                                        }}
+                                                                    >파일삭제</button>
+                                                                </li>
+                                                            </ul>
+                                                        }
                                                     </div>
-                                                    {menuOffImg != null &&
-                                                        <ul className="file_txt">
-                                                            <li>
-                                                                <span>{menuOffImg}</span>
-                                                                <button type="button" className="btn_file_remove" 
-                                                                    onClick={()=>{
-                                                                        setMenuOffImg(null);
-                                                                        setMenuOffImgData(null);
-                                                                    }}
-                                                                >파일삭제</button>
-                                                            </li>
-                                                        </ul>
-                                                    }
                                                 </div>
                                             </div>
-                                        </div>
+                                        </>}
                                     </div>
                                 </div>
                             </div>                            
