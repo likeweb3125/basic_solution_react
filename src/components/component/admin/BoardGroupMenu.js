@@ -2,13 +2,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import { adminBoardGroupPopMenuOn } from '../../../store/popupSlice';
-import { useEffect } from 'react';
 
 
 const BoardGroupMenu = (props) => {
     const dispatch = useDispatch();
     const popup = useSelector((state)=>state.popup);
-    
     const {
         attributes,
         listeners,
@@ -17,7 +15,10 @@ const BoardGroupMenu = (props) => {
         transition,
         isDragging,
         isSorting
-    } = useSortable({id: props.id});
+    } = useSortable({
+        id: props.id,
+        data:{...props.data}
+    });
     
     const style = {
         transform: CSS.Transform.toString(transform),

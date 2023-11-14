@@ -18,6 +18,7 @@ exports.enum_api_uri = {
     board_group_list: `${api_uri}admin/menu/boardGroup/:parent_id`,
     board_group: `${api_uri}admin/menu/boardGroup`,
     board_group_view: `${api_uri}admin/menu/boardGroup/view/:id`,
+    board_group_move: `${api_uri}admin/menu/boardGroupMove`,
     
 
 

@@ -6,6 +6,7 @@ import { enum_api_uri } from "../../../config/enum";
 import { adminNotiPop, confirmPop } from "../../../store/popupSlice";
 import { alarm } from "../../../store/commonSlice";
 import ConfirmPop from "../../popup/ConfirmPop";
+import { Link } from "react-router-dom";
 
 const NotiPop = (props) => {
     const dispatch = useDispatch();
@@ -27,7 +28,6 @@ const NotiPop = (props) => {
             setDeltConfirm(false);
         }
     },[popup.confirmPop]);
-
 
     //팝업닫기
     const closePopHandler = () => {
@@ -214,12 +214,14 @@ const NotiPop = (props) => {
                                     <li key={i} className={cont.a_read[0] == "Y" ? "read" : ""}>
                                         <div className="cate">{cont.follow}</div>
                                         <div className="txt_wrap">
-                                            <em className="ellipsis">{`[${cont.c_name}] `}{`‘${cont.title}‘`}{cont.follow == "게시글" ? " 새 글 작성" : " 댓글 작성"}</em>
-                                            <strong>
-                                                <b>{cont.m_name}</b>
-                                                <span>{cont.content}</span>
-                                            </strong>
-                                            <i>{date}</i>
+                                            <Link to={`/console/board/post/detail/${cont.category}/${cont.idx}`}>
+                                                <em className="ellipsis">{`[${cont.c_name}] `}{`‘${cont.title}‘`}{cont.follow == "게시글" ? " 새 글 작성" : " 댓글 작성"}</em>
+                                                <strong>
+                                                    <b>{cont.m_name}</b>
+                                                    <span>{cont.content}</span>
+                                                </strong>
+                                                <i>{date}</i>
+                                            </Link>
                                         </div>
                                         <button type="button" className="btn_noti_remove" onClick={()=>{deltHandler(cont.idx,cont.follow)}}>알림 삭제</button>
                                     </li>

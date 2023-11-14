@@ -23,10 +23,9 @@ const DesignPopup = () => {
     const etc = useSelector((state)=>state.etc);
     const [confirm, setConfirm] = useState(false);
     const [useConfirm, setUseConfirm] = useState(false);
-
+    const [deltConfirm, setDeltConfirm] = useState(false);
     const [searchTxt, setSearchTxt] = useState("");
     const [boardData, setBoardData] = useState({});
-    const [list, setList] = useState([]);
     const [limit, setLimit] = useState(10);
     const [checkList, setCheckList] = useState([]);
     const [checkedNum, setCheckedNum] = useState(0);
@@ -42,6 +41,7 @@ const DesignPopup = () => {
         if(popup.confirmPop === false){
             setConfirm(false);
             setUseConfirm(false);
+            setDeltConfirm(false);
         }
     },[popup.confirmPop]);
 
@@ -55,23 +55,13 @@ const DesignPopup = () => {
             txt = searchTxt;
         }
 
-        axios.get(`${popup_list.replace(":limit",limit)}?page=${page ? page : 1}${txt.length > 0 ? "&searchtxt="+txt : ""}`,
+        axios.get(`${popup_list.replace(":limit",limit)}?p_type=${tab}&page=${page ? page : 1}${txt.length > 0 ? "&searchtxt="+txt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
                 setBoardData(data);
-
-                let pop_list = data.popup_list;
-                const pc_list = pop_list.filter((item) => item.p_type[0] === "P");
-                const mo_list = pop_list.filter((item) => item.p_type[0] === "M");
-
-                if(tab === "P"){
-                    setList(pc_list);
-                }else{
-                    setList(mo_list); 
-                }
             }
         })
         .catch((error) => {
@@ -121,9 +111,11 @@ const DesignPopup = () => {
 
     //맨처음 리스트 idx값만 배열로 (전체 체크박스리스트 만들기)
     useEffect(()=>{
-        const idxList = list.map((item) => item.idx).filter(Boolean);
-        setCheckList([...idxList]);
-    },[list]);
+        if(boardData.hasOwnProperty("popup_list")){
+            const idxList = boardData.popup_list.map((item) => item.idx).filter(Boolean);
+            setCheckList([...idxList]);
+        }
+    },[boardData]);
 
 
     //전체선택 체크박스 체크시
@@ -227,6 +219,57 @@ const DesignPopup = () => {
     };
 
 
+    //삭제버튼 클릭시
+    const deltBtnClickHandler = () => {
+        if(checkedNum > 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'해당 팝업을 삭제하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+            setDeltConfirm(true);
+        }else if(checkedNum === 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'팝업을 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    };
+
+
+    //팝업 삭제하기
+    const deltHandler = () => {
+        const body = {
+            idx: etc.checkedList,
+        };
+        axios.delete(popup_list,
+            {
+                data: body,
+                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getBoardData();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
     return(<>
         <div className="page_admin_design">
             <div className="top_txt">
@@ -300,18 +343,18 @@ const DesignPopup = () => {
                             </div>
                         </div>
                         <div className="util_right">
-                            <button type="button" className="btn_type9">삭제</button>
+                            <button type="button" className="btn_type9" onClick={deltBtnClickHandler}>삭제</button>
                         </div>
                     </div>
                     <TableWrap 
                         class="tbl_wrap1 tbl_wrap1_1"
                         colgroup={["80px","10%","auto","auto","15%","12%","9%","9%"]}
                         thList={["","번호","제목","기간","팝업창전체크기/1일여부","팝업창위치","사용여부","팝업/레이어"]}
-                        tdList={list}
+                        tdList={boardData.popup_list}
                         type={"popup"}
                         popType={tab}
                     />
-                    {list.length > 0 &&
+                    {boardData.popup_list && boardData.popup_list.length > 0 &&
                         <Pagination 
                             currentPage={boardData.current_page} //현재페이지 번호
                             startPage={boardData.start_page} //시작페이지 번호 
@@ -328,6 +371,9 @@ const DesignPopup = () => {
 
         {/* 노출,중단하기 confirm팝업 */}
         {useConfirm && <ConfirmPop onClickHandler={useHandler} />}
+
+        {/* 게시글 삭제 confirm팝업 */}
+        {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

@@ -30,8 +30,8 @@ const NotiPop = (props) => {
     const board_group_list = enum_api_uri.board_group_list;
     const board_group_view = enum_api_uri.board_group_view;
     const board_group = enum_api_uri.board_group;
+    const board_group_move = enum_api_uri.board_group_move;
     const [confirm, setConfirm] = useState(false);
-    const [closeConfirm, setCloseConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [modifyOkConfirm, setModifyOkConfirm] = useState(false);
     const [addOkConfirm, setAddOkConfirm] = useState(false);
@@ -39,7 +39,6 @@ const NotiPop = (props) => {
     const [list, setList] = useState([]);
     const [info, setInfo] = useState({});
 
-    const [allCheck, setAllCheck] = useState("");
     const [nameInput, setNameInput] = useState("");
     const [uiCheck, setUiCheck] = useState("");
     const [menuOnImg, setMenuOnImg] = useState(null);
@@ -52,24 +51,11 @@ const NotiPop = (props) => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
-            setCloseConfirm(false);
             setDeltConfirm(false);
             setModifyOkConfirm(false);
             setAddOkConfirm(false);
         }
     },[popup.confirmPop]);
-
-
-    //닫기, 취소버튼 클릭시
-    const closeBtnClickHandler = () => {
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt: '작성중인 내용을 종료하시겠습니까?',
-            confirmPopBtn:2,
-        }));
-        setCloseConfirm(true);
-    };
 
 
     //팝업닫기
@@ -203,15 +189,40 @@ const NotiPop = (props) => {
         }),
     );
 
+
+
     const handleDragEnd = (event) => {
         const {active, over} = event;
 
         if (active.id !== over.id) {
-            setList((items) => {
-                const oldIndex = items.findIndex((item) => item.id === active.id);
-                const newIndex = items.findIndex((item) => item.id === over.id);
+            const body = {
+                id:active.id,
+                parent_id:active.data.current.parent_id,
+                g_num:over.data.current.g_num
+            };
 
-                return arrayMove(items, oldIndex, newIndex);
+            axios.put(board_group_move, body,
+                {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+            )
+            .then((res)=>{
+                if(res.status === 200){
+                    setList((items) => {
+                        const oldIndex = items.findIndex((item) => item.id === active.id);
+                        const newIndex = items.findIndex((item) => item.id === over.id);
+        
+                        return arrayMove(items, oldIndex, newIndex);
+                    });
+                }
+            })
+            .catch((error) => {
+                const err_msg = CF.errorMsgHandler(error);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
             });
         }
     }
@@ -414,33 +425,6 @@ const NotiPop = (props) => {
                     </div>
                     <div className="pop_con">
                         <div className="con_box">
-                            <div className="form_pop_inner">
-                                <div className="form_inner">
-                                    <div className="form_box form_box2">
-                                        <div className="form_input">
-                                            <h6>전체 분류 사용</h6>
-                                            <div className="input_wrap">
-                                                <div className="chk_box1">
-                                                    <input type="checkbox" id="chkPop11" className="blind"
-                                                        onChange={(e)=>{
-                                                            const checked = e.currentTarget.checked;
-                                                            if(checked){
-                                                                setAllCheck("Y");
-                                                            }else{
-                                                                setAllCheck("");
-                                                            }
-                                                        }}
-                                                        checked={allCheck == "Y" ? true : false}
-                                                    />
-                                                    <label htmlFor="chkPop11">체크 시 해당 게시판에 등록한 게시글을 모두 볼 수 있는 전체 게시판 분류 사용</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="con_box">
                             <div className="classification_box">
                                 <div className="menu_list_wrap">
                                     <div className="btn_util">
@@ -470,6 +454,7 @@ const NotiPop = (props) => {
                                                                 key={i}
                                                                 data={cont} 
                                                                 id={cont.id}
+                                                                parent_id={cont.parent_id}
                                                             />
                                                         );
                                                     })}
@@ -630,12 +615,8 @@ const NotiPop = (props) => {
                                 </div>
                             </div>
                         </div>
-                        <div className="form_btn_wrap">
-                            <button type="button" className="btn_type3" onClick={closeBtnClickHandler}>취소</button>
-                            <button type="button" className="btn_type4">저장</button>
-                        </div>
                     </div>
-                    <button type="button" className="btn_pop_close" onClick={closeBtnClickHandler}>팝업닫기</button>
+                    <button type="button" className="btn_pop_close" onClick={closePopHandler}>팝업닫기</button>
                 </div>
             </div>
         </div>
@@ -648,9 +629,6 @@ const NotiPop = (props) => {
 
         {/* 분류삭제 confirm팝업 */}
         {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
-
-        {/* 닫기,취소 confirm팝업 */}
-        {closeConfirm && <ConfirmPop onClickHandler={closePopHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

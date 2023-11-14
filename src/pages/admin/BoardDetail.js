@@ -76,9 +76,8 @@ const BoardDetail = () => {
         getBoardData();
 
         //게시판설정정보 가져오기
-        console.log(common.boardSettingData);
         setBoardSettingData(common.boardSettingData);
-    },[]);
+    },[board_category,board_idx]);
 
 
     //인풋값 변경시

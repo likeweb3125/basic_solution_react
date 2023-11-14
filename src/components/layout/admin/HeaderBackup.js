@@ -113,11 +113,11 @@ const Header = () => {
     //메뉴 on 변경시 슬라이드애니메이션 
     useEffect(() => {
         if(menuOn){
-            // if(menuOn === "menu" || menuOn === "menu1") {
-            //     menuRef.current.style.height = `${menuRef.current.scrollHeight}px`;
-            // }else{
-            //     menuRef.current.style.height = "0";
-            // }
+            if(menuOn === "menu" || menuOn === "menu1") {
+                menuRef.current.style.height = `${menuRef.current.scrollHeight}px`;
+            }else{
+                menuRef.current.style.height = "0";
+            }
 
             if(menuOn === "board" || menuOn.includes("board1") || menuOn.includes("board2")) {
                 let boardH = boardHeight;
@@ -131,23 +131,23 @@ const Header = () => {
                     }
                 }
                 
-                // if (menuOn.includes("board2")) {
-                //     boardH = boardH + board2Ref.current.scrollHeight;
-                //     board2Ref.current.style.height = `${board2Ref.current.scrollHeight}px`;
-                // }else{
-                //     board2Ref.current.style.height = "0";
-                // }
+                if (menuOn.includes("board2")) {
+                    boardH = boardH + board2Ref.current.scrollHeight;
+                    board2Ref.current.style.height = `${board2Ref.current.scrollHeight}px`;
+                }else{
+                    board2Ref.current.style.height = "0";
+                }
 
                 boardRef.current.style.height = `${boardH}px`;
             }else{
                 boardRef.current.style.height = "0";
             }
             
-            // if(menuOn === "member" || menuOn === "member1" || menuOn === "member2") {
-            //     memberRef.current.style.height = `${memberRef.current.scrollHeight}px`;
-            // }else{
-            //     memberRef.current.style.height = "0";
-            // }
+            if(menuOn === "member" || menuOn === "member1" || menuOn === "member2") {
+                memberRef.current.style.height = `${memberRef.current.scrollHeight}px`;
+            }else{
+                memberRef.current.style.height = "0";
+            }
 
             if(menuOn === "design" || menuOn === "design1" || menuOn === "design2") {
                 designRef.current.style.height = `${designRef.current.scrollHeight}px`;
@@ -161,11 +161,11 @@ const Header = () => {
                 settingRef.current.style.height = "0";
             }
 
-            // if(menuOn === "stats" || menuOn === "stats1" || menuOn === "stats2") {
-            //     statsRef.current.style.height = `${statsRef.current.scrollHeight}px`;
-            // }else{
-            //     statsRef.current.style.height = "0";
-            // }
+            if(menuOn === "stats" || menuOn === "stats1" || menuOn === "stats2") {
+                statsRef.current.style.height = `${statsRef.current.scrollHeight}px`;
+            }else{
+                statsRef.current.style.height = "0";
+            }
         }else{
             if(menuRef.current){
                 menuRef.current.style.height = "0";
@@ -207,14 +207,14 @@ const Header = () => {
                 <div className="menu_wrap">
                     <nav>
                         <ul className="admin_gnb">
-                            {/* <li className={menuOn && menuOn.includes("menu") ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("menu") ? "on" : ""}>
                                 <button type="button" className="admin_menu" onClick={()=>{setMenuOn("menu")}}><span>메뉴 관리</span></button>
                                 <ul className="depth2" ref={menuRef}>
                                     <li className={menuOn === "menu1" ? "on" : ""} >
                                         <Link to="/console/menu/category" className="menu">카테고리 관리</Link>
                                     </li>
                                 </ul>
-                            </li> */}
+                            </li>
                             <li className={menuOn && menuOn.includes("board") ? "on" : ""}>
                                 <button type="button" className="admin_board" onClick={()=>{setMenuOn("board")}}><span>게시판 관리</span></button>
                                 <ul className="depth2" ref={boardRef}>
@@ -234,17 +234,17 @@ const Header = () => {
                                             </ul>
                                         </li>
                                     }
-                                    {/* <li className={`is_depth${menuOn && menuOn.includes("board2") ? " on" :""}`}>
+                                    <li className={`is_depth${menuOn && menuOn.includes("board2") ? " on" :""}`}>
                                         <button type="button" className="menu" onClick={()=>{setMenuOn("board2")}}>댓글 관리</button>
                                         <ul className="depth3" ref={board2Ref}>
                                             <li className={menuOn === "board2_1" ? "on" : ""}>
                                                 <Link to="">전체</Link>
                                             </li>
                                         </ul>
-                                    </li> */}
+                                    </li>
                                 </ul>
                             </li>
-                            {/* <li className={menuOn && menuOn.includes("member") ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("member") ? "on" : ""}>
                                 <button type="button" className="admin_member" onClick={()=>{setMenuOn("member")}}><span>회원 관리</span></button>
                                 <ul className="depth2" ref={memberRef}>
                                     <li className={menuOn === "member1" ? "on" : ""}>
@@ -254,13 +254,13 @@ const Header = () => {
                                         <Link to="" className="menu">관리자 관리</Link>
                                     </li>
                                 </ul>
-                            </li> */}
+                            </li>
                             <li className={menuOn && menuOn.includes("design") ? "on" : ""}>
                                 <button type="button" className="admin_design" onClick={()=>{setMenuOn("design")}}><span>디자인 관리</span></button>
                                 <ul className="depth2" ref={designRef}>
-                                    {/* <li className={menuOn === "design1" ? "on" : ""}>
+                                    <li className={menuOn === "design1" ? "on" : ""}>
                                         <Link to="" className="menu">메인 배너 관리</Link>
-                                    </li> */}
+                                    </li>
                                     <li className={menuOn === "design2" ? "on" : ""}>
                                         <Link to="/console/design/popup" className="menu">팝업 관리</Link>
                                     </li>
@@ -275,12 +275,12 @@ const Header = () => {
                                     <li className={menuOn === "setting2" ? "on" : ""}>
                                         <Link to="/console/setting/policy" className="menu">시스템 운영정책</Link>
                                     </li>
-                                    {/* <li className={menuOn === "setting3" ? "on" : ""}>
+                                    <li className={menuOn === "setting3" ? "on" : ""}>
                                         <Link to="" className="menu">회원 등급 관리</Link>
-                                    </li> */}
+                                    </li>
                                 </ul>
                             </li>
-                            {/* <li className={menuOn && menuOn.includes("stats") ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("stats") ? "on" : ""}>
                                 <button type="button" className="admin_stats" onClick={()=>{setMenuOn("stats")}}><span>통계관리</span></button>
                                 <ul className="depth2" ref={statsRef}>
                                     <li className={menuOn === "stats1" ? "on" : ""}>
@@ -290,7 +290,7 @@ const Header = () => {
                                         <Link to="" className="menu">접속자 이력 통계</Link>
                                     </li>
                                 </ul>
-                            </li> */}
+                            </li>
                         </ul>
                     </nav>
                     <div className="help_link">

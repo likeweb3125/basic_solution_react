@@ -219,7 +219,7 @@ const TableWrap = (props) => {
                                         </td>
                                         <td>{cont.p_s_date}{cont.p_e_date && " ~ "+cont.p_e_date}</td>
                                         <td>{`${cont.p_width_size} X ${cont.p_height_size}`} / {cont.p_one_day == "Y" ? "사용" : "미사용"}</td>
-                                        <td>{`${cont.p_left_point} X ${cont.p_top_point}`}</td>
+                                        <td>{props.popType == "P" && `${cont.p_left_point} X ${cont.p_top_point}`}</td>
                                         <td>
                                             <em className={cont.p_open[0] == "Y" ? "txt_color1" : "txt_color2"}>{cont.p_open[1]}</em>
                                         </td>
