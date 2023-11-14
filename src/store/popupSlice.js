@@ -25,6 +25,18 @@ const popup = createSlice({
         adminCategoryPopData: {},
         adminCategoryPopAdd: false,
         adminCategoryPopModify: false,
+
+        //게시판분류 팝업
+        adminBoardGroupPop: false,
+        adminBoardGroupPopId: null,
+        adminBoardGroupPopMenuOn: null,
+
+        //팝업관리 상세 팝업
+        adminPopupPop: false,
+        adminPopupPopIdx: null,
+        adminPopupPopType: null,
+        adminPopupPopModify: false,
+        adminPopupPopWrite: false,
     },
     reducers:{
         // 공통 -----------------------------------
@@ -61,6 +73,24 @@ const popup = createSlice({
         adminCategoryPopModify: (state, action) => {
             state.adminCategoryPopModify = action.payload;
         },
+        adminBoardGroupPop: (state, action) => {
+            state.adminBoardGroupPop = action.payload.adminBoardGroupPop;
+            state.adminBoardGroupPopId = action.payload.adminBoardGroupPopId;
+        },
+        adminBoardGroupPopMenuOn: (state, action) => {
+            state.adminBoardGroupPopMenuOn = action.payload;
+        },
+        adminPopupPop: (state, action) => {
+            state.adminPopupPop = action.payload.adminPopupPop;
+            state.adminPopupPopIdx = action.payload.adminPopupPopIdx;
+            state.adminPopupPopType = action.payload.adminPopupPopType;
+        },
+        adminPopupPopModify: (state, action) => {
+            state.adminPopupPopModify = action.payload;
+        },
+        adminPopupPopWrite: (state, action) => {
+            state.adminPopupPopWrite = action.payload;
+        },
     }
 });
 
@@ -73,6 +103,11 @@ export const {
     adminCategoryPop,
     adminCategoryPopData,
     adminCategoryPopAdd,
-    adminCategoryPopModify
+    adminCategoryPopModify,
+    adminBoardGroupPop,
+    adminBoardGroupPopMenuOn,
+    adminPopupPop,
+    adminPopupPopModify,
+    adminPopupPopWrite,
 } = popup.actions;
 export default popup;

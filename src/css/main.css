@@ -17,6 +17,8 @@
 	letter-spacing: -0.05em;
 }
 
+li{font-style: normal;}
+
 
 /* 공통 */
 .section_inner {max-width: 1400px; width: 100%; margin: 0 auto; position: relative;}
@@ -101,7 +103,7 @@
 .list_main_board .txt strong {display: block; font-size: 18px; font-weight: 500; color: #222; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .list_main_board .txt strong a {display: inline-block; vertical-align: top; font-size: inherit; font-weight: inherit; color: inherit; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
 .list_main_board .txt span {display: block; font-size: 18px; color: #666; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-.list_main_board em {flex: 0 0 100px; font-size: 18px; font-weight: 400; color: #666; text-align: right;}
+.list_main_board em {flex: 0 0 100px; font-size: 18px; font-weight: 400; color: #666; text-align: right;font-style: normal;}
 .list_main_board em b {font-size: inherit; font-weight: inherit; color: inherit; color: inherit;}
 .list_main_board em b:before {content: '.';}
 
@@ -109,7 +111,7 @@
 .list_main_board li:first-of-type .txt {padding-left: 24px; max-width: calc(100% - 90px);}
 .list_main_board li:first-of-type .txt strong {font-size: 28px;}
 .list_main_board li:first-of-type .txt span {padding-top: 5px;}
-.list_main_board li:first-of-type em {display: flex; flex-direction: column-reverse; justify-content: center; align-items: center; text-align: center; font-size: 16px; font-weight: 500; color: #222; border-radius: 16px; background: #f8f8f8; width: 90px; height: 90px; flex: none;}
+.list_main_board li:first-of-type em {display: flex; flex-direction: column-reverse; justify-content: center; align-items: center; text-align: center; font-size: 16px; font-weight: 500; color: #222; border-radius: 16px; background: #f8f8f8; width: 90px; height: 90px; flex: none;font-style: normal;}
 .list_main_board li:first-of-type em b {display: block; font-size: 32px; font-weight: 700; line-height: 40px;}
 .list_main_board li:first-of-type em b:before {display: none;}
 .list_main_board li:nth-of-type(2) {margin-top: 20px;}
@@ -217,13 +219,13 @@
     .main_board .btn_more {display: none;}
     .list_main_board {padding: 10px 0;}
     .list_main_board .txt strong {font-size: 16px;}
-    .list_main_board em {flex: 0 0 80px; font-size: 16px;}
+    .list_main_board em {flex: 0 0 80px; font-size: 16px;font-style: normal;}
     .list_main_board li {padding: 8px 0;}
     .list_main_board li:first-of-type {border-bottom: none; padding: 8px 0; flex-direction: row; justify-content: space-between;}
     .list_main_board li:first-of-type .txt {padding-left: 0;}
     .list_main_board li:first-of-type .txt strong {font-size: inherit; font-weight: 500; color: #222;}
     .list_main_board li:first-of-type .txt span {display: none;}
-    .list_main_board li:first-of-type em {display: block; text-align: right; font-size: inherit; width: auto; height: auto; background: none; font-size: inherit; font-weight: inherit; color: inherit;}
+    .list_main_board li:first-of-type em {display: block; text-align: right; font-size: inherit; width: auto; height: auto; background: none; font-size: inherit; font-weight: inherit; color: inherit;font-style: normal;}
     .list_main_board li:first-of-type em b {display: inline; font-size: inherit; font-weight: inherit; line-height: inherit;}
     .list_main_board li:first-of-type em b:before {display: inline;}
     .list_main_board li:nth-of-type(2) {margin-top: 0;}

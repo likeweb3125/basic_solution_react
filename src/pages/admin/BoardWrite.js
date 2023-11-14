@@ -104,13 +104,20 @@ const BoardWrite = (props) => {
         if(boardData.b_contents){
             setContent(boardData.b_contents);
         }
-
         if(boardData.b_file){
             let list = [...files];
                 list = boardData.b_file;
             setFiles(list);
         }
-
+        if(boardSettingData.c_content_type === 5 && boardData.b_img){
+            let name = boardData.b_img.replace("upload/board/","");
+            let url = "http://api.likeweb.co.kr:5001/" + boardData.b_img;
+            let data = {
+                name: name,
+                url: url
+            };
+            setThumbImg(data);
+        }
         if(boardData.m_pwd){
             setPasswordOn(true);
             setPassword(boardData.m_pwd);
@@ -370,6 +377,9 @@ const BoardWrite = (props) => {
             });
         }
     };
+
+
+
 
 
     return(<>

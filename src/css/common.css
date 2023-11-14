@@ -34,16 +34,16 @@
 .tab_type2 li.on a, .tab_type2 li.on button {font-weight: 500; color: #222;}
 .tab_type3 {display: flex;}
 .tab_type3 li {flex: 0 0 160px;}
-.tab_type3 li a {display: flex; width: 100%; justify-content: center; align-items: center; column-gap: 12px; position: relative; line-height: 50px;}
-.tab_type3 li a:before {content: ''; width: 24px; height: 24px; background: url('../images/ic_tab_pc.svg') no-repeat 50% 50%/100%; transition: all .3s;}
-.tab_type3 li:first-of-type a:before {background-image: url('../images/ic_tab_pc.svg');} 
-.tab_type3 li:nth-of-type(2) a:before {background-image: url('../images/ic_tab_mobile.svg');} 
-.tab_type3 li a:after {content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 4px; background: #222; opacity: 0; transition: all .3s;}
-.tab_type3 li a span {font-size: 24px; font-weight: 600; color: #999; transition: all .3s;}
-.tab_type3 li.on:first-of-type a:before {background-image: url('../images/ic_tab_pc_on.svg');} 
-.tab_type3 li.on:nth-of-type(2) a:before {background-image: url('../images/ic_tab_mobile_on.svg');} 
-.tab_type3 li.on a:after {opacity: 1;}
-.tab_type3 li.on a span {color: #222;}
+.tab_type3 li > * {display: flex; width: 100%; justify-content: center; align-items: center; column-gap: 12px; position: relative; line-height: 50px;}
+.tab_type3 li > *:before {content: ''; width: 24px; height: 24px; background: url('../images/ic_tab_pc.svg') no-repeat 50% 50%/100%; transition: all .3s;}
+.tab_type3 li:first-of-type > *:before {background-image: url('../images/ic_tab_pc.svg');} 
+.tab_type3 li:nth-of-type(2) > *:before {background-image: url('../images/ic_tab_mobile.svg');} 
+.tab_type3 li > *:after {content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 4px; background: #222; opacity: 0; transition: all .3s;}
+.tab_type3 li > * span {font-size: 24px; font-weight: 600; color: #999; transition: all .3s;}
+.tab_type3 li.on:first-of-type > *:before {background-image: url('../images/ic_tab_pc_on.svg');} 
+.tab_type3 li.on:nth-of-type(2) > *:before {background-image: url('../images/ic_tab_mobile_on.svg');} 
+.tab_type3 li.on > *:after {opacity: 1;}
+.tab_type3 li.on > * span {color: #222;}
 .tab_type4 {display: flex; column-gap: 50px;}
 .tab_type4 li a {display: block; font-size: 24px; font-weight: 500; color: #222; line-height: 30px;}
 .tab_type4 li.on a {font-weight: 700; color: #4f46e5;}
@@ -53,6 +53,7 @@
 table td .txt_ellipsis {display: block; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;}
 table td .txt_light {font-size: 14px; color: #999;}
 .tbl_wrap1 {border-top: 1px solid #ddd;}
+.tbl_wrap1 em{font-style: normal;}
 .tbl_wrap1 th {font-size: 18px; font-weight: 500; color: #666; padding: 15px 0; text-align: center; border-bottom: 1px solid #ddd; background: #fbfbfc;}
 .tbl_wrap1 td {font-size: 16px; color: #666; padding: 15px 0; border-bottom: 1px solid #ddd; text-align: center;}
 .tbl_wrap1 tbody tr {transition: all .05s;}
@@ -175,7 +176,7 @@ table td .txt_light {font-size: 14px; color: #999;}
 .pop_display .pop_tit {display: flex; align-items: center; padding: 30px 40px 15px; border-bottom: 1px solid rgba(221, 221, 221, 0.4);}
 .pop_display .pop_tit h3 {font-size: 24px; font-weight: 700; color: #222;}
 .pop_display .pop_tit .tit_txt {display: flex; align-items: center; column-gap: 12px; margin-left: 12px;}
-.pop_display .pop_tit em {font-size: 20px; font-weight: 500; color: #666; padding-left: 12px; position: relative;}
+.pop_display .pop_tit em {font-size: 20px; font-weight: 500; color: #666; padding-left: 12px; position: relative;font-style: normal;}
 .pop_display .pop_tit em:before {content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 16px; background: rgba(170, 170, 170, 0.5);}
 .pop_display .pop_tit p {font-size: 14px; font-weight: 400; color: #999;}
 .pop_display .pop_tit .btn_switch {margin-left: 20px;}
@@ -237,8 +238,11 @@ table td .txt_light {font-size: 14px; color: #999;}
 /* 달력 인풋 */
 .date_input {height: 50px; position: relative;}
 .date_input:after {content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_cal.svg') no-repeat 50% 50%/100%;}
-.date_input input {display: block; height: 100%; width: 100%; padding: 0 40px 0 70px; position: relative; z-index: 1;}
+.date_input input[type=text] {display: block; height: 100%; width: 100%; padding: 0 40px 0 70px; position: relative; z-index: 1;}
 .date_input span {position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 16px; font-weight: 500; color: #222;}
+.date_input .react-datepicker-wrapper{height: 100%;}
+.date_input .react-datepicker__input-container{height: 100%;}
+
 
 
 /* 에디터 */

@@ -14,6 +14,10 @@ exports.enum_api_uri = {
     board_detail: `${api_uri}board/view/:category/:idx`,
     board_file: `${api_uri}board/file`,
     board_file_down: `${api_uri}board/download/:category/:parent_idx/:idx`,
+    //게시판분류
+    board_group_list: `${api_uri}admin/menu/boardGroup/:parent_id`,
+    board_group: `${api_uri}admin/menu/boardGroup`,
+    board_group_view: `${api_uri}admin/menu/boardGroup/view/:id`,
     
 
 
@@ -28,9 +32,14 @@ exports.enum_api_uri = {
     alarm_list: `${api_uri}admin/first/alarm-cnt/:follow`,
     alarm_modify: `${api_uri}admin/first/alarm-read-delete/`,
 
-    // 카테고리
+    //메뉴관리
     menu_sub_detail: `${api_uri}admin/menu/sub/:id`,
     menu_sub: `${api_uri}admin/menu/sub`,
+
+    //디자인관리
+    popup_list: `${api_uri}admin/popup`,
+    popup_open: `${api_uri}admin/popup/open`,
+    popup_detail: `${api_uri}admin/popup/:idx`,
 
 
     // 환경설정

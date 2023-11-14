@@ -15,7 +15,7 @@ import ConfirmPop from "../../components/popup/ConfirmPop";
 import Pagination from "../../components/component/admin/Pagination";
 
 
-const BoardList = (props) => {
+const Board = () => {
     const dispatch = useDispatch();
     const board_list = enum_api_uri.board_list;
     const board_move = enum_api_uri.board_move;
@@ -458,4 +458,4 @@ const BoardList = (props) => {
     </>);
 };
 
-export default BoardList;
+export default Board;

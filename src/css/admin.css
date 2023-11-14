@@ -250,7 +250,7 @@ body,input,select,textarea,button,table {
 
 
 /* 게시판 분류 팝업 */
-.pop_board_category {z-index: 1001;}
+/* .pop_board_category {z-index: 1001;} */
 .pop_board_category .popup {width: 800px;}
 .pop_board_category .con_box {padding: 30px 20px;}
 .pop_board_category .classification_box {display: flex; column-gap: 20px;}

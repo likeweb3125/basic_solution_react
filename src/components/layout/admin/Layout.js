@@ -54,6 +54,11 @@ const Layout = (props) => {
             }
         }
 
+        //디자인관리 - 팝업관리
+        if(path === "/console/design/popup"){
+            setLocationList(["디자인 관리","팝업 관리"]);
+        }
+
         //환경설정 - 사이트정보
         if(path === "/console/setting/site"){
             setLocationList(["환경설정","사이트 정보"]);

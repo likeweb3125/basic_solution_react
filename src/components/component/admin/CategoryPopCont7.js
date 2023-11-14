@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { confirmPop, adminCategoryPopData } from "../../../store/popupSlice";
+import { confirmPop, adminCategoryPopData, adminBoardGroupPop } from "../../../store/popupSlice";
 import InputBox from "./InputBox";
 import TxtSelectBox from "./TxtSelectBox";
 import ConfirmPop from "../../popup/ConfirmPop";
@@ -183,7 +183,7 @@ const CategoryPopCont7 = (props) => {
             <div className="tab_inner">
                 <div className="form_pop_inner">
                     <div className="form_inner">
-                        <div className="form_box form_border_box">
+                        <div className="form_box">
                             <div className="form_input">
                                 <h6>목록 요소</h6>
                                 <div className="input_wrap">
@@ -259,6 +259,28 @@ const CategoryPopCont7 = (props) => {
                                 </div>
                             </div>
                         </div>
+                        <div className="form_box form_border_box">
+                            <div className="form_input">
+                                <h6>게시판 분류 사용여부</h6>
+                                <div className="input_wrap">
+                                    <div className="chk_rdo_wrap chk_rdo_wrap2">
+                                        <div className="chk_box1">
+                                            <input type="checkbox" id="check_split" className="blind"
+                                                onChange={(e)=>{
+                                                    const checked = e.currentTarget.checked;
+                                                    onCheckChangeHandler(checked,"b_group","Y");
+                                                }}
+                                                checked={info.b_group && info.b_group == "Y" ? true : false}
+                                            />
+                                            <label htmlFor="check_split">체크 시 게시판 분류를 사용합니다.</label>
+                                        </div>
+                                        <button type="button" className="btn_right" onClick={()=>{
+                                            dispatch(adminBoardGroupPop({adminBoardGroupPop:true,adminBoardGroupPopId:info.parent_id}));
+                                        }}>분류 설정</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div className="form_box">
                             <div className="form_input_wrap">
                                 <div className="form_input">
@@ -327,11 +349,11 @@ const CategoryPopCont7 = (props) => {
                                     <div className="chk_rdo_wrap chk_rdo_wrap2">
                                         <div className="chk_box1">
                                             <input type="checkbox" id="check_write_alarm" className="blind"
-                                                // onChange={(e)=>{
-                                                //     const checked = e.currentTarget.checked;
-                                                //     onCheckChangeHandler(checked,"b_write_alarm","Y");
-                                                // }}
-                                                // checked={info.b_write_alarm && info.b_write_alarm == "Y" ? true : false}
+                                                onChange={(e)=>{
+                                                    const checked = e.currentTarget.checked;
+                                                    onCheckChangeHandler(checked,"b_write_alarm","Y");
+                                                }}
+                                                checked={info.b_write_alarm && info.b_write_alarm == "Y" ? true : false}
                                             />
                                             <label htmlFor="check_write_alarm">체크 시 작성자가 입력한 회원 정보로 답변 알림 수신</label>
                                         </div>
@@ -344,11 +366,11 @@ const CategoryPopCont7 = (props) => {
                                     <div className="chk_rdo_wrap chk_rdo_wrap2">
                                         <div className="chk_box1">
                                             <input type="checkbox" id="check_send_email" className="blind"
-                                                // onChange={(e)=>{
-                                                //     const checked = e.currentTarget.checked;
-                                                //     onCheckChangeHandler(checked,"b_write_send","Y");
-                                                // }}
-                                                // checked={info.b_write_send && info.b_write_send == "Y" ? true : false}
+                                                onChange={(e)=>{
+                                                    const checked = e.currentTarget.checked;
+                                                    onCheckChangeHandler(checked,"b_write_send","Y");
+                                                }}
+                                                checked={info.b_write_send && info.b_write_send == "Y" ? true : false}
                                             />
                                             <label htmlFor="check_send_email">이메일</label>
                                         </div>
@@ -356,11 +378,11 @@ const CategoryPopCont7 = (props) => {
                                     <div className="chk_rdo_wrap chk_rdo_wrap2">
                                         <div className="chk_box1">
                                             <input type="checkbox" id="check_send_sms" className="blind"
-                                                // onChange={(e)=>{
-                                                //     const checked = e.currentTarget.checked;
-                                                //     onCheckChangeHandler(checked,"b_write_send","Y");
-                                                // }}
-                                                // checked={info.b_write_send && info.b_write_send == "Y" ? true : false}
+                                                onChange={(e)=>{
+                                                    const checked = e.currentTarget.checked;
+                                                    onCheckChangeHandler(checked,"b_write_sms","Y");
+                                                }}
+                                                checked={info.b_write_sms && info.b_write_sms == "Y" ? true : false}
                                             />
                                             <label htmlFor="check_send_sms">문자</label>
                                         </div>

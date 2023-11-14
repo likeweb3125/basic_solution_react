@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import * as CF from "../../../config/function";
 import { checkedList } from "../../../store/etcSlice";
-import { adminPolicyPop } from "../../../store/popupSlice";
+import { adminPolicyPop, adminPopupPop } from "../../../store/popupSlice";
 
 
 const TableWrap = (props) => {
@@ -30,7 +30,7 @@ const TableWrap = (props) => {
     useEffect(()=>{
         const list = props.colgroup;
         
-        if(props.type == "board" && props.data.c_content_type === 7){
+        if(props.type === "board" && props.data.c_content_type === 7){
             list.splice(2,0,"10%");
         }
 
@@ -42,7 +42,7 @@ const TableWrap = (props) => {
     useEffect(()=>{
         const list = props.thList;
 
-        if(props.type == "board" && props.data.c_content_type === 7){
+        if(props.type === "board" && props.data.c_content_type === 7){
             list.splice(2,0,"답변상태");
         }
 
@@ -69,7 +69,7 @@ const TableWrap = (props) => {
                     <tbody>
                         {props.tdList && props.tdList.map((cont,i)=>{
                             //메인페이지 최근게시판조회 일때
-                            if(props.type == "main_board"){
+                            if(props.type === "main_board"){
                                 return(
                                     <tr key={i}>
                                         <td>{cont.idx}</td>
@@ -86,7 +86,7 @@ const TableWrap = (props) => {
                                 );
                             }
                             //메인페이지 접속자이력조회 일때
-                            if(props.type == "main_connector"){
+                            if(props.type === "main_connector"){
                                 return(
                                     <tr key={i}>
                                         <td>{cont.user}</td>
@@ -101,7 +101,7 @@ const TableWrap = (props) => {
                                 );
                             }
                             //게시판관리 - 게시글관리 일때
-                            if(props.type == "board"){
+                            if(props.type === "board"){
                                 let type;
                                 if(cont.c_content_type === 4){
                                     type = "일반";
@@ -155,7 +155,7 @@ const TableWrap = (props) => {
                                 );
                             }
                             //환경설정 - 운영정책설정 일때
-                            if(props.type == "policy"){
+                            if(props.type === "policy"){
                                 return(
                                     <tr key={i} className={cont.p_use_yn == "Y" ? "" : "disabled"}>
                                         <td>
@@ -189,6 +189,41 @@ const TableWrap = (props) => {
                                                 :   <em className="txt_color2">중단</em>
                                             }
                                         </td>
+                                    </tr>
+                                );
+                            }
+                            //디자인관리 - 팝업관리 일때
+                            if(props.type === "popup"){
+                                return(
+                                    <tr key={i} className={cont.p_open[0] == "Y" ? "" : "disabled"}>
+                                        <td>
+                                            <div className="chk_box2">
+                                                <input type="checkbox" id={`check_${cont.idx}`} className="blind"
+                                                    value={cont.idx}
+                                                    onChange={(e) => {
+                                                        const isChecked = e.currentTarget.checked;
+                                                        const value = e.currentTarget.value;
+                                                        checkHandler(isChecked, value);
+                                                    }}
+                                                    checked={etc.checkedList.includes(cont.idx)}
+                                                />
+                                                <label htmlFor={`check_${cont.idx}`}>선택</label>
+                                            </div>
+                                        </td>
+                                        <td>{cont.idx}</td>
+                                        <td>
+                                            <button type="button" className="link" 
+                                                onClick={()=>{
+                                                    dispatch(adminPopupPop({adminPopupPop:true,adminPopupPopIdx:cont.idx,adminPopupPopType:props.popType}));
+                                                }}>{cont.p_title}</button>
+                                        </td>
+                                        <td>{cont.p_s_date}{cont.p_e_date && " ~ "+cont.p_e_date}</td>
+                                        <td>{`${cont.p_width_size} X ${cont.p_height_size}`} / {cont.p_one_day == "Y" ? "사용" : "미사용"}</td>
+                                        <td>{`${cont.p_left_point} X ${cont.p_top_point}`}</td>
+                                        <td>
+                                            <em className={cont.p_open[0] == "Y" ? "txt_color1" : "txt_color2"}>{cont.p_open[1]}</em>
+                                        </td>
+                                        <td>{cont.p_layer_pop[1]}</td>
                                     </tr>
                                 );
                             }

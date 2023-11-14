@@ -39,7 +39,7 @@ const Header = () => {
     },[popup.confirmPop]);
 
 
-
+    //url 변경될때마다 헤더메뉴 on값 변경
     useEffect(()=>{
         const path = location.pathname;
         // console.log(path);
@@ -56,6 +56,10 @@ const Header = () => {
             if(path.includes("/detail") && board_category && board_idx){
                 setMenuOn(`board1_${board_category}`);
             }
+        }
+
+        if(path === "/console/design/popup"){
+            setMenuOn("design2");
         }
 
         
@@ -258,7 +262,7 @@ const Header = () => {
                                         <Link to="" className="menu">메인 배너 관리</Link>
                                     </li>
                                     <li className={menuOn === "design2" ? "on" : ""}>
-                                        <Link to="" className="menu">팝업 관리</Link>
+                                        <Link to="/console/design/popup" className="menu">팝업 관리</Link>
                                     </li>
                                 </ul>
                             </li>

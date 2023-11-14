@@ -9,6 +9,9 @@ import AdminMenuCategory from './pages/admin/MenuCategory';
 import AdminBoard from "./pages/admin/Board";
 import AdminBoardDetail from "./pages/admin/BoardDetail";
 import AdminBoardWrite from "./pages/admin/BoardWrite";
+
+import AdminDesignPopup from "./pages/admin/DesignPopup";
+
 import AdminSettingSiteInfo from "./pages/admin/SettingSiteInfo";
 import AdminSettingPolicy from "./pages/admin/SettingPolicy";
 
@@ -50,6 +53,9 @@ function App() {
                     <Route path="modify/:board_category/:board_idx" element={<AdminBoardWrite/>} />     {/* 수정 */}
                 </Route>
 
+                {/* -- 디자인관리 -- */}
+                {/* 팝업관리 */}
+                <Route path="/console/design/popup" element={<AdminLayout><AdminDesignPopup/></AdminLayout>} />
                 
                 {/* -- 환경설정 -- */}
                 {/* 사이트정보 */}

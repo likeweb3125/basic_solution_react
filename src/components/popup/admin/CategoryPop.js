@@ -26,20 +26,15 @@ const CategoryPop = () => {
     const [confirm, setConfirm] = useState(false);
     const [closeConfirm, setCloseConfirm] = useState(false);
     const [saveConfirm, setSaveConfirm] = useState(false);
-
     const [info, setInfo] = useState({});
     const [error, setError] = useState({});
-    
-    
     const [menuUi, setMenuUi] = useState("");
-
     const [titImg, setTitImg] = useState(null);
     const [titImgData, setTitImgData] = useState(null);
     const [menuOnImg, setMenuOnImg] = useState(null);
     const [menuOnImgData, setMenuOnImgData] = useState(null);
     const [menuOffImg, setMenuOffImg] = useState(null);
     const [menuOffImgData, setMenuOffImgData] = useState(null);
-
     const [tabList, setTabList] = useState(["HTML","빈 메뉴","고객맞춤","일반 게시판","갤러리 게시판","FAQ","문의게시판"]);
     const [tab, setTab] = useState(1);
 
@@ -81,7 +76,6 @@ const CategoryPop = () => {
                     data.c_menu_ui = data.c_menu_ui[0];
                     data.c_content_type = data.c_content_type[0];
                 setInfo(data);
-                console.table(data);
 
                 setMenuUi(data.c_menu_ui);
                 setTab(data.c_content_type);
@@ -438,7 +432,7 @@ const CategoryPop = () => {
                                 <ul className="tab_type1">
                                     {tabList.map((cont,i)=>{
                                         return(
-                                            <li key={i} className={tab === i + 1? "on" : ""}>
+                                            <li key={i} className={tab === i+1? "on" : ""}>
                                                 <button type="button" onClick={()=>setTab(i+1)}>{cont}</button>
                                             </li>
                                         );
