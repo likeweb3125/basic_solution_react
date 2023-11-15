@@ -259,7 +259,7 @@ const CategoryPop = () => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        }else if(info.c_menu_ui == "IMG" && menuOnImg == null){
+        }else if(info.c_menu_ui.includes("IMG") && menuOnImg == null){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -267,7 +267,7 @@ const CategoryPop = () => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        }else if(info.c_menu_ui == "IMG" && menuOffImg == null){
+        }else if(info.c_menu_ui.includes("IMG") && menuOffImg == null){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -291,6 +291,27 @@ const CategoryPop = () => {
             if (body.hasOwnProperty(key)) {
                 const value = body[key];
                 formData.append(key, value);
+            }
+        }
+
+        // 제목이미지 삭제했으면 삭제
+        if(titImg == null){
+            formData.append("c_main_banner_file_del", "Y");
+        }
+
+        // 메뉴 UI 텍스트일때 on,off 이미지 삭제
+        if(body.c_menu_ui.includes("TXT")){
+            formData.append("c_menu_on_img_del", "Y");
+            formData.append("c_menu_off_img_del", "Y");
+        }
+
+        // 메뉴 UI 이미지일때 on,off 이미지 삭제했으면 삭제
+        else if(body.c_menu_ui.includes("IMG")){
+            if(menuOnImg == null){
+                formData.append("c_menu_on_img_del", "Y");
+            }
+            if(menuOffImg == null){
+                formData.append("c_menu_off_img_del", "Y");
             }
         }
 
@@ -363,7 +384,7 @@ const CategoryPop = () => {
                                                                 const checked = e.currentTarget.checked;
                                                                 onCheckChangeHandler(checked,"c_menu_ui","TXT");
                                                             }}
-                                                            checked={info.c_menu_ui && info.c_menu_ui == "TXT" ? true : false}
+                                                            checked={info.c_menu_ui && info.c_menu_ui.includes("TXT") ? true : false}
                                                             name="menuUi"
                                                         />
                                                         <label htmlFor="check_ui_1">텍스트</label>
@@ -374,7 +395,7 @@ const CategoryPop = () => {
                                                                 const checked = e.currentTarget.checked;
                                                                 onCheckChangeHandler(checked,"c_menu_ui","IMG");
                                                             }}
-                                                            checked={info.c_menu_ui && info.c_menu_ui == "IMG" ? true : false}
+                                                            checked={info.c_menu_ui && info.c_menu_ui.includes("IMG") ? true : false}
                                                             name="menuUi"
                                                         />
                                                         <label htmlFor="check_ui_2">이미지</label>
@@ -414,7 +435,7 @@ const CategoryPop = () => {
                                             </div>
                                         </div>
                                         {/* 메뉴 UI 이미지선택시에만 노출 */}
-                                        {info.c_menu_ui && info.c_menu_ui.includes("IMG") &&<>
+                                        {info.c_menu_ui && info.c_menu_ui.includes("IMG") && <>
                                             <div className="form_input">
                                                 <h6>메뉴 이미지 ON</h6>
                                                 <div className="input_wrap">
@@ -503,7 +524,7 @@ const CategoryPop = () => {
                             </div>
                         </div>
                         <div className="pop_btn_wrap">
-                            <button type="button" className="btn_left">카테고리 삭제</button>
+                            {/* <button type="button" className="btn_left">카테고리 삭제</button> */}
                             <div className="btn_box">
                                 <button type="button" className="btn_type3" onClick={closeBtnClickHandler}>취소</button>
                                 <button type="button" className="btn_type4" onClick={saveBtnClickHandler}>저장</button>
