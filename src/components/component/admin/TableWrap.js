@@ -129,7 +129,7 @@ const TableWrap = (props) => {
                                             </div>
                                         </td>
                                         <td>{cont.b_notice == "1" ? "공지" : cont.idx}</td>
-                                        {type == "문의" && <td>답변상태</td>}
+                                        {type == "문의" && <td>{cont.g_status}</td>}
                                         <td>
                                             <div className="txt_left">
                                                 <span>

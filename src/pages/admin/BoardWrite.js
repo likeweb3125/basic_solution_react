@@ -398,11 +398,13 @@ const BoardWrite = (props) => {
                                 <colgroup>
                                     <col style={{width: "140px"}}/>
                                     <col style={{width: "auto"}}/>
+                                    <col style={{width: "140px"}}/>
+                                    <col style={{width: "auto"}}/>
                                 </colgroup>
                                 <tbody>
                                     <tr>
                                         <th>제목</th>
-                                        <td>
+                                        <td colSpan={3}>
                                             <InputBox 
                                                 type={`text`}
                                                 placeholder={`제목을 입력해주세요.`}
@@ -433,14 +435,26 @@ const BoardWrite = (props) => {
                                                 <label htmlFor="chkNotice">체크 시 목록 최상단 노출</label>
                                             </div>
                                         </td>
+                                        {/* 게시판 분류사용시에만 보이기 */}
+                                        {boardSettingData.b_group == "Y" && <>
+                                            <th>유형</th>
+                                            <td>
+                                                <div class="select_type3">
+                                                    <select name="" id="" title="문의 유형 선택">
+                                                        <option value="">답변 대기</option>
+                                                        <option value="">답변 완료</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                        </>}
                                     </tr>
                                     {/* 갤러리 게시판일때 미리보기이미지 보이기*/}
                                     {boardSettingData.c_content_type === 5 && <>
                                         <tr className="tr_view">
-                                            <th colSpan="2">미리보기 등록 <b>권장 : 400*300</b></th>
+                                            <th colSpan={4}>미리보기 등록 <b>권장 : 400*300</b></th>
                                         </tr>
                                         <tr className="tr_view">
-                                            <td colSpan="2">
+                                            <td colSpan={4}>
                                                 <div className="file_box1">
                                                     <div {...getRootProps2({className: 'dropzone'})}>
                                                         <div className="input_file">
@@ -480,7 +494,7 @@ const BoardWrite = (props) => {
                                         </tr>
                                     </>}
                                     <tr>
-                                        <td colSpan="2">
+                                        <td colSpan={4}>
                                             <div className="edit_box">
                                                 <Editor 
                                                     value={content}
@@ -500,7 +514,7 @@ const BoardWrite = (props) => {
                                     </tr>
                                     <tr>
                                         <th>파일첨부</th>
-                                        <td>
+                                        <td colSpan={3}>
                                             <div className="file_box2">
                                                 <div className="input_file">
                                                     <div {...getRootProps1({className: 'dropzone'})}>
