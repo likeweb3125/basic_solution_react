@@ -30,8 +30,15 @@ const TableWrap = (props) => {
     useEffect(()=>{
         const list = props.colgroup;
         
+        //문의게시판일때 colgroup 추가 (답변상태)
         if(props.type === "board" && props.data.c_content_type === 7){
-            list.splice(2,0,"10%");
+            list.splice(2,0,"100px");
+        }
+
+        //게시판분류 사용시 colgroup 추가 (분류유형)
+        if(props.type === "board" && props.data.b_group == "Y"){
+            const index = list.length - 3; //뒤에서 3번째에 추가
+            list.splice(index,0,"12%");
         }
 
         setColgroup(list);
@@ -42,8 +49,15 @@ const TableWrap = (props) => {
     useEffect(()=>{
         const list = props.thList;
 
+        //문의게시판일때 th 추가 (답변상태)
         if(props.type === "board" && props.data.c_content_type === 7){
             list.splice(2,0,"답변상태");
+        }
+
+        //게시판분류 사용시 th 추가 (분류유형)
+        if(props.type === "board" && props.data.b_group == "Y"){
+            const index = list.length - 3; //뒤에서 3번째에 추가
+            list.splice(index,0,"분류유형");
         }
 
         setThList(list);
@@ -128,8 +142,10 @@ const TableWrap = (props) => {
                                                 <label htmlFor={`check_${cont.idx}`}>선택</label>
                                             </div>
                                         </td>
-                                        <td>{cont.b_notice == "1" ? "공지" : cont.idx}</td>
-                                        {type == "문의" && <td>{cont.g_status}</td>}
+                                        <td>{cont.num}</td>
+                                        {type == "문의" && 
+                                            <td><em className={`answer_status${cont.g_status == "답변완료" ? " on" : ""}`}>{cont.g_status}</em></td>
+                                        }
                                         <td>
                                             <div className="txt_left">
                                                 <span>
@@ -139,6 +155,9 @@ const TableWrap = (props) => {
                                             </div>
                                         </td>
                                         <td>{type}</td>
+                                        {props.data.b_group == "Y"  &&
+                                            <td>{cont.g_name}</td>
+                                        }
                                         <td>
                                             <button className="link">{cont.m_name}</button>
                                         </td>
@@ -224,6 +243,43 @@ const TableWrap = (props) => {
                                             <em className={cont.p_open[0] == "Y" ? "txt_color1" : "txt_color2"}>{cont.p_open[1]}</em>
                                         </td>
                                         <td>{cont.p_layer_pop[1]}</td>
+                                    </tr>
+                                );
+                            }
+                            //유지보수게시판 일때
+                            if(props.type === "maint"){
+                                let color ="";
+                                if(cont.process == "처리완료"){
+                                    color = " txt_color1";
+                                }
+                                if(cont.process == "접수완료"){
+                                    color = " txt_color3";
+                                }
+                                if(cont.process == "재요청"){
+                                    color = " txt_color2";
+                                }
+                                if(cont.process == "검토중"){
+                                    color = " txt_color4";
+                                }
+
+                                return(
+                                    <tr key={i}>
+                                        <td>1</td>
+                                        <td>
+                                            <div className="txt_left">
+                                                <span>
+                                                    <Link to={`/console/maint/detail/${cont.list_no}`}>{cont.subject}</Link>
+                                                    {cont.comment_count > 0 && <b>({CF.MakeIntComma(cont.comment_count)})</b>}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>{cont.name}</td>
+                                        <td>
+                                            <em className={`maint_status${color}`}>{cont.process}</em>
+                                        </td>
+                                        <td>
+                                            <span className="txt_light">{cont.w_date}</span>
+                                        </td>
                                     </tr>
                                 );
                             }

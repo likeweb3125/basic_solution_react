@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { loginUser, siteId } from "../../store/userSlice";
+import { loginUser, siteId, maintName } from "../../store/userSlice";
 import { confirmPop } from "../../store/popupSlice";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 
@@ -66,6 +66,9 @@ const Login = () => {
 
                 //siteId store 에 저장 (고정값)
                 dispatch(siteId("likeweb"));
+
+                //maintName store 에 저장 (고정값) 유지보수업체이름
+                dispatch(maintName("소잠한의원"));
 
                 //관리자단 메인으로 페이지이동
                 navigate('/console');

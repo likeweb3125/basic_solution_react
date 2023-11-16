@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Formik } from "formik";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminCategoryPop } from "../../store/popupSlice";
-import { pageNo, pageNoChange, checkedList } from "../../store/etcSlice";
+import { pageNoChange, checkedList } from "../../store/etcSlice";
 import { boardSettingData } from "../../store/commonSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
@@ -74,7 +73,7 @@ const Board = () => {
             search = "name";
         } 
 
-        axios.get(`${board_list.replace(":category",board_category).replace(":limit",limit)}?page=${page ? page : 1}&search=${search}${searchTxt.length > 0 ? "&searchtxt="+searchTxt : ""}`,
+        axios.get(`${board_list.replace(":category",board_category).replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -401,20 +400,23 @@ const Board = () => {
                         <div className="util_wrap">
                             <span>선택한 게시글</span>
                             <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>개</span>
-                            <SelectBox 
-                                class="select_type3"
-                                list={boardData.board_Name}
-                                selected={moveSelect}
-                                onChangeHandler={(e)=>{
-                                    const val = e.currentTarget.value;
-                                    setMoveSelect(val);
-                                }}
-                                selHidden={true}
-                                objectSel={`board_title`}
-                            />
-                            <span>(으)로</span>
-                            <button type="button" className="btn_type8" onClick={moveBtnClickHandler}>이동</button>
-                            <em>※ 게시판 유형이 동일할 시에만 게시글 이동이 가능합니다.</em>
+                            {/* 동일한 게시판유형이있을때만 노출 */}
+                            {boardData.board_Name && boardData.board_Name.length > 0 && <>
+                                <SelectBox 
+                                    class="select_type3"
+                                    list={boardData.board_Name}
+                                    selected={moveSelect}
+                                    onChangeHandler={(e)=>{
+                                        const val = e.currentTarget.value;
+                                        setMoveSelect(val);
+                                    }}
+                                    selHidden={true}
+                                    objectSel={`board_title`}
+                                />
+                                <span>(으)로</span>
+                                <button type="button" className="btn_type8" onClick={moveBtnClickHandler}>이동</button>
+                                <em>※ 게시판 유형이 동일할 시에만 게시글 이동이 가능합니다.</em>
+                            </>}
                         </div>
                         <div className="util_right">
                             <button type="button" className="btn_type9" onClick={deltBtnClickHandler}>삭제</button>

@@ -15,6 +15,10 @@ import AdminDesignPopup from "./pages/admin/DesignPopup";
 import AdminSettingSiteInfo from "./pages/admin/SettingSiteInfo";
 import AdminSettingPolicy from "./pages/admin/SettingPolicy";
 
+import AdminMaint from "./pages/admin/Maint";
+import AdminMaintDetail from "./pages/admin/MaintDetail";
+import AdminMaintWrite from "./pages/admin/MaintWrite";
+
 import './css/default.css';
 
 
@@ -40,11 +44,11 @@ function App() {
                 {/* 메인 */}
                 <Route path="/console" element={<AdminLayout><AdminMain/></AdminLayout>} />
 
-                {/* -- 메뉴관리 -- */}
+                {/* ---- 메뉴관리 ---- */}
                 {/* 카테고리관리 */}
                 <Route path="/console/menu/category" element={<AdminLayout><AdminMenuCategory/></AdminLayout>} />
 
-                {/* -- 게시판관리 -- */}
+                {/* ---- 게시판관리 ---- */}
                 {/* 게시글관리 */}
                 <Route path="/console/board/post" element={<AdminLayout><Outlet/></AdminLayout>}>
                     <Route path=":board_category" element={<AdminBoard/>} />                            {/* 리스트 */}
@@ -53,16 +57,24 @@ function App() {
                     <Route path="modify/:board_category/:board_idx" element={<AdminBoardWrite/>} />     {/* 수정 */}
                 </Route>
 
-                {/* -- 디자인관리 -- */}
+                {/* ---- 디자인관리 ---- */}
                 {/* 팝업관리 */}
                 <Route path="/console/design/popup" element={<AdminLayout><AdminDesignPopup/></AdminLayout>} />
                 
-                {/* -- 환경설정 -- */}
+                {/* ---- 환경설정 ---- */}
                 {/* 사이트정보 */}
                 <Route path="/console/setting/site" element={<AdminLayout><AdminSettingSiteInfo/></AdminLayout>} />
 
                 {/* 운영정책 설정 */}
                 <Route path="/console/setting/policy" element={<AdminLayout><AdminSettingPolicy/></AdminLayout>} />
+
+
+                {/* ---- 유지보수 ---- */}
+                <Route path="/console/maint" element={<AdminLayout><Outlet/></AdminLayout>}>
+                    <Route path="" element={<AdminMaint/>}/>                                        {/* 리스트 */}
+                    <Route path="detail/:list_no" element={<AdminMaintDetail/>} />                  {/* 상세 */}
+                    <Route path="write" element={<AdminMaintWrite/>} />                             {/* 작성 */}
+                </Route>
 
                     
                 {/* //관리자단---------------------------------------------- */}

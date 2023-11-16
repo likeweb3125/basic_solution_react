@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Formik } from "formik";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminPolicyPopWrite, adminPolicyPop, adminPolicyPopModify } from "../../store/popupSlice";
-import { pageNo, pageNoChange, checkedList } from "../../store/etcSlice";
+import { pageNoChange, checkedList } from "../../store/etcSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
@@ -23,6 +21,7 @@ const SettingPolicy = () => {
     const policy_use = enum_api_uri.policy_use;
     const [confirm, setConfirm] = useState(false);
     const [useConfirm, setUseConfirm] = useState(false);
+    const [deltConfirm, setDeltConfirm] = useState(false);
     const [searchTxt, setSearchTxt] = useState("");
     const [boardData, setBoardData] = useState({});
     const [limit, setLimit] = useState(10);
@@ -40,6 +39,7 @@ const SettingPolicy = () => {
         if(popup.confirmPop === false){
             setConfirm(false);
             setUseConfirm(false);
+            setDeltConfirm(false);
         }
     },[popup.confirmPop]);
 
@@ -55,7 +55,7 @@ const SettingPolicy = () => {
             search = "name";
         } 
 
-        axios.get(`${site_policy.replace(":limit",limit)}?page=${page ? page : 1}&search=${search}${searchTxt.length > 0 ? "&searchtxt="+searchTxt : ""}`,
+        axios.get(`${site_policy.replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -203,6 +203,57 @@ const SettingPolicy = () => {
     };
 
 
+    //삭제버튼 클릭시
+    const deltBtnClickHandler = () => {
+        if(checkedNum > 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'해당 운영정책을 삭제하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+            setDeltConfirm(true);
+        }else if(checkedNum === 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'운영정책을 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    };
+
+
+    //팝업 삭제하기
+    const deltHandler = () => {
+        const body = {
+            idx: etc.checkedList,
+        };
+        axios.delete(policy_use,
+            {
+                data: body,
+                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getBoardData();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
 
     return(<>
         <div className="page_admin_setting">
@@ -277,7 +328,7 @@ const SettingPolicy = () => {
                             </div>
                         </div>
                         <div className="util_right">
-                            <button type="button" className="btn_type9">삭제</button>
+                            <button type="button" className="btn_type9" onClick={deltBtnClickHandler}>삭제</button>
                         </div>
                     </div>
                     <TableWrap 
@@ -304,6 +355,9 @@ const SettingPolicy = () => {
 
         {/* 노출,중단하기 confirm팝업 */}
         {useConfirm && <ConfirmPop onClickHandler={useHandler} />}
+
+        {/* 운영정책 삭제 confirm팝업 */}
+        {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

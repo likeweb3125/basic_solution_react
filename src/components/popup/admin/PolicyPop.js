@@ -146,7 +146,21 @@ const PolicyPop = () => {
 
         setError(newError);
 
-        if (!newError.p_title) {
+        let cont;
+        if(showRaw){
+            cont = rawHtml;
+        }else{
+            cont = content.replace(/<p><br><\/p>/g, "");
+        }
+        if(!cont){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'내용을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if (!newError.p_title && cont) {
             saveHandler();
         }
     };
@@ -154,11 +168,17 @@ const PolicyPop = () => {
 
     //저장하기
     const saveHandler = () => {
+        let cont;
+        if(showRaw){
+            cont = rawHtml;
+        }else{
+            cont = content;
+        }
         //새로 작성일때
         if(popup.adminPolicyPopWrite){
             const body = {
                 p_title:info.p_title,
-                p_contents:content,
+                p_contents:cont,
                 p_use_yn:useBtn,
             };
             axios.post(`${site_policy}`, body, 
@@ -191,7 +211,7 @@ const PolicyPop = () => {
             const body = {
                 idx:popup.adminPolicyPopIdx,
                 p_title:info.p_title,
-                p_contents:content,
+                p_contents:cont,
                 p_use_yn:useBtn,
             };
             axios.put(`${policy_modify}`, body, 
@@ -282,11 +302,15 @@ const PolicyPop = () => {
                                                 value={content}
                                                 onChangeHandler={onEditorChangeHandler}
                                                 onClickRaw={handleClickShowRaw}
+                                                btnHtmlOn={showRaw}
                                             />
                                             {showRaw ? 
                                                 <textarea
                                                     value={rawHtml}
-                                                    onChange={(e) => setRawHtml(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setRawHtml(e.target.value);
+                                                        
+                                                    }}
                                                     className="raw_editor"
                                                 />
                                                 : null  

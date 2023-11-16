@@ -143,6 +143,7 @@ const CategoryPopCont7 = (props) => {
     //에디터내용 값
     const onEditorChangeHandler = (e) => {
         setTemplateEditor(e);
+        
     };
 
 
@@ -275,7 +276,7 @@ const CategoryPopCont7 = (props) => {
                                             <label htmlFor="check_split">체크 시 게시판 분류를 사용합니다.</label>
                                         </div>
                                         <button type="button" className="btn_right" onClick={()=>{
-                                            dispatch(adminBoardGroupPop({adminBoardGroupPop:true,adminBoardGroupPopId:info.parent_id}));
+                                            dispatch(adminBoardGroupPop({adminBoardGroupPop:true,adminBoardGroupPopId:info.id}));
                                         }}>분류 설정</button>
                                     </div>
                                 </div>
@@ -468,11 +469,15 @@ const CategoryPopCont7 = (props) => {
                                                         value={templateEditor}
                                                         onChangeHandler={onEditorChangeHandler}
                                                         onClickRaw={handleClickShowRaw}
+                                                        btnHtmlOn={showRaw}
                                                     />
                                                     {showRaw ? 
                                                         <textarea
                                                             value={rawHtml}
-                                                            onChange={(e) => setRawHtml(e.target.value)}
+                                                            onChange={(e) => {
+                                                                setRawHtml(e.target.value);
+                                                                
+                                                            }}
                                                             className="raw_editor"
                                                         />
                                                         : null  

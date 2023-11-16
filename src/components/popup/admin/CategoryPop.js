@@ -37,6 +37,12 @@ const CategoryPop = () => {
     const [menuOffImgData, setMenuOffImgData] = useState(null);
     const [tabList, setTabList] = useState(["HTML","빈 메뉴","고객맞춤","일반 게시판","갤러리 게시판","FAQ","문의게시판"]);
     const [tab, setTab] = useState(1);
+    const [firstRender, setFirstRender] = useState(false);
+
+
+    useEffect(()=>{
+        console.log(info)
+    },[info]);
 
 
     // Confirm팝업 닫힐때
@@ -106,27 +112,25 @@ const CategoryPop = () => {
 
     //맨처음 
     useEffect(()=>{
+        if(!firstRender){
+            setFirstRender(true);
+        }
+
         //하위카테고리 새로등록이 아닐때만 상세정보 가져오기
         if(!popup.adminCategoryPopAdd){
             getData();
         }
     },[]);
 
-
-    useEffect(()=>{
-        //카테고리 값 변경시 adminCategoryPopData store 에 저장
-        dispatch(adminCategoryPopData(info));
-
-        console.log(info);
-    },[info]);
-
     
     //카테고리 종류 탭 변경시 info 값 변경
     useEffect(()=>{
-        let newInfo = {...info};
-            newInfo.c_content_type = tab;
-            
-        setInfo(newInfo);
+        if(firstRender){
+            let newInfo = {...info};
+                newInfo.c_content_type = tab;
+                
+            setInfo(newInfo);
+        }
     },[tab]);
     
 
@@ -160,11 +164,6 @@ const CategoryPop = () => {
         
         setInfo(newData);
     };
-
-
-    useEffect(()=>{
-        // console.log(popup.adminCategoryPopData);
-    },[popup.adminCategoryPopData]);
 
     
     // 카테고리 제목이미지 등록
@@ -200,50 +199,12 @@ const CategoryPop = () => {
         }
     });
 
-    useEffect(()=>{
-        let newData = {...info};
-        if(titImgData != null){
-            titImgData.forEach((file) => {
-                newData.c_main_banner_file = file;
-            });
-        }else if(titImgData ==  null || titImg == null){
-            newData.c_main_banner_file = null;
-        }
-        setInfo(newData);
-    },[titImgData, titImg]);
 
-
-    useEffect(()=>{
-        let newData = {...info};
-        if(menuOnImgData != null){
-            menuOnImgData.forEach((file) => {
-                newData.c_menu_on_img = file;
-            });
-        }else if(menuOnImgData ==  null || menuOnImg == null){
-            newData.c_menu_on_img = null;
-        }
-        setInfo(newData);
-    },[menuOnImgData,menuOnImg]);
-
-
-
-    useEffect(()=>{
-        let newData = {...info};
-        if(menuOffImgData != null){
-            menuOffImgData.forEach((file) => {
-                newData.c_menu_off_img = file;
-            });
-        }else if(menuOffImgData ==  null || menuOffImg == null){
-            newData.c_menu_off_img = null;
-        }
-        setInfo(newData);
-    },[menuOffImgData,menuOffImg]);
-
-
-
-    //저장버튼 클릭시 필수입력 체크 (카테고리명, 메뉴UI, 카테고리종류)
+    //저장버튼 클릭시 필수입력 체크
     const saveBtnClickHandler = () => {
-        if(!info.c_name){
+        const data = popup.adminCategoryPopData;
+        //공통 필수값 체크 (카테고리명, 메뉴UI, 카테고리종류) --------------
+        if(!data.c_name){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -251,7 +212,7 @@ const CategoryPop = () => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        }else if(!info.c_menu_ui){
+        }else if(!data.c_menu_ui){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -259,7 +220,7 @@ const CategoryPop = () => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        }else if(info.c_menu_ui.includes("IMG") && menuOnImg == null){
+        }else if(data.c_menu_ui.includes("IMG") && menuOnImg == null){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -267,11 +228,37 @@ const CategoryPop = () => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        }else if(info.c_menu_ui.includes("IMG") && menuOffImg == null){
+        }else if(data.c_menu_ui.includes("IMG") && menuOffImg == null){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
                 confirmPopTxt: '메뉴 OFF 이미지를 등록해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+        //갤러리게시판일때 필수값 체크 (썸네일) ---------
+        else if(data.c_content_type == 5 && data.b_thumbnail_with <= 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '썸네일 가로사이즈를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(data.c_content_type == 5 && data.b_thumbnail_height <= 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '썸네일 세로사이즈를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(data.c_content_type == 5 && !data.b_thumbnail){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '썸네일 이미지스타일을 선택해주세요.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -292,6 +279,24 @@ const CategoryPop = () => {
                 const value = body[key];
                 formData.append(key, value);
             }
+        }
+
+        if(titImgData){
+            titImgData.forEach((file) => {
+                formData.append("c_main_banner_file", file);
+            });
+        }
+
+        if(menuOnImgData){
+            menuOnImgData.forEach((file) => {
+                formData.append("c_menu_on_img", file);
+            });
+        }
+
+        if(menuOffImgData){
+            menuOffImgData.forEach((file) => {
+                formData.append("c_menu_off_img", file);
+            });
         }
 
         // 제목이미지 삭제했으면 삭제
@@ -366,7 +371,7 @@ const CategoryPop = () => {
                                                 <InputBox 
                                                     type={`text`}
                                                     placeholder={`카테고리 명을 입력해주세요.`}
-                                                    value={info.c_name || ""}
+                                                    value={info && info.c_name ? info.c_name : ""}
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`c_name`}
                                                     className={error.c_name ? "wrong_input" : ""}
@@ -384,7 +389,7 @@ const CategoryPop = () => {
                                                                 const checked = e.currentTarget.checked;
                                                                 onCheckChangeHandler(checked,"c_menu_ui","TXT");
                                                             }}
-                                                            checked={info.c_menu_ui && info.c_menu_ui.includes("TXT") ? true : false}
+                                                            checked={info && info.c_menu_ui && info.c_menu_ui.includes("TXT") ? true : false}
                                                             name="menuUi"
                                                         />
                                                         <label htmlFor="check_ui_1">텍스트</label>
@@ -395,7 +400,7 @@ const CategoryPop = () => {
                                                                 const checked = e.currentTarget.checked;
                                                                 onCheckChangeHandler(checked,"c_menu_ui","IMG");
                                                             }}
-                                                            checked={info.c_menu_ui && info.c_menu_ui.includes("IMG") ? true : false}
+                                                            checked={info && info.c_menu_ui && info.c_menu_ui.includes("IMG") ? true : false}
                                                             name="menuUi"
                                                         />
                                                         <label htmlFor="check_ui_2">이미지</label>
@@ -435,7 +440,7 @@ const CategoryPop = () => {
                                             </div>
                                         </div>
                                         {/* 메뉴 UI 이미지선택시에만 노출 */}
-                                        {info.c_menu_ui && info.c_menu_ui.includes("IMG") && <>
+                                        {info && info.c_menu_ui && info.c_menu_ui.includes("IMG") && <>
                                             <div className="form_input">
                                                 <h6>메뉴 이미지 ON</h6>
                                                 <div className="input_wrap">

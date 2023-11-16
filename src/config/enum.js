@@ -14,6 +14,7 @@ exports.enum_api_uri = {
     board_detail: `${api_uri}board/view/:category/:idx`,
     board_file: `${api_uri}board/file`,
     board_file_down: `${api_uri}board/download/:category/:parent_idx/:idx`,
+    board_reply: `${api_uri}board/reply`,
     //게시판분류
     board_group_list: `${api_uri}admin/menu/boardGroup/:parent_id`,
     board_group: `${api_uri}admin/menu/boardGroup`,
@@ -43,15 +44,22 @@ exports.enum_api_uri = {
     popup_detail: `${api_uri}admin/popup/:idx`,
 
 
-    // 환경설정
+    //환경설정
     site_info: `${api_uri}admin/config/site/:site_id`,
     site_info_modify: `${api_uri}admin/config/site`,
     site_policy: `${api_uri}admin/config/policy`,
     policy_use: `${api_uri}admin/config/policy/use`,
     policy_detail: `${api_uri}admin/config/policy/:idx`,
     policy_modify: `${api_uri}admin/config/policy/`,
-
     level_list: `${api_uri}admin/config/level`,
+
+
+    //유지보수
+    maint_list: `${api_uri}admin/maintenance/list/:category`,
+    maint_detail: `${api_uri}admin/maintenance/view/:category/:list_no`,
+    maint_comment_list: `${api_uri}admin/maintenance/comment/:list_no`,
+    maint_comment: `${api_uri}admin/maintenance/comment`,
+    maint_create: `${api_uri}admin/maintenance/create`,
 
 
 

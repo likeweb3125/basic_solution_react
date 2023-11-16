@@ -185,6 +185,7 @@ const PopupPop = () => {
     //에디터내용 값
     const onEditorChangeHandler = (e) => {
         setContent(e);
+        
     };
 
 
@@ -225,10 +226,26 @@ const PopupPop = () => {
                 newError.p_point = true;
             }
         }
-
         setError(newError);
 
-        if (!newError.p_title && !newError.p_one_day && !newError.p_layer_pop && !newError.p_size && !newError.p_point) {
+        let cont;
+        if(showRaw){
+            cont = rawHtml;
+        }else{
+            cont = content.replace(/<p><br><\/p>/g, "");
+        }
+        if(!cont){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'내용을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+        
+
+        if (!newError.p_title && !newError.p_one_day && !newError.p_layer_pop && !newError.p_size && !newError.p_point && cont) {
             saveHandler();
         }
     };
@@ -246,6 +263,12 @@ const PopupPop = () => {
             if(endDate){
                 eDate = moment(endDate).format("YYYY.MM.DD");
             }
+            let cont;
+            if(showRaw){
+                cont = rawHtml;
+            }else{
+                cont = content;
+            }
             const body = {
                 p_type:popup.adminPopupPopType,
                 p_open:useBtn,
@@ -260,7 +283,7 @@ const PopupPop = () => {
                 p_top_point:info.p_top_point,
                 p_scroll:scrollCheck,
                 p_link_target:linkCheck,
-                p_content:content || "",
+                p_content:cont,
             };
             axios.post(`${popup_list}`, body, 
                 {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
@@ -308,6 +331,13 @@ const PopupPop = () => {
                 layer = layer[0];
             }
 
+            let cont;
+            if(showRaw){
+                cont = rawHtml;
+            }else{
+                cont = content;
+            }
+
             const body = {
                 idx:popup.adminPopupPopIdx,
                 p_type:popup.adminPopupPopType,
@@ -323,7 +353,7 @@ const PopupPop = () => {
                 p_top_point:info.p_top_point,
                 p_scroll:scrollCheck,
                 p_link_target:linkCheck,
-                p_content:content,
+                p_content:cont,
             };
             axios.put(`${popup_list}`, body, 
                 {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
@@ -667,11 +697,14 @@ const PopupPop = () => {
                                                     value={content}
                                                     onChangeHandler={onEditorChangeHandler}
                                                     onClickRaw={handleClickShowRaw}
+                                                    btnHtmlOn={showRaw}
                                                 />
                                                 {showRaw ? 
                                                     <textarea
                                                         value={rawHtml}
-                                                        onChange={(e) => setRawHtml(e.target.value)}
+                                                        onChange={(e) => {
+                                                            setRawHtml(e.target.value);
+                                                        }}
                                                         className="raw_editor"
                                                     />
                                                     : null  

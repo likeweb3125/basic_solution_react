@@ -10,6 +10,7 @@ import { confirmPop } from "../../store/popupSlice";
 import InputBox from "../../components/component/admin/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
+import SelectBox from "../../components/component/admin/SelectBox";
 
 
 const BoardWrite = (props) => {
@@ -19,6 +20,7 @@ const BoardWrite = (props) => {
     const board_detail = enum_api_uri.board_detail;
     const board_file = enum_api_uri.board_file;
     const board_modify = enum_api_uri.board_modify;
+    const board_group_list = enum_api_uri.board_group_list;
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
@@ -37,6 +39,9 @@ const BoardWrite = (props) => {
     const [rawHtml, setRawHtml] = useState('');
     const [thumbImg, setThumbImg] = useState(null);
     const [thumbImgData, setThumbImgData] = useState(null);
+    const [groupList, setGroupList] = useState([]);
+    const [groupSelect, setGroupSelect] = useState("");
+    const [groupSelectId, setGroupSelectId] = useState(null);
 
 
     // Confirm팝업 닫힐때
@@ -131,7 +136,55 @@ const BoardWrite = (props) => {
         if(props.write && boardSettingData.b_template == "Y"){
             setContent(boardSettingData.b_template_text);
         }
+
+        //게시판 분류사용시 분류유형리스트 가져오기
+        if(boardSettingData.b_group == "Y"){
+            getGroupList();
+        }
     },[boardSettingData]);
+
+
+
+    //게시판 분류유형리스트 가져오기
+    const getGroupList = () => {
+        axios.get(`${board_group_list.replace(":parent_id",board_category)}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                const newList = data.filter((item)=>item.g_num !== "0"); //숨긴분류 제외
+                setGroupList(newList);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //게시글수정페이지일때 분류유형 값 뿌려주기
+    useEffect(()=>{
+        if(groupList.length > 0 && !props.write && boardData.group_id){
+            const findItem = groupList.find((item)=>item.id === boardData.group_id);
+            const txt = findItem.g_name;
+            const id = findItem.id;
+            setGroupSelect(txt);
+            setGroupSelectId(id);
+        }
+    },[groupList, boardData]);
+
+
+    useEffect(()=>{
+        console.log(groupSelectId)
+    },[groupSelectId]);
 
 
 
@@ -150,6 +203,7 @@ const BoardWrite = (props) => {
     //에디터내용 값
     const onEditorChangeHandler = (e) => {
         setContent(e);
+        
     };
 
 
@@ -208,15 +262,6 @@ const BoardWrite = (props) => {
     });
 
 
-    useEffect(()=>{
-        console.log(thumbImgData);
-    },[thumbImgData]);
-
-    useEffect(()=>{
-        console.log(filesData);
-    },[filesData]);
-
-
     //첨부파일 삭제버튼 클릭시
     const handleRemove = (i, idx) => {
         let newList = [...files];
@@ -263,6 +308,13 @@ const BoardWrite = (props) => {
 
     //글 수정, 등록버튼 클릭시 삭제파일있으면 삭제후 submit
     const submitClickHandler = () => {
+        let cont;
+        if(showRaw){
+            cont = rawHtml;
+        }else{
+            cont = content.replace(/<p><br><\/p>/g, "");
+        }
+
         if(!boardData.b_title){
             dispatch(confirmPop({
                 confirmPop:true,
@@ -271,9 +323,17 @@ const BoardWrite = (props) => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
+        }else if(!cont){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'내용을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         }
         // 갤러리게시판일때
-        else if(boardSettingData.c_content_type === 5 && thumbImgData === null){
+        else if(boardSettingData.c_content_type === 5 && !thumbImg){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -282,7 +342,16 @@ const BoardWrite = (props) => {
             }));
             setConfirm(true);
         }
-        else{
+        // 분류사용시 분류유형선택 체크
+        else if(boardSettingData.b_group == "Y" && !groupSelect){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'유형을 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else{
             if(deltFiles.length > 0){
                 fileDeltHandler();
             }else{
@@ -294,12 +363,6 @@ const BoardWrite = (props) => {
 
     //글 수정, 등록하기
     const submitHandler = () => {
-        let cont;
-        if(showRaw){
-            cont = rawHtml;
-        }else{
-            cont = content;
-        }
         const formData = new FormData();
 
         //첨부파일
@@ -313,9 +376,18 @@ const BoardWrite = (props) => {
 
         //갤러리게시판일때 미리보기이미지 값 추가
         if(boardSettingData.c_content_type === 5){
-            thumbImgData.forEach((file) => {
-                formData.append("b_img", file);
-            });
+            if(thumbImgData){
+                thumbImgData.forEach((file) => {
+                    formData.append("b_img", file);
+                });
+            }
+        }
+
+        let cont;
+        if(showRaw){
+            cont = rawHtml;
+        }else{
+            cont = content;
         }
 
         formData.append("category", board_category);
@@ -326,6 +398,11 @@ const BoardWrite = (props) => {
         formData.append("b_contents", cont);
         formData.append("b_depth", 0);
         formData.append("b_notice", notice);
+
+        //분류사용시 유형선택값 보내기
+        if(boardSettingData.b_group == "Y"){
+            formData.append("group_id", groupSelectId);
+        }
 
         //게시글 수정일때
         if(!props.write){
@@ -439,12 +516,19 @@ const BoardWrite = (props) => {
                                         {boardSettingData.b_group == "Y" && <>
                                             <th>유형</th>
                                             <td>
-                                                <div class="select_type3">
-                                                    <select name="" id="" title="문의 유형 선택">
-                                                        <option value="">답변 대기</option>
-                                                        <option value="">답변 완료</option>
-                                                    </select>
-                                                </div>
+                                                <SelectBox 
+                                                    class="select_type3"
+                                                    list={groupList}
+                                                    selected={groupSelect}
+                                                    onChangeHandler={(e)=>{
+                                                        const val = e.currentTarget.value;
+                                                        const id = e.target.options[e.target.selectedIndex].getAttribute("data-id");
+                                                        setGroupSelect(val);
+                                                        setGroupSelectId(id);
+                                                    }}
+                                                    selHidden={true}
+                                                    objectSel={`board_group`}
+                                                />
                                             </td>
                                         </>}
                                     </tr>
@@ -458,8 +542,8 @@ const BoardWrite = (props) => {
                                                 <div className="file_box1">
                                                     <div {...getRootProps2({className: 'dropzone'})}>
                                                         <div className="input_file">
-                                                            <input {...getInputProps2({className: 'blind', id: 'thumb'})} />
-                                                            <label htmlFor="thumb">
+                                                            <input {...getInputProps2({className: 'blind'})} />
+                                                            <label>
                                                                 {thumbImg === null && <b>파일을 마우스로 끌어 오세요.</b>}
                                                                 <strong>파일선택</strong>
                                                             </label>
@@ -500,11 +584,15 @@ const BoardWrite = (props) => {
                                                     value={content}
                                                     onChangeHandler={onEditorChangeHandler}
                                                     onClickRaw={handleClickShowRaw}
+                                                    btnHtmlOn={showRaw}
                                                 />
                                                 {showRaw ? 
                                                     <textarea
                                                         value={rawHtml}
-                                                        onChange={(e) => setRawHtml(e.target.value)}
+                                                        onChange={(e) => {
+                                                            setRawHtml(e.target.value);
+                                                            
+                                                        }}
                                                         className="raw_editor"
                                                     />
                                                     : null  
@@ -518,8 +606,8 @@ const BoardWrite = (props) => {
                                             <div className="file_box2">
                                                 <div className="input_file">
                                                     <div {...getRootProps1({className: 'dropzone'})}>
-                                                        <input {...getInputProps1({className: 'blind', id: 'file'})} />
-                                                        <label htmlFor="file">
+                                                        <input {...getInputProps1({className: 'blind'})} />
+                                                        <label>
                                                             <b>파일을 마우스로 끌어 오세요.</b>
                                                             <strong>파일선택</strong>
                                                         </label>

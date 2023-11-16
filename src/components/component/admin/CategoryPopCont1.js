@@ -30,6 +30,7 @@ const CategoryPopCont1 = (props) => {
     //에디터내용 값
     const onEditorChangeHandler = (e) => {
         setContent(e);
+        
     };
 
 
@@ -68,11 +69,15 @@ const CategoryPopCont1 = (props) => {
                             value={content}
                             onChangeHandler={onEditorChangeHandler}
                             onClickRaw={handleClickShowRaw}
+                            btnHtmlOn={showRaw}
                         />
                         {showRaw ? 
                             <textarea
                                 value={rawHtml}
-                                onChange={(e) => setRawHtml(e.target.value)}
+                                onChange={(e) => {
+                                    setRawHtml(e.target.value);
+                                    
+                                }}
                                 className="raw_editor"
                             />
                             : null  

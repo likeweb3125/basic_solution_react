@@ -4,7 +4,7 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminPopupPop ,adminPopupPopWrite, adminPopupPopModify } from "../../store/popupSlice";
-import { pageNo, pageNoChange, checkedList } from "../../store/etcSlice";
+import { pageNoChange, checkedList } from "../../store/etcSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
@@ -16,8 +16,6 @@ const DesignPopup = () => {
     const dispatch = useDispatch();
     const popup_list = enum_api_uri.popup_list;
     const popup_open = enum_api_uri.popup_open;
-
-    const common = useSelector((state)=>state.common);
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);

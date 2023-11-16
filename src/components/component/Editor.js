@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
-import ReactQuill from "react-quill";
+import ReactQuill,{ Quill } from "react-quill";
 import EditorToolbar from "./EditorToolbar";
 import "react-quill/dist/quill.snow.css";
-// import { Quill } from "react-quill";
-// import ImageResize from 'quill-image-resize';
+import ImageResize from 'quill-image-resize';
 
 // Quill.register('modules/ImageResize', ImageResize);
 
@@ -19,9 +18,9 @@ export const Editor = (props) => {
                 maxStack: 100,
                 userOnly: true,
             },
-            // ImageResize: {
-            //     parchment: Quill.import('parchment'),
-            // },
+            ImageResize: {
+                parchment: Quill.import('parchment'),
+            },
         };
     }, []);
       
@@ -48,6 +47,7 @@ export const Editor = (props) => {
     return (<>
         <EditorToolbar 
             onClickRaw={props.onClickRaw}
+            btnHtmlOn={props.btnHtmlOn}
         />
         <ReactQuill
             theme="snow"

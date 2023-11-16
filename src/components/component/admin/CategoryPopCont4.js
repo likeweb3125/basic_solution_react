@@ -43,7 +43,6 @@ const CategoryPopCont4 = (props) => {
 
 
     useEffect(()=>{
-        //하위카테고리 새로등록이 아닐때만 상세정보 가져오기
         if(Object.keys(props.info).length > 0){
             setInfo(props.info);
             setLimit(props.info.b_list_cnt);
@@ -110,7 +109,6 @@ const CategoryPopCont4 = (props) => {
 
     //인풋값 변경시
     const onInputChangeHandler = (e) => {
-        console.log(e)
         const id = e.currentTarget.id;
         const val = e.currentTarget.value;
 
@@ -153,6 +151,7 @@ const CategoryPopCont4 = (props) => {
     //에디터내용 값
     const onEditorChangeHandler = (e) => {
         setTemplateEditor(e);
+        
     };
 
 
@@ -474,11 +473,14 @@ const CategoryPopCont4 = (props) => {
                                                         value={templateEditor}
                                                         onChangeHandler={onEditorChangeHandler}
                                                         onClickRaw={handleClickShowRaw}
+                                                        btnHtmlOn={showRaw}
                                                     />
                                                     {showRaw ? 
                                                         <textarea
                                                             value={rawHtml}
-                                                            onChange={(e) => setRawHtml(e.target.value)}
+                                                            onChange={(e) => {
+                                                                setRawHtml(e.target.value);
+                                                            }}
                                                             className="raw_editor"
                                                         />
                                                         : null  

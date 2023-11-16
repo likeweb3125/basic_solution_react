@@ -254,7 +254,8 @@ table td .txt_light {font-size: 14px; color: #999;}
 .edit_box .ql-snow .ql-tooltip.ql-editing a.ql-action::after{content: "저장";}
 .edit_box .ql-snow .ql-tooltip a.ql-remove::before{content: "삭제";}
 .edit_box .raw_editor{position: absolute;width: 100%;bottom: 0;left: 0;height: calc(100% - 43px);}
-.edit_box .ql-toolbar .btn_html{width: auto;}
+.edit_box .ql-toolbar .btn_html{width: auto;color: #000 !important;}
+.edit_box .ql-toolbar .btn_html.on{color: var(--admin-color1) !important;}
 .edit_box .ql-editor{min-height: 300px;}
 .edit_box .ql-container{font-size: inherit;}
 

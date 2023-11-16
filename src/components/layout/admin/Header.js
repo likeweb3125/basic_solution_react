@@ -294,10 +294,10 @@ const Header = () => {
                         </ul>
                     </nav>
                     <div className="help_link">
-                        <a href="#" rel="noopener noreferrer">
+                        <Link to="/console/maint">
                             <strong>유지보수 게시판</strong>
                             <b>1588-0311</b>
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

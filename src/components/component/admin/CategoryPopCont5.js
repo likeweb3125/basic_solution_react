@@ -111,7 +111,6 @@ const CategoryPopCont5 = (props) => {
 
     //인풋값 변경시
     const onInputChangeHandler = (e) => {
-        console.log(e)
         const id = e.currentTarget.id;
         const val = e.currentTarget.value;
 
@@ -154,6 +153,7 @@ const CategoryPopCont5 = (props) => {
     //에디터내용 값
     const onEditorChangeHandler = (e) => {
         setTemplateEditor(e);
+        
     };
 
 
@@ -274,7 +274,7 @@ const CategoryPopCont5 = (props) => {
                                 <div className="input_wrap input_wrap2">
                                     <InputBox2 
                                         type={`text`}
-                                        value={info.b_thumbnail_with || ""}
+                                        value={info.b_thumbnail_with || 0}
                                         onChangeHandler={onInputChangeHandler}
                                         id={`b_thumbnail_with`}
                                         numberOnly={true}
@@ -282,7 +282,7 @@ const CategoryPopCont5 = (props) => {
                                     />
                                     <InputBox2 
                                         type={`text`}
-                                        value={info.b_thumbnail_height || ""}
+                                        value={info.b_thumbnail_height || 0}
                                         onChangeHandler={onInputChangeHandler}
                                         id={`b_thumbnail_height`}
                                         numberOnly={true}
@@ -525,11 +525,15 @@ const CategoryPopCont5 = (props) => {
                                                         value={templateEditor}
                                                         onChangeHandler={onEditorChangeHandler}
                                                         onClickRaw={handleClickShowRaw}
+                                                        btnHtmlOn={showRaw}
                                                     />
                                                     {showRaw ? 
                                                         <textarea
                                                             value={rawHtml}
-                                                            onChange={(e) => setRawHtml(e.target.value)}
+                                                            onChange={(e) => {
+                                                                setRawHtml(e.target.value);
+                                                                
+                                                            }}
                                                             className="raw_editor"
                                                         />
                                                         : null  

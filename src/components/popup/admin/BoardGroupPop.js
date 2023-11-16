@@ -35,10 +35,8 @@ const NotiPop = (props) => {
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [modifyOkConfirm, setModifyOkConfirm] = useState(false);
     const [addOkConfirm, setAddOkConfirm] = useState(false);
-
     const [list, setList] = useState([]);
     const [info, setInfo] = useState({});
-
     const [nameInput, setNameInput] = useState("");
     const [uiCheck, setUiCheck] = useState("");
     const [menuOnImg, setMenuOnImg] = useState(null);
@@ -74,7 +72,6 @@ const NotiPop = (props) => {
                 let data = res.data.data;
                 const newList = data.filter((item)=>item.g_num !== "0"); //숨긴분류 제외
                 setList(newList);
-                // setAllCheck(res.data.all_board);
             }
         })
         .catch((error) => {
@@ -190,7 +187,6 @@ const NotiPop = (props) => {
     );
 
 
-
     const handleDragEnd = (event) => {
         const {active, over} = event;
 
@@ -279,17 +275,29 @@ const NotiPop = (props) => {
     const groupAddHandler = () => {
         const formData = new FormData();
         formData.append("parent_id", popup.adminBoardGroupPopId);
-        // formData.append("g_num", "");
-        // formData.append("all_board", allCheck);
         formData.append("g_name", nameInput);
         formData.append("g_menu_ui", uiCheck);
-        formData.append("g_img_on", menuOnImgData);
-        formData.append("g_img_off", menuOffImgData);
+
+        if(menuOnImgData){
+            menuOnImgData.forEach((file) => {
+                formData.append("g_img_on", file);
+            });
+        }
+
+        if(menuOffImgData){
+            menuOffImgData.forEach((file) => {
+                formData.append("g_img_off", file);
+            });
+        }
+        
         formData.append("use_yn", "Y");
 
-        axios.post(board_group, formData,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
+        axios.post(board_group, formData, {
+            headers: {
+                Authorization: `Bearer ${user.loginUser.accessToken}`,
+                "Content-Type": "multipart/form-data",
+            },
+        })
         .then((res)=>{
             if(res.status === 200){
                 getList();
@@ -321,18 +329,40 @@ const NotiPop = (props) => {
     //분류수정하기
     const groupModifyHandler = () => {
         const formData = new FormData();
-        formData.append("parent_id", popup.adminBoardGroupPopId);
-        formData.append("g_num", popup.adminBoardGroupPopMenuOn);
-        // formData.append("all_board", allCheck);
+        formData.append("id", popup.adminBoardGroupPopMenuOn);
         formData.append("g_name", nameInput);
         formData.append("g_menu_ui", uiCheck);
-        formData.append("g_img_on", menuOnImgData);
-        formData.append("g_img_off", menuOffImgData);
+
+        if(menuOnImgData){
+            menuOnImgData.forEach((file) => {
+                formData.append("g_img_on", file);
+            });
+        }
+
+        if(menuOffImgData){
+            menuOffImgData.forEach((file) => {
+                formData.append("g_img_off", file);
+            });
+        }
+
+        // 메뉴 UI 이미지일때 on,off 이미지 삭제했으면 삭제
+        if(uiCheck == "IMG"){
+            if(menuOnImg == null){
+                formData.append("g_img_on_del", "Y");
+            }
+            if(menuOffImg == null){
+                formData.append("g_img_off_del", "Y");
+            }
+        }
+        
         formData.append("use_yn", "Y");
 
-        axios.put(board_group, formData,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
+        axios.put(board_group, formData, {
+            headers: {
+                Authorization: `Bearer ${user.loginUser.accessToken}`,
+                "Content-Type": "multipart/form-data",
+            },
+        })
         .then((res)=>{
             if(res.status === 200){
                 getList();
@@ -396,6 +426,7 @@ const NotiPop = (props) => {
         .then((res)=>{
             if(res.status === 200){
                 getList();
+                setInfo({});
             }
         })
         .catch((error) => {
@@ -547,64 +578,67 @@ const NotiPop = (props) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="form_input">
-                                                    <h6>이미지 ON</h6>
-                                                    <div className="input_wrap">
-                                                        <div className="file_box1">
-                                                            <div {...getRootProps2({className: 'dropzone'})}>
-                                                                <div className="input_file">
-                                                                    <input {...getInputProps2({className: 'blind'})} />
-                                                                    <label>
-                                                                        {menuOnImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
-                                                                        <strong>파일선택</strong>
-                                                                    </label>
+                                                {/* 메뉴 UI 이미지선택시에만 노출 */}
+                                                {uiCheck == "IMG" && <>
+                                                    <div className="form_input">
+                                                        <h6>이미지 ON</h6>
+                                                        <div className="input_wrap">
+                                                            <div className="file_box1">
+                                                                <div {...getRootProps2({className: 'dropzone'})}>
+                                                                    <div className="input_file">
+                                                                        <input {...getInputProps2({className: 'blind'})} />
+                                                                        <label>
+                                                                            {menuOnImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
+                                                                            <strong>파일선택</strong>
+                                                                        </label>
+                                                                    </div>
                                                                 </div>
+                                                                {menuOnImg != null &&
+                                                                    <ul className="file_txt">
+                                                                        <li>
+                                                                            <span>{menuOnImg}</span>
+                                                                            <button type="button" className="btn_file_remove" 
+                                                                                onClick={()=>{
+                                                                                    setMenuOnImg(null);
+                                                                                    setMenuOnImgData(null);
+                                                                                }}
+                                                                            >파일삭제</button>
+                                                                        </li>
+                                                                    </ul>
+                                                                }
                                                             </div>
-                                                            {menuOnImg != null &&
-                                                                <ul className="file_txt">
-                                                                    <li>
-                                                                        <span>{menuOnImg}</span>
-                                                                        <button type="button" className="btn_file_remove" 
-                                                                            onClick={()=>{
-                                                                                setMenuOnImg(null);
-                                                                                setMenuOnImgData(null);
-                                                                            }}
-                                                                        >파일삭제</button>
-                                                                    </li>
-                                                                </ul>
-                                                            }
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div className="form_input">
-                                                    <h6>이미지 OFF</h6>
-                                                    <div className="input_wrap">
-                                                        <div className="file_box1">
-                                                            <div {...getRootProps3({className: 'dropzone'})}>
-                                                                <div className="input_file">
-                                                                    <input {...getInputProps3({className: 'blind'})} />
-                                                                    <label>
-                                                                        {menuOffImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
-                                                                        <strong>파일선택</strong>
-                                                                    </label>
+                                                    <div className="form_input">
+                                                        <h6>이미지 OFF</h6>
+                                                        <div className="input_wrap">
+                                                            <div className="file_box1">
+                                                                <div {...getRootProps3({className: 'dropzone'})}>
+                                                                    <div className="input_file">
+                                                                        <input {...getInputProps3({className: 'blind'})} />
+                                                                        <label>
+                                                                            {menuOffImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
+                                                                            <strong>파일선택</strong>
+                                                                        </label>
+                                                                    </div>
                                                                 </div>
+                                                                {menuOffImg != null &&
+                                                                    <ul className="file_txt">
+                                                                        <li>
+                                                                            <span>{menuOffImg}</span>
+                                                                            <button type="button" className="btn_file_remove" 
+                                                                                onClick={()=>{
+                                                                                    setMenuOffImg(null);
+                                                                                    setMenuOffImgData(null);
+                                                                                }}
+                                                                            >파일삭제</button>
+                                                                        </li>
+                                                                    </ul>
+                                                                }
                                                             </div>
-                                                            {menuOffImg != null &&
-                                                                <ul className="file_txt">
-                                                                    <li>
-                                                                        <span>{menuOffImg}</span>
-                                                                        <button type="button" className="btn_file_remove" 
-                                                                            onClick={()=>{
-                                                                                setMenuOffImg(null);
-                                                                                setMenuOffImgData(null);
-                                                                            }}
-                                                                        >파일삭제</button>
-                                                                    </li>
-                                                                </ul>
-                                                            }
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </>}
                                             </div>
                                         </div>
                                     </div>

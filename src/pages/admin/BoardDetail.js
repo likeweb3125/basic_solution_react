@@ -18,6 +18,7 @@ const BoardDetail = () => {
     const board_detail = enum_api_uri.board_detail;
     const board_modify = enum_api_uri.board_modify;
     const board_file_down = enum_api_uri.board_file_down;
+    const board_reply = enum_api_uri.board_reply;
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
@@ -57,6 +58,8 @@ const BoardDetail = () => {
             if(res.status === 200){
                 let data = res.data.data;
                 setBoardData(data);
+
+                setAnswerTxt(data.b_reply);
             }
         })
         .catch((error) => {
@@ -167,6 +170,50 @@ const BoardDetail = () => {
     };
 
 
+    //문의게시판일때 답변작성하기
+    const replyHandler = () => {
+        if(!answerTxt){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'답변을 작성해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else{
+            const body = {
+                category: board_category,
+                idx: board_idx,
+                b_reply: answerTxt
+            };
+            axios.post(board_reply, body,
+                {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+            )
+            .then((res)=>{
+                if(res.status === 200){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'답변이 등록되었습니다.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }
+            })
+            .catch((error) => {
+                const err_msg = CF.errorMsgHandler(error);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            });
+        }
+    };
+
+
     return(<>
         <div className="page_admin_board">
             <div className="content_box">
@@ -182,13 +229,13 @@ const BoardDetail = () => {
                                 <h5>{boardData.b_title}</h5>
                                 <ul className="board_info">
                                     <li>
-                                        <strong>관리자</strong>
+                                        <strong>{boardData.m_name}</strong>
                                     </li>
                                     <li>
                                         <em>{boardData.b_reg_date}</em>
                                     </li>
                                     <li>
-                                        <span className="view_cnt">{boardData.b_view}</span>
+                                        <span className="view_cnt">{CF.MakeIntComma(boardData.b_view)}</span>
                                     </li>
                                 </ul>
                             </div>
@@ -234,10 +281,9 @@ const BoardDetail = () => {
                                                 <p>휴대폰번호</p>
                                                 <InputBox 
                                                     type={`text`}
-                                                    // count={boardData.b_title ? boardData.b_title.length : 0}
-                                                    // value={boardData.b_title || ""}
-                                                    // onChangeHandler={onInputChangeHandler}
-                                                    // id={`b_title`}
+                                                    value={boardData.b_sms_phone || ""}
+                                                    onChangeHandler={onInputChangeHandler}
+                                                    id={`b_sms_phone`}
                                                     phone={true}
                                                 />
                                             </li>
@@ -245,10 +291,9 @@ const BoardDetail = () => {
                                                 <p>이메일</p>
                                                 <InputBox 
                                                     type={`text`}
-                                                    // count={boardData.b_title ? boardData.b_title.length : 0}
-                                                    // value={boardData.b_title || ""}
-                                                    // onChangeHandler={onInputChangeHandler}
-                                                    // id={`b_title`}
+                                                    value={boardData.b_email || ""}
+                                                    onChangeHandler={onInputChangeHandler}
+                                                    id={`b_email`}
                                                 />
                                             </li>
                                         </ul>
@@ -261,7 +306,7 @@ const BoardDetail = () => {
                     {boardSettingData.c_content_type == 7 ?
                         <div className="form_btn_wrap">
                             <button type="button" className="btn_type3" onClick={()=>{navigate(-1)}}>목록</button>
-                            <button type="button" className="btn_type4">답변등록</button>
+                            <button type="button" className="btn_type4" onClick={replyHandler}>답변등록</button>
                         </div>
                         :
                         <div className="btn_list_wrap tm30">

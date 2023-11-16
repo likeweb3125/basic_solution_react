@@ -1,423 +1,152 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { enum_api_uri } from "../../../config/enum";
+import * as CF from "../../../config/function";
+import { confirmPop } from "../../../store/popupSlice";
+import TextareaBox from "./TextareaBox";
+import ConfirmPop from "../../popup/ConfirmPop";
+
+
 const CommentWrap = (props) => {
-    return(
+    const maint_comment = enum_api_uri.maint_comment;
+    const dispatch = useDispatch();
+    const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
+    const [confirm, setConfirm] = useState(false);
+    const [list, setList] = useState([]);
+    const [comment, setComment] = useState("");
+
+
+    // Confirm팝업 닫힐때
+    useEffect(()=>{
+        if(popup.confirmPop === false){
+            setConfirm(false);
+        }
+    },[popup.confirmPop]);
+
+
+    useEffect(()=>{
+        setList(props.list);
+    },[props.list]);
+
+
+    //댓글 textarea 값 변경시
+    const onTextChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setComment(val);
+    };
+
+
+    //댓글등록버튼 클릭시
+    const enterBtnClickHandler = () => {
+        if(comment.length == 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'댓글을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else{
+            enterHandler();
+        }
+    };
+
+
+    //댓글등록하기
+    const enterHandler = () => {
+        const body = {
+            list_no: props.list_no,
+            c_name: user.maintName,
+            c_content: comment,
+            m_id: "",
+            c_password: "",
+            c_table: "admin",
+        };
+        axios.post(`${maint_comment}`, body, 
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'댓글이 등록되었습니다.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    return(<>
         <div className="comment_section">
             <div className="txt">
                 <span>댓글</span>
-                <span className="cnt">37</span>
+                <span className="cnt">{CF.MakeIntComma(list.length)}</span>
             </div>
             <div className="comment_wrap">
                 <div className="comment_box">
-                    <div className="comment">
-                        <div className="comment_item">
-                            <div className="profile">
-                                <ul className="comment_info">
-                                    <li>
-                                        <strong>관리자</strong>
-                                    </li>
-                                    <li>
-                                        <em>2023.07.23</em>
-                                    </li>
-                                    <li>
-                                        <button type="button" className="btn_write_comment">답글쓰기</button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="con_comment">
-                                <p>저녁 뭐 먹죠1</p>
-                            </div>
-                            <div className="comment_util">
-                                <button type="button" className="btn_type11">수정</button>
-                                <button type="button" className="btn_type12">삭제</button>
-                            </div>
-                        </div>
-                        <div className="reply_wrap">
-                            <div className="reply_comment">
-                                <button type="button" className="btn_reply_toggle on">댓글 토글</button>
-                                <div className="comment">
-                                    <div className="comment_item">
-                                        <div className="profile">
-                                            <ul className="comment_info">
-                                                <li>
-                                                    <strong>관리자</strong>
-                                                </li>
-                                                <li>
-                                                    <em>2023.07.23</em>
-                                                </li>
-                                                <li>
-                                                    <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="con_comment">
-                                            <p>저녁 뭐 먹죠1-1</p>
-                                        </div>
-                                        <div className="comment_util">
-                                            <button type="button" className="btn_type11">수정</button>
-                                            <button type="button" className="btn_type12">삭제</button>
-                                        </div>
+                    {list.map((cont,i)=>{
+                        return(
+                            <div key={i} className="comment">
+                                <div className="comment_item">
+                                    <div className="profile">
+                                        <ul className="comment_info">
+                                            <li>
+                                                <strong>{cont.c_name}</strong>
+                                            </li>
+                                            <li>
+                                                <em>{cont.c_wdate}</em>
+                                            </li>
+                                        </ul>
                                     </div>
-                                </div>
-                                <div className="comment">
-                                    <div className="comment_item">
-                                        <div className="profile">
-                                            <ul className="comment_info">
-                                                <li>
-                                                    <strong>관리자</strong>
-                                                </li>
-                                                <li>
-                                                    <em>2023.07.23</em>
-                                                </li>
-                                                <li>
-                                                    <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="con_comment">
-                                            <p>저녁 뭐 먹죠1-2</p>
-                                        </div>
-                                        <div className="comment_util">
-                                            <button type="button" className="btn_type11">수정</button>
-                                            <button type="button" className="btn_type12">삭제</button>
-                                        </div>
-                                    </div>
-                                    <div className="reply_wrap">
-                                        <div className="btn_reply_more_wrap">
-                                            <button type="button" className="btn_reply_more">댓글 더보기</button>
-                                            <button type="button" className="btn_reply_more_txt">댓글 더보기</button>
-                                        </div>
-                                        <div className="reply_comment">
-                                            {/* <div className="comment">
-                                                <div className="comment_item">
-                                                    <div className="profile">
-                                                        <ul className="comment_info">
-                                                            <li>
-                                                                <strong>관리자</strong>
-                                                            </li>
-                                                            <li>
-                                                                <em>2023.07.23</em>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <div className="con_comment">
-                                                        <p>저녁 뭐 먹죠1-2-1</p>
-                                                    </div>
-                                                    <div className="comment_util">
-                                                        <button type="button" className="btn_type11">수정</button>
-                                                        <button type="button" className="btn_type12">삭제</button>
-                                                    </div>
-                                                </div>
-                                            </div> */}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="comment">
-                                    <div className="comment_item">
-                                        <div className="profile">
-                                            <ul className="comment_info">
-                                                <li>
-                                                    <strong>관리자</strong>
-                                                </li>
-                                                <li>
-                                                    <em>2023.07.23</em>
-                                                </li>
-                                                <li>
-                                                    <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="con_comment">
-                                            <p>저녁 뭐 먹죠1-3</p>
-                                        </div>
-                                        <div className="comment_util">
-                                            <button type="button" className="btn_type11">수정</button>
-                                            <button type="button" className="btn_type12">삭제</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* 답글입력 */}
-                                <div className="write_reply_wrap">
-                                    <div className="writer_wrap">
-                                        <div className="writer_info">
-                                            {/* 로그인 했을 경우 strong태그에 user_name추가 */}
-                                            <strong className="user_name">관리자</strong>
-                                        </div>
-                                    </div>
-                                    <div className="write_comment">
-                                        <div className="textarea_box">
-                                            <textarea name="" id="" cols="30" rows="4" placeholder="댓글을 입력해주세요."></textarea>
-                                            <span className="char_cnt">0 / 300</span>
-                                        </div>
-                                        <button type="button" className="btn_type14">등록</button>
-                                        <button type="button" className="btn_cancel">답글 취소</button>
-                                    </div>
-                                </div>
-                                {/* //답글입력 */}
-
-                            </div>
-                        </div>
-                    </div>
-                    <div className="comment">
-                        <div className="comment_item">
-                            <div className="profile">
-                                <ul className="comment_info">
-                                    <li>
-                                        <strong>관리자</strong>
-                                    </li>
-                                    <li>
-                                        <em>2023.07.23</em>
-                                    </li>
-                                    <li>
-                                        <button type="button" className="btn_write_comment">답글쓰기</button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="con_comment">
-                                <p>저녁 뭐 먹죠1</p>
-                            </div>
-                            <div className="comment_util">
-                                <button type="button" className="btn_type11">수정</button>
-                                <button type="button" className="btn_type12">삭제</button>
-                            </div>
-                        </div>
-                        <div className="reply_wrap">
-                            <div className="reply_comment">
-                                <button type="button" className="btn_reply_toggle on">댓글 토글</button>
-                                <div className="comment">
-                                    <div className="comment_item">
-                                        <div className="profile">
-                                            <ul className="comment_info">
-                                                <li>
-                                                    <strong>관리자</strong>
-                                                </li>
-                                                <li>
-                                                    <em>2023.07.23</em>
-                                                </li>
-                                                <li>
-                                                    <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="con_comment">
-                                            <p>저녁 뭐 먹죠1-1</p>
-                                        </div>
-                                        <div className="comment_util">
-                                            <button type="button" className="btn_type11">수정</button>
-                                            <button type="button" className="btn_type12">삭제</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="comment">
-                                    <div className="comment_item">
-                                        <div className="profile">
-                                            <ul className="comment_info">
-                                                <li>
-                                                    <strong>관리자</strong>
-                                                </li>
-                                                <li>
-                                                    <em>2023.07.23</em>
-                                                </li>
-                                                <li>
-                                                    <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="con_comment">
-                                            <p>저녁 뭐 먹죠1-2</p>
-                                        </div>
-                                        <div className="comment_util">
-                                            <button type="button" className="btn_type11">수정</button>
-                                            <button type="button" className="btn_type12">삭제</button>
-                                        </div>
-                                    </div>
-                                    <div className="reply_wrap">
-                                        {/* <div className="btn_reply_more_wrap">
-                                            <button type="button" className="btn_reply_more">댓글 더보기</button>
-                                            <button type="button" className="btn_reply_more_txt">댓글 더보기</button>
-                                        </div> */}
-                                        <div className="reply_comment">
-                                            <button type="button" className="btn_reply_toggle on">댓글 토글</button>
-                                            <div className="comment">
-                                                <div className="comment_item">
-                                                    <div className="profile">
-                                                        <ul className="comment_info">
-                                                            <li>
-                                                                <strong>관리자</strong>
-                                                            </li>
-                                                            <li>
-                                                                <em>2023.07.23</em>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <div className="con_comment">
-                                                        <p>저녁 뭐 먹죠1-2-1</p>
-                                                    </div>
-                                                    <div className="comment_util">
-                                                        <button type="button" className="btn_type11">수정</button>
-                                                        <button type="button" className="btn_type12">삭제</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="comment">
-                                    <div className="comment_item">
-                                        <div className="profile">
-                                            <ul className="comment_info">
-                                                <li>
-                                                    <strong>관리자</strong>
-                                                </li>
-                                                <li>
-                                                    <em>2023.07.23</em>
-                                                </li>
-                                                <li>
-                                                    <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="con_comment">
-                                            <p>저녁 뭐 먹죠1-3</p>
-                                        </div>
-                                        <div className="comment_util">
-                                            <button type="button" className="btn_type11">수정</button>
-                                            <button type="button" className="btn_type12">삭제</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="comment">
-                                    <div className="comment_item">
-                                        <div className="profile">
-                                            <ul className="comment_info">
-                                                <li>
-                                                    <strong>관리자</strong>
-                                                </li>
-                                                <li>
-                                                    <em>2023.07.23</em>
-                                                </li>
-                                                <li>
-                                                    <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div className="con_comment">
-                                            <p>저녁 뭐 먹죠1-2</p>
-                                        </div>
-                                        <div className="comment_util">
-                                            <button type="button" className="btn_type11">수정</button>
-                                            <button type="button" className="btn_type12">삭제</button>
-                                        </div>
-                                    </div>
-                                    <div className="reply_wrap">
-                                        {/* <div className="btn_reply_more_wrap">
-                                            <button type="button" className="btn_reply_more">댓글 더보기</button>
-                                            <button type="button" className="btn_reply_more_txt">댓글 더보기</button>
-                                        </div> */}
-                                        <div className="reply_comment">
-                                            <button type="button" className="btn_reply_toggle on">댓글 토글</button>
-                                            <div className="comment">
-                                                <div className="comment_item">
-                                                    <div className="profile">
-                                                        <ul className="comment_info">
-                                                            <li>
-                                                                <strong>관리자</strong>
-                                                            </li>
-                                                            <li>
-                                                                <em>2023.07.23</em>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <div className="con_comment">
-                                                        <p>저녁 뭐 먹죠1-2-1</p>
-                                                    </div>
-                                                    <div className="comment_util">
-                                                        <button type="button" className="btn_type11">수정</button>
-                                                        <button type="button" className="btn_type12">삭제</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="comment">
-                                                <div className="comment_item">
-                                                    <div className="profile">
-                                                        <ul className="comment_info">
-                                                            <li>
-                                                                <strong>관리자</strong>
-                                                            </li>
-                                                            <li>
-                                                                <em>2023.07.23</em>
-                                                            </li>
-                                                            <li>
-                                                                <button type="button" className="btn_write_comment">답글쓰기</button>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <div className="con_comment">
-                                                        <p>저녁 뭐 먹죠1-2-1</p>
-                                                    </div>
-                                                    <div className="comment_util">
-                                                        <button type="button" className="btn_type11">수정</button>
-                                                        <button type="button" className="btn_type12">삭제</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    <div className="con_comment">
+                                        <p>{cont.c_content}</p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="comment">
-                        <div className="comment_item">
-                            <div className="profile">
-                                <ul className="comment_info">
-                                    <li>
-                                        <strong>관리자aaaa</strong>
-                                    </li>
-                                    <li>
-                                        <em>2023.07.23</em>
-                                    </li>
-                                    <li>
-                                        <button type="button" className="btn_write_comment">답글쓰기</button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="con_comment">
-                                <p>저녁 뭐 먹죠2</p>
-                            </div>
-                            <div className="comment_util">
-                                <button type="button" className="btn_type11">수정</button>
-                                <button type="button" className="btn_type12">삭제</button>
-                            </div>
-                        </div>
-                    </div>
+                        );
+                    })}
                 </div>
                 <div className="write_comment_wrap">
                     <div className="writer_wrap">
                         <div className="writer_info">
-                            {/* 로그인 했을 경우 strong태그에 user_name추가 */}
-                            <strong className="user_name">관리자</strong>
+                            <strong className="user_name">{props.name}</strong>
                         </div>
                     </div>
                     <div className="write_comment">
-                        <div className="textarea_box">
-                            <textarea name="" id="" cols="30" rows="4" placeholder="댓글을 입력해주세요."></textarea>
-                            <span className="char_cnt">0 / 300</span>
-                        </div>
-                        <button type="button" className="btn_type14">등록</button>
+                        <TextareaBox 
+                            cols={30}
+                            rows={4}
+                            placeholder="댓글을 입력해주세요."
+                            countShow={true}
+                            countMax={300}
+                            count={comment.length}
+                            value={comment}
+                            onChangeHandler={onTextChangeHandler}
+                        />
+                        <button type="button" className="btn_type14" onClick={enterBtnClickHandler}>등록</button>
                     </div>
                 </div>
             </div>
         </div>
-    );
+
+        {/* confirm팝업 */}
+        {confirm && <ConfirmPop />}
+    </>);
 };
 
 export default CommentWrap;

@@ -63,7 +63,7 @@ export const QuillToolbar = (props) => (
             <button className="ql-video" />
         </span>
         <span className="ql-formats">
-            <button className="btn_html" onClick={props.onClickRaw}>HTML</button>
+            <button className={`btn_html${props.btnHtmlOn ? " on" : ""}`} onClick={props.onClickRaw}>HTML</button>
         </span>
     </div>
 );
