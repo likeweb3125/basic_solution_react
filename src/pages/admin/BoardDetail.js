@@ -16,7 +16,6 @@ const BoardDetail = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { board_category, board_idx } = useParams();
-    const api_uri = enum_api_uri.api_uri;
     const board_detail = enum_api_uri.board_detail;
     const board_modify = enum_api_uri.board_modify;
     const board_file_down = enum_api_uri.board_file_down;
@@ -24,7 +23,6 @@ const BoardDetail = () => {
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
-    const etc = useSelector((state)=>state.etc);
     const [confirm, setConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [title, setTitle] = useState("");

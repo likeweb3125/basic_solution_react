@@ -153,7 +153,7 @@ const MaintWrite = (props) => {
         }
 
         formData.append("category", user.maintName);
-        formData.append("name", "");
+        formData.append("name", user.maintName);
         formData.append("password", "");
         formData.append("subject", boardData.subject);
         formData.append("contents", cont);

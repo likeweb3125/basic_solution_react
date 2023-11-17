@@ -69,6 +69,10 @@ const Header = () => {
         if(path === "/console/setting/policy"){
             setMenuOn("setting2");
         }
+
+        if(path === "/console/maint"){
+            setMenuOn("maint");
+        }
     },[location.pathname]);
 
 
@@ -208,7 +212,7 @@ const Header = () => {
                     <nav>
                         <ul className="admin_gnb">
                             {/* <li className={menuOn && menuOn.includes("menu") ? "on" : ""}>
-                                <button type="button" className="admin_menu" onClick={()=>{setMenuOn("menu")}}><span>메뉴 관리</span></button>
+                                <button type="button" className="btn_menu admin_menu" onClick={()=>{setMenuOn("menu")}}><span>메뉴 관리</span></button>
                                 <ul className="depth2" ref={menuRef}>
                                     <li className={menuOn === "menu1" ? "on" : ""} >
                                         <Link to="/console/menu/category" className="menu">카테고리 관리</Link>
@@ -216,7 +220,7 @@ const Header = () => {
                                 </ul>
                             </li> */}
                             <li className={menuOn && menuOn.includes("board") ? "on" : ""}>
-                                <button type="button" className="admin_board" onClick={()=>{setMenuOn("board")}}><span>게시판 관리</span></button>
+                                <button type="button" className="btn_menu admin_board" onClick={()=>{setMenuOn("board")}}><span>게시판 관리</span></button>
                                 <ul className="depth2" ref={boardRef}>
                                     {boardList.length > 0 &&
                                         <li className={`is_depth${menuOn && menuOn.includes("board1") ? " on" : ""}`}>
@@ -245,7 +249,7 @@ const Header = () => {
                                 </ul>
                             </li>
                             {/* <li className={menuOn && menuOn.includes("member") ? "on" : ""}>
-                                <button type="button" className="admin_member" onClick={()=>{setMenuOn("member")}}><span>회원 관리</span></button>
+                                <button type="button" className="btn_menu admin_member" onClick={()=>{setMenuOn("member")}}><span>회원 관리</span></button>
                                 <ul className="depth2" ref={memberRef}>
                                     <li className={menuOn === "member1" ? "on" : ""}>
                                         <Link to="" className="menu">회원 관리</Link>
@@ -256,7 +260,7 @@ const Header = () => {
                                 </ul>
                             </li> */}
                             <li className={menuOn && menuOn.includes("design") ? "on" : ""}>
-                                <button type="button" className="admin_design" onClick={()=>{setMenuOn("design")}}><span>디자인 관리</span></button>
+                                <button type="button" className="btn_menu admin_design" onClick={()=>{setMenuOn("design")}}><span>디자인 관리</span></button>
                                 <ul className="depth2" ref={designRef}>
                                     {/* <li className={menuOn === "design1" ? "on" : ""}>
                                         <Link to="" className="menu">메인 배너 관리</Link>
@@ -267,7 +271,7 @@ const Header = () => {
                                 </ul>
                             </li>
                             <li className={menuOn && menuOn.includes("setting") ? "on" : ""}>
-                                <button type="button" className="admin_setting" onClick={()=>{setMenuOn("setting")}}><span>환경설정</span></button>
+                                <button type="button" className="btn_menu admin_setting" onClick={()=>{setMenuOn("setting")}}><span>환경설정</span></button>
                                 <ul className="depth2" ref={settingRef}>
                                     <li className={menuOn === "setting1" ? "on" : ""}>
                                         <Link to="/console/setting/site" className="menu">사이트정보</Link>
@@ -281,7 +285,7 @@ const Header = () => {
                                 </ul>
                             </li>
                             {/* <li className={menuOn && menuOn.includes("stats") ? "on" : ""}>
-                                <button type="button" className="admin_stats" onClick={()=>{setMenuOn("stats")}}><span>통계관리</span></button>
+                                <button type="button" className="btn_menu admin_stats" onClick={()=>{setMenuOn("stats")}}><span>통계관리</span></button>
                                 <ul className="depth2" ref={statsRef}>
                                     <li className={menuOn === "stats1" ? "on" : ""}>
                                         <Link to="" className="menu">전체 통계</Link>
@@ -291,14 +295,11 @@ const Header = () => {
                                     </li>
                                 </ul>
                             </li> */}
+                            <li className={menuOn && menuOn === "maint" ? "on" : ""}>
+                                <Link to="/console/maint" className="btn_menu admin_maint" onClick={()=>{setMenuOn("maint")}}><span>유지보수 게시판</span></Link>
+                            </li>
                         </ul>
                     </nav>
-                    <div className="help_link">
-                        <Link to="/console/maint">
-                            <strong>유지보수 게시판</strong>
-                            <b>1588-0311</b>
-                        </Link>
-                    </div>
                 </div>
             </div>
         </header>

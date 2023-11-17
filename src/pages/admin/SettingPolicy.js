@@ -49,7 +49,7 @@ const SettingPolicy = () => {
         let search;
         if(searchType == "제목만"){
             search = "title";
-        }else if(searchType == "제목 + 내용"){
+        }else if(searchType == "제목+내용"){
             search = "titlecontents";
         }else if(searchType == "작성자"){
             search = "name";
@@ -281,7 +281,7 @@ const SettingPolicy = () => {
                             <div className="search_box">
                                 <SelectBox 
                                     class="select_type3"
-                                    list={["제목만","제목 + 내용"]}
+                                    list={["제목만","제목+내용"]}
                                     selected={searchType}
                                     onChangeHandler={(e)=>{
                                         const val = e.currentTarget.value;

@@ -14,8 +14,9 @@ const SelectBox = (props) => {
                 value={props.selected}
                 onChange={props.onChangeHandler}
                 name={props.name}
+                required={props.required}
             >
-                <option value="" hidden={props.selHidden}>선택</option>
+                <option value="" hidden={props.selHidden}>{props.hiddenTxt ? props.hiddenTxt : "선택"}</option>
                 {list && list.map((val,i)=>{
                     return(
                         props.objectSel === "board_title" ? //게시판관리 - 게시글들 제목일때

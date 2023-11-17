@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import * as CF from "../../../config/function";
-import { checkedList } from "../../../store/etcSlice";
+import { checkedList, scrollY } from "../../../store/etcSlice";
 import { adminPolicyPop, adminPopupPop } from "../../../store/popupSlice";
 
 
@@ -148,7 +148,7 @@ const TableWrap = (props) => {
                                         }
                                         <td>
                                             <div className="txt_left">
-                                                <span>
+                                                <span onClick={()=>{dispatch(scrollY(window.scrollY))}}>
                                                     <Link to={`/console/board/post/detail/${cont.category}/${cont.idx}`}>{cont.b_title}</Link>
                                                 </span>
                                                 {cont.comment_count > 0 && <b>({CF.MakeIntComma(cont.comment_count)})</b>}
@@ -267,7 +267,7 @@ const TableWrap = (props) => {
                                         <td>1</td>
                                         <td>
                                             <div className="txt_left">
-                                                <span>
+                                                <span onClick={()=>{dispatch(scrollY(window.scrollY))}}>
                                                     <Link to={`/console/maint/detail/${cont.list_no}`}>{cont.subject}</Link>
                                                     {cont.comment_count > 0 && <b>({CF.MakeIntComma(cont.comment_count)})</b>}
                                                 </span>

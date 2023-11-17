@@ -41,18 +41,19 @@ body,input,select,textarea,button,table {
 
 /* 메뉴 */
 .admin_gnb {padding: 0 20px;}
-.admin_gnb > li > button {display: block; position: relative;width: 100%;text-align: left;}
-.admin_gnb > li > button:before {content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: 5px; background: rgba(255, 255, 255, 0.1); opacity: 0; /*transition: all .3s;*/}
-.admin_gnb > li.on > button:before {opacity: 1;}
-.admin_gnb > li > button:after {content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/admin_gnb_arrow.svg') no-repeat 50% 50%/100%;}
-.admin_gnb > li > button span {display: block; position: relative; line-height: 24px; padding: 20px 12px 20px 48px; font-size: 22px; font-weight: 600; color: #fff; border-radius: 5px;}
-.admin_gnb > li > button span:before {content: ''; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px;}
-.admin_gnb > li > button.admin_menu span:before {background: url('../images/ic_admin_menu.svg') no-repeat 50% 50%/100%;} 
-.admin_gnb > li > button.admin_board span:before {background: url('../images/ic_admin_board.svg') no-repeat 50% 50%/100%;} 
-.admin_gnb > li > button.admin_member span:before {background: url('../images/ic_admin_member.svg') no-repeat 50% 50%/100%;} 
-.admin_gnb > li > button.admin_design span:before {background: url('../images/ic_admin_design.svg') no-repeat 50% 50%/100%;} 
-.admin_gnb > li > button.admin_setting span:before {background: url('../images/ic_admin_setting.svg') no-repeat 50% 50%/100%;} 
-.admin_gnb > li > button.admin_stats span:before {background: url('../images/ic_admin_stats.svg') no-repeat 50% 50%/100%;} 
+.admin_gnb > li > .btn_menu {display: block; position: relative;width: 100%;text-align: left;}
+.admin_gnb > li > .btn_menu:before {content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; border-radius: 5px; background: rgba(255, 255, 255, 0.1); opacity: 0; /*transition: all .3s;*/}
+.admin_gnb > li.on > .btn_menu:before {opacity: 1;}
+.admin_gnb > li > .btn_menu:after {content: ''; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/admin_gnb_arrow.svg') no-repeat 50% 50%/100%;}
+.admin_gnb > li > .btn_menu span {display: block; position: relative; line-height: 24px; padding: 20px 12px 20px 48px; font-size: 22px; font-weight: 600; color: #fff; border-radius: 5px;}
+.admin_gnb > li > .btn_menu span:before {content: ''; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px;}
+.admin_gnb > li > .btn_menu.admin_menu span:before {background: url('../images/ic_admin_menu.svg') no-repeat 50% 50%/100%;} 
+.admin_gnb > li > .btn_menu.admin_board span:before {background: url('../images/ic_admin_board.svg') no-repeat 50% 50%/100%;} 
+.admin_gnb > li > .btn_menu.admin_member span:before {background: url('../images/ic_admin_member.svg') no-repeat 50% 50%/100%;} 
+.admin_gnb > li > .btn_menu.admin_design span:before {background: url('../images/ic_admin_design.svg') no-repeat 50% 50%/100%;} 
+.admin_gnb > li > .btn_menu.admin_setting span:before {background: url('../images/ic_admin_setting.svg') no-repeat 50% 50%/100%;} 
+.admin_gnb > li > .btn_menu.admin_stats span:before {background: url('../images/ic_admin_stats.svg') no-repeat 50% 50%/100%;} 
+.admin_gnb > li > .btn_menu.admin_maint span:before {background: url('../images/ic_help.svg') no-repeat 50% 50%/100%;} 
 
 
 /* 메뉴 1차 */
@@ -69,11 +70,6 @@ body,input,select,textarea,button,table {
 .admin_gnb .depth3 {height: 0;overflow: hidden;transition: 0.2s ease-in-out;}
 .admin_gnb .depth3 > li > a {display: block; padding: 5px 0 5px 48px; font-size: 16px; font-weight: 500; color: #878b93;cursor: pointer;}
 .admin_gnb .depth3 > li.on > a {color: rgba(255, 255, 255, 0.8);}
-.body_admin #header .help_link {padding: 0 20px 130px;}
-.body_admin #header .help_link a {display: flex; align-items: center; justify-content: space-between; position: relative; line-height: 22px; padding: 20px 12px 20px 48px; border: 1px solid rgba(221, 221, 221, 0.4); border-radius: 5px;}
-.body_admin #header .help_link a:before {content: ''; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_help.svg') no-repeat 50% 50%/100%;}
-.body_admin #header .help_link strong {font-size: 18px; font-weight: 600; color: #fff;}
-.body_admin #header .help_link b {font-size: 18px; font-weight: 600; color: rgba(255, 255, 255, 0.51);}
 
 
 /* 탑 */
@@ -280,6 +276,7 @@ body,input,select,textarea,button,table {
 .board_table_util .util_wrap .select_type3 {width: 240px;}
 .board_table_util .util_wrap .btn_box {display: flex; column-gap: 4px;}
 .admin_section .board_section .board_btn_wrap {position: absolute; right: 0; bottom: -1%;}
+.admin_section .board_section .board_btn_wrap.none_list{position: relative;text-align: right;}
 .admin_section .board_section .btn_list_wrap {text-align: center;}
 .admin_section .board_section .user_level {display: flex; align-items: center; justify-content: center; column-gap: 4px;}
 .admin_section .board_section .user_level strong {font-size: 16px; font-weight: 400; color: #222;}

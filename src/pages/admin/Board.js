@@ -5,7 +5,7 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminCategoryPop } from "../../store/popupSlice";
-import { pageNoChange, checkedList, listPageData } from "../../store/etcSlice";
+import { pageNoChange, checkedList, listPageData, detailPageBack } from "../../store/etcSlice";
 import { boardSettingData } from "../../store/commonSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
@@ -39,11 +39,16 @@ const Board = () => {
     const [checkList, setCheckList] = useState([]);
     const [checkedNum, setCheckedNum] = useState(0);
     const navigate = useNavigate();
+    const [scrollMove, setScrollMove] = useState(false);
 
 
+    //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
     useEffect(()=>{
-        console.log(etc.detailPageBack);
-    },[etc.detailPageBack]);
+        if(scrollMove){
+            const y = etc.scrollY;
+            window.scrollTo(0,y); 
+        }
+    },[scrollMove]);
 
 
     // Confirm팝업 닫힐때
@@ -73,21 +78,33 @@ const Board = () => {
         let pageNum;
         let search;
         let searchText;
-        
+
         //상세페이지에서 뒤로가기시 저장된 리스트페이지 정보로 조회
         if(etc.detailPageBack){
             limitNum = etc.listPageData.limit;
             pageNum = etc.listPageData.page;
             search = etc.listPageData.search;
             searchText = etc.listPageData.searchTxt;
-        }
-        else{
+
+            let type;
+            if(search == "title"){
+                type = "제목만";
+            }else if(search == "titlecontents"){
+                type = "제목+내용";
+            }else if(search == "name"){
+                type = "작성자";
+            }
+
+            setLimit(limitNum);
+            setSearchType(type);
+            setSearchTxt(searchText);
+        }else{
             limitNum = limit;
             pageNum = page;
 
             if(searchType == "제목만"){
                 search = "title";
-            }else if(searchType == "제목 + 내용"){
+            }else if(searchType == "제목+내용"){
                 search = "titlecontents";
             }else if(searchType == "작성자"){
                 search = "name";
@@ -95,6 +112,7 @@ const Board = () => {
 
             searchText = searchTxt;
         }
+
         axios.get(`${board_list.replace(":category",board_category).replace(":limit",limitNum)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search="+search+"&searchtxt="+searchText : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
@@ -116,6 +134,12 @@ const Board = () => {
                     searchTxt: searchTxt
                 };
                 dispatch(listPageData(pageData));
+
+                //상세페이지에서 뒤로가기시
+                if(etc.detailPageBack){
+                    setScrollMove(true);
+                    dispatch(detailPageBack(false));
+                }
             }
         })
         .catch((error) => {
@@ -399,7 +423,7 @@ const Board = () => {
                             <div className="search_box">
                                 <SelectBox 
                                     class="select_type3"
-                                    list={["제목만","제목 + 내용","작성자"]}
+                                    list={["제목만","제목+내용","작성자"]}
                                     selected={searchType}
                                     onChangeHandler={(e)=>{
                                         const val = e.currentTarget.value;
@@ -471,7 +495,7 @@ const Board = () => {
                             lastPage={boardData.last_page} //총페이지 끝
                         />
                     }
-                    <div className="board_btn_wrap">
+                    <div className={`board_btn_wrap${boardData.board_list && boardData.board_list.length > 0 ? "" : " none_list"}`}>
                         <Link to={`/console/board/post/write/${board_category}`} className="btn_type4">작성하기</Link>                                        
                     </div>
                 </div>

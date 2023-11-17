@@ -68,8 +68,8 @@ const Layout = (props) => {
             setLocationList(["환경설정","시스템 운영정책"]);
         }
 
-        //유지보수
-        if(path === "/console/maint"){
+        //유지보수게시판
+        if(path.includes("/console/maint")){
             setLocationList(["유지보수 게시판"]);
         }
     },[location.pathname, common.boardMenu]);

@@ -65,10 +65,10 @@ const Login = () => {
                 dispatch(loginUser(data));
 
                 //siteId store 에 저장 (고정값)
-                dispatch(siteId("likeweb"));
+                dispatch(siteId(process.env.REACT_APP_SITE_ID));
 
                 //maintName store 에 저장 (고정값) 유지보수업체이름
-                dispatch(maintName("라이크웹테스트"));
+                dispatch(maintName(process.env.REACT_APP_MAINT_NAME));
 
                 //관리자단 메인으로 페이지이동
                 navigate('/console');
