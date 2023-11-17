@@ -1,33 +1,26 @@
+import { useEffect, useState } from "react";
 import f_admin_logo from "../../../images/f_admin_logo.png";
 
-const Footer = () => {
+const Footer = (props) => {
+    const [info, setInfo] = useState({});
+
+    useEffect(()=>{
+        setInfo(props.info);
+    },[props.info]);
+
     return(
         <footer id="footer" className="footer">
             <div className="footer_inner">
                 <address>
                     <ul>
-                        <li><h2>라이크웹</h2></li>
-                        <li>
-                            <span>대표이사</span>
-                            홍길동
-                        </li>
-                        <li>
-                            <span>사업자등록번호</span>
-                            012-34-567890
-                        </li>
+                        <li><h2>{info.c_site_name}</h2></li>
+                        {info.c_ceo && <li><span>대표이사</span>{info.c_ceo}</li>}
+                        {info.c_num && <li><span>사업자등록번호</span>{info.c_num}</li>}
                     </ul>
                     <ul>
-                        <li>
-                            서울 강남구 봉은사로55길 17 가남빌딩 5층
-                        </li>
-                        <li>
-                            <span>Tel</span>
-                            070-1234-5678
-                        </li>
-                        <li>
-                            <span>Email</span>
-                            info@mailmailamial.co.kr
-                        </li>
+                        {info.c_address && <li>{info.c_address}</li>}
+                        {info.c_tel && <li><span>Tel</span>{info.c_tel}</li>}
+                        {info.c_email && <li><span>Email</span>{info.c_email}</li>}
                     </ul>
                 </address>
                 <h2 className="f_logo">

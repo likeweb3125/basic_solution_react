@@ -512,21 +512,11 @@ body,input,select,textarea,button,table {
 /* 유지보수 */
 .page_admin_maint .maint_status {color: #666;}
 .page_admin_maint .maint_notice {background: url('../images/img_maint.png') no-repeat 50% 50%/cover; position: relative; margin-bottom: 20px; padding: 60px 70px 0;}
-.page_admin_maint .maint_notice .maint_box {padding: 40px 60px 25px; position: relative; background: #fff; max-width: 800px;}
-.page_admin_maint .maint_notice h2 {font-size: 28px; font-weight: 700; color: #222; line-height: 50px; padding-bottom: 15px; border-bottom: 1px solid #333;}
-.page_admin_maint .maint_notice p {padding-top: 15px; font-size: 18px; font-weight: 400; color: #666;}
-.page_admin_maint .maint_notice p b {font-weight: 500; color: #222;}
+.page_admin_maint .maint_notice .maint_box {width: 800px;position: relative;}
+.page_admin_maint .maint_box .btn_likeweb {text-align: center; line-height: 30px; padding: 10px; max-width: 240px; width: 100%; position: absolute; right: 60px; top: 40px; border-radius: 5px; background: var(--admin-color1); font-size: 18px; font-weight: 500; color: #fff;}
+.page_admin_maint .maint_box .btn_likeweb strong {font-weight: 400;}
+.page_admin_maint .maint_box .btn_likeweb strong b {font-weight: 700;}
 .page_admin_maint .tit {max-width: calc(100% - 800px);}
-.page_admin_maint .list_maint {padding-top: 25px; display: grid; grid-template-columns: 1fr 1fr; row-gap: 10px;}
-.page_admin_maint .list_maint li {display: flex;}
-.page_admin_maint .list_maint li:nth-of-type(2) {grid-column-start: 2; grid-column-end: 3; grid-row-start: 1; grid-row-end: 3;}
-.page_admin_maint .list_maint span {width: 100px; font-size: 20px; font-weight: 500; color: var(--admin-color1); line-height: 30px;}
-.page_admin_maint .list_maint strong {font-size: 18px; font-weight: 400; color: #222; line-height: 30px;}
-.page_admin_maint .list_maint .bank_box {display: flex; align-items: center; column-gap: 8px; padding-bottom: 10px;}
-.page_admin_maint .list_maint .bank_box b {line-height: 30px; font-size: 20px; font-weight: 600; color: #222;}
-.page_admin_maint .btn_likeweb {text-align: center; line-height: 30px; padding: 10px; max-width: 240px; width: 100%; position: absolute; right: 60px; top: 40px; border-radius: 5px; background: var(--admin-color1); font-size: 18px; font-weight: 500; color: #fff;}
-.page_admin_maint .btn_likeweb strong {font-weight: 400;}
-.page_admin_maint .btn_likeweb strong b {font-weight: 700;}
 
 
 /* ADMIN 푸터 */

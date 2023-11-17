@@ -49,16 +49,50 @@ const Maint = () => {
 
     //게시판정보 가져오기
     const getBoardData = (page) => {
+        let processTxt;
+        let limitNum;
+        let pageNum;
         let search;
-        if(searchType == "제목만"){
-            search = "title";
-        }else if(searchType == "제목+내용"){
-            search = "titlecontents";
-        }else if(searchType == "작성자"){
-            search = "name";
-        } 
+        let searchText;
 
-        axios.get(`${maint_list.replace(":category",user.maintName)}?page=${page ? page : 1}&getLimit=${limit}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}${process.length > 0 ? "&process="+process : ""}`,
+        //상세페이지에서 뒤로가기시 저장된 리스트페이지 정보로 조회
+        if(etc.detailPageBack){
+            processTxt = etc.listPageData.process;
+            limitNum = etc.listPageData.limit;
+            pageNum = etc.listPageData.page;
+            search = etc.listPageData.search;
+            searchText = etc.listPageData.searchTxt;
+
+            let type;
+            if(search == "title"){
+                type = "제목만";
+            }else if(search == "titlecontents"){
+                type = "제목+내용";
+            }else if(search == "name"){
+                type = "작성자";
+            }
+
+            setProcess(processTxt);
+            setLimit(limitNum);
+            setSearchType(type);
+            setSearchTxt(searchText);
+        }else{
+            processTxt = process;
+            limitNum = limit;
+            pageNum = page;
+
+            if(searchType == "제목만"){
+                search = "title";
+            }else if(searchType == "제목+내용"){
+                search = "titlecontents";
+            }else if(searchType == "작성자"){
+                search = "name";
+            }
+
+            searchText = searchTxt;
+        }
+
+        axios.get(`${maint_list.replace(":category",user.maintName)}?page=${pageNum ? pageNum : 1}&getLimit=${limitNum}${searchText.length > 0 ? "&search="+search+"&searchtxt="+searchText : ""}${processTxt.length > 0 ? "&process="+processTxt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -68,12 +102,19 @@ const Maint = () => {
 
                 //리스트페이지 조회 데이터저장
                 let pageData = {
+                    process: process,
                     limit: limit,
                     page: page,
                     search: search,
                     searchTxt: searchTxt
                 };
                 dispatch(listPageData(pageData));
+
+                //상세페이지에서 뒤로가기시
+                if(etc.detailPageBack){
+                    setScrollMove(true);
+                    dispatch(detailPageBack(false));
+                }
             }
         })
         .catch((error) => {
@@ -111,34 +152,7 @@ const Maint = () => {
             <div className="content_box">
                 <div className="maint_notice">
                     <div className="maint_box">
-                        <h2>유지보수 서비스 이용</h2>
-                        <p>
-                            귀사(하)의 무궁한 발전을 기원합니다. 
-                            <br/>
-                            유지보수 게시판은 라이크웹과 고객님의 소통공간입니다.
-                            <br/>
-                            수정사항 및 궁금하신 점은 <b>아래 전화번호</b>로 연락 부탁드립니다.
-                        </p>
-                        <ul className="list_maint">
-                            <li>
-                                <span>개발</span>
-                                <strong>070-7443-3143</strong>
-                            </li>
-                            <li>
-                                <span>계좌정보</span>
-                                <strong>
-                                    <div className="bank_box">
-                                        <img src={bank_maint} alt="국민은행"/>
-                                        <b>국민은행</b>
-                                    </div>
-                                    387601-04-075401 라이크웹
-                                </strong>
-                            </li>
-                            <li>
-                                <span>기술문의</span>
-                                <strong>070-7443-3131</strong>
-                            </li>
-                        </ul>
+                        <img src="https://likeweb.co.kr/admin/banner2.jpg" alt="이미지" />
                         <button type="button" onClick={()=>{window.open("https://www.likeweb.co.kr/")}} className="btn_likeweb"><strong><b>LIKE</b>WEB</strong> 바로가기</button>
                     </div>
                 </div>
@@ -159,7 +173,6 @@ const Maint = () => {
                                     const val = e.currentTarget.value;
                                     setProcess(val);
                                 }}
-                                selHidden={true}
                                 required={true}
                                 hiddenTxt={`진행상황 선택`}
                             />

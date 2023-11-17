@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { adminNotiPop, confirmPop } from "../../../store/popupSlice";
 import { alarm } from "../../../store/commonSlice";
+import { loginUser, siteId, maintName } from "../../../store/userSlice";
 import { enum_api_uri } from "../../../config/enum";
 import * as CF from "../../../config/function";
 import Header from "./Header";
@@ -22,6 +23,9 @@ const Layout = (props) => {
     const location = useLocation();
     const { board_category } = useParams();
     const alarm_list = enum_api_uri.alarm_list;
+    const site_info = enum_api_uri.site_info;
+    const navigate = useNavigate();
+    const [siteInfo, setSiteInfo] = useState({});
 
 
     // Confirm팝업 닫힐때
@@ -109,9 +113,48 @@ const Layout = (props) => {
     };
 
 
+    //사이트정보 가져오기
+    const getSiteInfo = () => {
+        axios.get(`${site_info.replace(":site_id",user.siteId)}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                    data.site_id = user.siteId;
+                setSiteInfo(data);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
     useEffect(()=>{
         getAlarmList();
+        getSiteInfo();
     },[]);
+
+
+    //로그아웃하기
+    const logoutHandler = () => {
+
+        //로그인했을때 저장된 정보들 지우기
+        dispatch(loginUser({}));
+        dispatch(siteId(""));
+        dispatch(maintName(""));
+
+        //로그인 페이지이동
+        navigate('/console/login');
+    };
 
 
     return(<>
@@ -133,7 +176,7 @@ const Layout = (props) => {
                             </ul>
                             <div className="header_util">
                                 <div className="admin_util">
-                                    <a href="#" rel="noopener noreferrer" className="btn_user">사용자화면 바로가기</a>
+                                    <button type="button" className="btn_user">사용자화면 바로가기</button>
                                     {/* 알림 있을 경우 active */}
                                     <button type="button" className={`btn_noti${common.alarm ? " active" : ""}`}
                                         onClick={()=>{
@@ -145,7 +188,7 @@ const Layout = (props) => {
                                 </div>
                                 <div className="log_util">
                                     <strong><b>{user.loginUser.m_name}</b> 님</strong>
-                                    <button type="button" className="btn_logout">로그아웃</button>
+                                    <button type="button" className="btn_logout" onClick={logoutHandler}>로그아웃</button>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +200,7 @@ const Layout = (props) => {
                         </div>
                     </section>
                 </main>
-                <Footer />
+                <Footer info={siteInfo} />
             </div>
         </div>
 

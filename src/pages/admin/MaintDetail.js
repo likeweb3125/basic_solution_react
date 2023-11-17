@@ -16,12 +16,13 @@ const MaintDetail = () => {
     const { list_no } = useParams();
     const maint_detail = enum_api_uri.maint_detail;
     const maint_comment_list = enum_api_uri.maint_comment_list;
+    const maint_comment = enum_api_uri.maint_comment;
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
-    const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
     const [boardData, setBoardData] = useState({});
     const [commentList, setCommentList] = useState([]);
+    const [comment, setComment] = useState("");
 
 
     // Confirm팝업 닫힐때
@@ -86,7 +87,7 @@ const MaintDetail = () => {
     },[list_no]);
 
 
-
+    
     //첨부파일 다운로드
     // const fileDownHandler = (idx, name) => {
     //     axios.get(`${board_file_down.replace(":category",board_category).replace(":parent_idx",board_idx).replace(":idx",idx)}`,
@@ -118,6 +119,73 @@ const MaintDetail = () => {
     //         setConfirm(true);
     //     });
     // };
+
+
+    useEffect(()=>{
+        if(comment.length === 300){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'300 자 초과하였습니다.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    },[comment]);
+
+
+    //댓글 textarea 값 변경시
+    const onTextChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setComment(val);
+    };
+
+
+    //댓글등록버튼 클릭시
+    const enterBtnClickHandler = () => {
+        if(comment.length == 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'댓글을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else{
+            enterHandler();
+        }
+    };
+
+
+    //댓글등록하기
+    const enterHandler = () => {
+        const body = {
+            list_no: list_no,
+            c_name: user.maintName,
+            c_content: comment,
+            m_id: "",
+            c_password: "",
+            c_table: "admin",
+        };
+        axios.post(`${maint_comment}`, body, 
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getCommentList();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
 
 
 
@@ -170,7 +238,9 @@ const MaintDetail = () => {
                             <CommentWrap 
                                 list={commentList}
                                 name={user.maintName}
-                                list_no={list_no}
+                                comment={comment}
+                                onTextChangeHandler={onTextChangeHandler}
+                                onEnterHandler={enterBtnClickHandler}
                             />
                         </div> 
                     </div>

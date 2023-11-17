@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const user = createSlice({
     name: "user", //state 이름
     initialState: {
-        loginUser: "",
+        loginUser: {},
         siteId: "", //고정값
         maintName: "", //유지보수업체이름 고정값
     },

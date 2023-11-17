@@ -75,8 +75,6 @@ const Login = () => {
             }
         })
         .catch((error) => {
-            console.log(error)
-            // console.log(error.response.data.message)
             const err_msg = CF.errorMsgHandler(error);
             dispatch(confirmPop({
                 confirmPop:true,
