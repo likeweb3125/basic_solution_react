@@ -79,7 +79,7 @@ body,input,select,textarea,button,table {
 /* 탑 */
 .admin_location {height: 80px; position: relative; background: #fff; padding: 0 50px 0 360px; border-bottom: 1px solid #ddd;}
 .admin_location .location_wrap {display: flex; justify-content: space-between; align-items: center; height: 100%; position: relative;}
-.admin_location .location_wrap:before {content: ''; position: absolute; left: 10px; top: 7px; width: 5px; height: 11px; background: url('../images/admin_location_arrow.svg') no-repeat 50% 50%/100%;}
+/* .admin_location .location_wrap:before {content: ''; position: absolute; left: 10px; top: 7px; width: 5px; height: 11px; background: url('../images/admin_location_arrow.svg') no-repeat 50% 50%/100%;} */
 .admin_location .location {padding-left: 60px; display: flex; align-items: center;}
 .admin_location .location li {margin-left: 20px; padding-left: 25px; font-size: 20px; font-weight: 500; color: #666; position: relative;}
 .admin_location .location li:first-of-type {margin-left: 0; padding-left: 0;}

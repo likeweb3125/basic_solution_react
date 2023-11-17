@@ -127,7 +127,7 @@ const MaintWrite = (props) => {
             }));
             setConfirm(true);
         }else{
-            // submitHandler();
+            submitHandler();
         }
     };
 

@@ -68,7 +68,7 @@ const Login = () => {
                 dispatch(siteId("likeweb"));
 
                 //maintName store 에 저장 (고정값) 유지보수업체이름
-                dispatch(maintName("소잠한의원"));
+                dispatch(maintName("라이크웹테스트"));
 
                 //관리자단 메인으로 페이지이동
                 navigate('/console');

@@ -5,8 +5,7 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
-import { pageNoChange } from "../../store/etcSlice";
-import { boardSettingData } from "../../store/commonSlice";
+import { pageNoChange, listPageData } from "../../store/etcSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
@@ -54,6 +53,15 @@ const Maint = () => {
             if(res.status === 200){
                 let data = res.data.data;
                 setBoardData(data);
+
+                //리스트페이지 조회 데이터저장
+                let pageData = {
+                    limit: limit,
+                    page: page,
+                    search: search,
+                    searchTxt: searchTxt
+                };
+                dispatch(listPageData(pageData));
             }
         })
         .catch((error) => {

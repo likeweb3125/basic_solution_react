@@ -5,7 +5,7 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminCategoryPop } from "../../store/popupSlice";
-import { pageNoChange, checkedList } from "../../store/etcSlice";
+import { pageNoChange, checkedList, listPageData } from "../../store/etcSlice";
 import { boardSettingData } from "../../store/commonSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
@@ -41,6 +41,11 @@ const Board = () => {
     const navigate = useNavigate();
 
 
+    useEffect(()=>{
+        console.log(etc.detailPageBack);
+    },[etc.detailPageBack]);
+
+
     // Confirm팝업 닫힐때
     useEffect(()=>{
         if(popup.confirmPop === false){
@@ -64,16 +69,33 @@ const Board = () => {
 
     //게시판정보 가져오기
     const getBoardData = (page) => {
+        let limitNum;
+        let pageNum;
         let search;
-        if(searchType == "제목만"){
-            search = "title";
-        }else if(searchType == "제목 + 내용"){
-            search = "titlecontents";
-        }else if(searchType == "작성자"){
-            search = "name";
-        } 
+        let searchText;
+        
+        //상세페이지에서 뒤로가기시 저장된 리스트페이지 정보로 조회
+        if(etc.detailPageBack){
+            limitNum = etc.listPageData.limit;
+            pageNum = etc.listPageData.page;
+            search = etc.listPageData.search;
+            searchText = etc.listPageData.searchTxt;
+        }
+        else{
+            limitNum = limit;
+            pageNum = page;
 
-        axios.get(`${board_list.replace(":category",board_category).replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
+            if(searchType == "제목만"){
+                search = "title";
+            }else if(searchType == "제목 + 내용"){
+                search = "titlecontents";
+            }else if(searchType == "작성자"){
+                search = "name";
+            }
+
+            searchText = searchTxt;
+        }
+        axios.get(`${board_list.replace(":category",board_category).replace(":limit",limitNum)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search="+search+"&searchtxt="+searchText : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -81,9 +103,19 @@ const Board = () => {
                 let data = res.data.data;
                 setBoardData(data);
 
+                //게시판설정정보 store 에 저장
                 const newData = {...data};
                 delete newData.board_list;
                 dispatch(boardSettingData(newData));
+
+                //리스트페이지 조회 데이터저장
+                let pageData = {
+                    limit: limit,
+                    page: page,
+                    search: search,
+                    searchTxt: searchTxt
+                };
+                dispatch(listPageData(pageData));
             }
         })
         .catch((error) => {

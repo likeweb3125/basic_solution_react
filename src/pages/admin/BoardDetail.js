@@ -4,7 +4,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
+import history from "../../config/history";
 import { confirmPop } from "../../store/popupSlice";
+import { detailPageBack } from "../../store/etcSlice";
 import CommentWrap from "../../components/component/admin/CommentWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import InputBox from "../../components/component/admin/InputBox";
@@ -22,12 +24,29 @@ const BoardDetail = () => {
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const etc = useSelector((state)=>state.etc);
     const [confirm, setConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [title, setTitle] = useState("");
     const [boardData, setBoardData] = useState({});
     const [boardSettingData, setBoardSettingData] = useState({});
     const [answerTxt, setAnswerTxt] = useState(null);
+
+
+    //상세페이지 뒤로가기
+    useEffect(() => {
+        const listenBackEvent = () => {
+            dispatch(detailPageBack(true));
+        };
+    
+        const unlistenHistoryEvent = history.listen(({ action }) => {
+            if (action === "POP") {
+                listenBackEvent();
+            }
+        });
+
+        return unlistenHistoryEvent;
+    },[]);
 
 
     // Confirm팝업 닫힐때
