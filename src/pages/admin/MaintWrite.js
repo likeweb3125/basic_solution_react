@@ -18,19 +18,19 @@ const MaintWrite = (props) => {
     const navigate = useNavigate();
     const maint_detail = enum_api_uri.maint_detail;
     const maint_create = enum_api_uri.maint_create;
-
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
-
     const [boardData, setBoardData] = useState({});
     const [content, setContent] = useState("");
-    const [files, setFiles] = useState([]);
-    const [filesData, setFilesData] = useState([]);
-    const [deltFiles, setDeltFiles] = useState([]);
+    const [files, setFiles] = useState(null);
+    const [filesData, setFilesData] = useState(null);
+    const [deltFiles, setDeltFiles] = useState(null);
     const [showRaw, setShowRaw] = useState(false);
     const [rawHtml, setRawHtml] = useState('');
+
+    
 
 
     // Confirm팝업 닫힐때
@@ -56,7 +56,6 @@ const MaintWrite = (props) => {
     //에디터내용 값
     const onEditorChangeHandler = (e) => {
         setContent(e);
-        
     };
 
 
@@ -76,29 +75,27 @@ const MaintWrite = (props) => {
     },[showRaw]);
 
 
+    //에디터 기본내용 적용
+    useEffect(()=>{
+        const txt = "<p>## 빠른 처리를 위해 아래 고객님 정보를 입력해주시길 바랍니다. ##</p><br/><p>- (필수)담당자 :</p><p>- (필수)담당자연락처(직통) :</p><p>- 담당자이메일 :</p><p>- (필수)도메인 :</p><p>- 보수내용 :</p>"
+        setContent(txt);
+    },[]);
+
+
     //첨부파일 등록
     const { getRootProps: getRootProps1, getInputProps: getInputProps1 } = useDropzone({
-        multiple: true, // 여러 개의 파일 선택 가능하도록 설정
+        multiple: false, // 여러 개의 파일 선택 불가능하도록 설정
         onDrop: acceptedFiles => {
-            setFiles(prevFiles => [
-                ...prevFiles,
-                ...acceptedFiles.map((file,i) => ({
-                    id: uuidv4(), // 고유한 식별자로 파일 이름 사용
-                    original_name: file.name,
-                }))
-            ]);
+            const file = acceptedFiles[0];
+        
+            // 파일의 이름
+            const name = file.name;
+
+            setFiles(name);
 
             setFilesData(acceptedFiles);
         }
     });
-
-
-    //첨부파일 삭제버튼 클릭시
-    const handleRemove = (i) => {
-        let newList = [...files];
-            newList.splice(i,1);
-        setFiles(newList);
-    };
 
 
     //글 등록버튼 클릭시
@@ -251,26 +248,17 @@ const MaintWrite = (props) => {
                                                         </label>
                                                     </div>
                                                 </div>
-                                                {files.length > 0 &&
+                                                {files !== null &&
                                                     <ul className="file_txt">
-                                                        {files.map((cont,i)=>{
-                                                            return(
-                                                                <li key={i}>
-                                                                    <span>{cont.original_name}</span>
-                                                                    <button type="button" className="btn_file_remove" 
-                                                                        onClick={() => {
-                                                                            let id;
-                                                                            if(cont.idx){
-                                                                                id = cont.idx;
-                                                                            }else{
-                                                                               id = null; 
-                                                                            }
-                                                                            handleRemove(i,id);
-                                                                        }}
-                                                                    >파일삭제</button>
-                                                                </li>
-                                                            );
-                                                        })}
+                                                        <li>
+                                                            <span>{files}</span>
+                                                            <button type="button" className="btn_file_remove" 
+                                                                onClick={() => {
+                                                                    setFiles(null);
+                                                                    setFilesData(null);
+                                                                }}
+                                                            >파일삭제</button>
+                                                        </li>
                                                     </ul>
                                                 }
                                             </div>

@@ -271,10 +271,10 @@ const BoardDetail = () => {
                                             return(
                                                 <button type="button" key={i}
                                                     onClick={()=>{
-                                                        const name = cont.original_name.replace("upload/board/","");
+                                                        const name = cont.original_name;
                                                         fileDownHandler(cont.idx, name);
                                                     }}
-                                                >{cont.original_name.replace("upload/board/","")}</button>
+                                                >{cont.original_name}</button>
                                             );
                                         })}
                                     </div>

@@ -17,6 +17,7 @@ const MaintDetail = () => {
     const maint_detail = enum_api_uri.maint_detail;
     const maint_comment_list = enum_api_uri.maint_comment_list;
     const maint_comment = enum_api_uri.maint_comment;
+    const maint_file_down = enum_api_uri.maint_file_down;
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const [confirm, setConfirm] = useState(false);
@@ -89,38 +90,39 @@ const MaintDetail = () => {
 
     
     //첨부파일 다운로드
-    // const fileDownHandler = (idx, name) => {
-    //     axios.get(`${board_file_down.replace(":category",board_category).replace(":parent_idx",board_idx).replace(":idx",idx)}`,
-    //         {
-    //             headers:{Authorization: `Bearer ${user.loginUser.accessToken}`},
-    //             responseType: 'blob' // 요청 데이터 형식을 blob으로 설정
-    //         }
-    //     )
-    //     .then((res)=>{
-    //         if(res.status === 200){
-    //             const blob = new Blob([res.data], { type: 'application/octet-stream' });
-    //             const url = window.URL.createObjectURL(blob);
-    //             const a = document.createElement('a');
-    //             a.href = url;
-    //             a.download = name; // 파일명 설정
-    //             document.body.appendChild(a);
-    //             a.click();
-    //             window.URL.revokeObjectURL(url);
-    //         }
-    //     })
-    //     .catch((error) => {
-    //         const err_msg = CF.errorMsgHandler(error);
-    //         dispatch(confirmPop({
-    //             confirmPop:true,
-    //             confirmPopTit:'알림',
-    //             confirmPopTxt: err_msg,
-    //             confirmPopBtn:1,
-    //         }));
-    //         setConfirm(true);
-    //     });
-    // };
+    const fileDownHandler = (name) => {
+        axios.get(`${maint_file_down.replace(":list_no",list_no)}`,
+            {
+                headers:{Authorization: `Bearer ${user.loginUser.accessToken}`},
+                responseType: 'blob' // 요청 데이터 형식을 blob으로 설정
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                const blob = new Blob([res.data], { type: 'application/octet-stream' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = name; // 파일명 설정
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
 
 
+    //댓글 300자초과시 알림팝업 띄우기
     useEffect(()=>{
         if(comment.length === 300){
             dispatch(confirmPop({
@@ -215,26 +217,24 @@ const MaintDetail = () => {
                                     </li>
                                 </ul>
                             </div>
+                            <p className={`txt_process${boardData.process == "처리완료" ? " txt_color1" : boardData.process == "접수완료" ? " txt_color3" : boardData.process == "재요청" ? " txt_color2" : boardData.process == "검토중" ? " txt_color4" : ""}`}>{boardData.process}</p>
                         </div>
                         <div className="board_con">
                             <div className="con" dangerouslySetInnerHTML={{ __html: boardData.contents }}></div>
-                            {/* {boardData.b_file && boardData.b_file.length > 0 &&
+                            {boardData.b_file && boardData.b_file.length > 0 &&
                                 <div className="file_section">
                                     <span>첨부파일</span>
                                     <div>
-                                        {boardData.b_file.map((cont,i)=>{
-                                            return(
-                                                <button type="button" key={i}
-                                                    onClick={()=>{
-                                                        const name = cont.original_name.replace("upload/board/","");
-                                                        fileDownHandler(cont.idx, name);
-                                                    }}
-                                                >{cont.original_name.replace("upload/board/","")}</button>
-                                            );
-                                        })}
+                                        {boardData.b_file && 
+                                            <button type="button"
+                                                onClick={()=>{
+                                                    fileDownHandler(boardData.b_file);
+                                                }}
+                                            >{boardData.b_file.replace("upload/board/","")}</button>
+                                        }
                                     </div>
                                 </div>
-                            } */}
+                            }
                             <CommentWrap 
                                 list={commentList}
                                 name={user.maintName}

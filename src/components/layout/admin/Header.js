@@ -29,6 +29,7 @@ const Header = () => {
     const settingRef = useRef();
     const statsRef = useRef();
     const location = useLocation();
+    const siteId = process.env.REACT_APP_SITE_ID;
 
 
     // Confirm팝업 닫힐때
@@ -204,9 +205,9 @@ const Header = () => {
             <div className="menu_header">
                 <div className="logo_wrap">
                     <h1 className="logo">
-                        <Link to="/console">Lorem ipsum</Link>
+                        <Link to="/console">{siteId} 관리자</Link>
                     </h1>
-                    <span>Likeweb Company Dashboard</span>
+                    <span>{siteId} Company Dashboard</span>
                 </div>
                 <div className="menu_wrap">
                     <nav>
