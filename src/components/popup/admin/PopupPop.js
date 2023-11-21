@@ -112,11 +112,23 @@ const PopupPop = () => {
                 setUseBtn(info.p_open[0]);
             }
             if(info.p_s_date){
-                let date = new Date(info.p_s_date);
+                let dateString = info.p_s_date;
+                let dateParts = dateString.split('.');
+                let year = parseInt(dateParts[0]);
+                let month = parseInt(dateParts[1]) - 1; // 월은 0부터 시작하므로 1을 빼줍니다.
+                let day = parseInt(dateParts[2]);
+
+                let date = new Date(year, month, day);
                 setStartDate(date);
             }
             if(info.p_e_date){
-                let date = new Date(info.p_e_date);
+                let dateString = info.p_e_date;
+                let dateParts = dateString.split('.');
+                let year = parseInt(dateParts[0]);
+                let month = parseInt(dateParts[1]) - 1; // 월은 0부터 시작하므로 1을 빼줍니다.
+                let day = parseInt(dateParts[2]);
+
+                let date = new Date(year, month, day);
                 setEndDate(date);
             }
             setContent(info.p_content);
