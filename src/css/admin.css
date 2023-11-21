@@ -143,7 +143,8 @@ body,input,select,textarea,button,table {
 .admin_section .top_txt {display: flex; justify-content: space-between; align-items: center; border-radius: 8px; position: relative; background: #fff; padding: 20px 40px; margin-bottom: 24px;}
 .admin_section .top_txt strong {font-size: 20px; font-weight: 500; color: #222;}
 .admin_section .top_txt .btn_type15 {width: 240px;}
-.page_admin_main .main_con_wrap {display: flex; column-gap: 50px;}
+.page_admin_main .main_con_wrap {display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-pack: justify; -ms-flex-pack: justify;-webkit-justify-content: space-between; justify-content: space-between;}
+.page_admin_main .main_con_wrap .main_con{width: calc(50% - 25px);}
 .page_admin_main h3 {padding-bottom: 20px;}
 .total_num_box {padding: 40px 12px; background: #fff; border-radius: 5px; box-shadow: none; border: 1px solid #ddd;}
 .total_num_box ul {display: flex; text-align: center;}

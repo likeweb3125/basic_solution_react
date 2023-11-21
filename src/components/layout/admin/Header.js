@@ -29,8 +29,6 @@ const Header = () => {
     const settingRef = useRef();
     const statsRef = useRef();
     const location = useLocation();
-    const siteId = process.env.REACT_APP_SITE_ID;
-
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
@@ -205,9 +203,9 @@ const Header = () => {
             <div className="menu_header">
                 <div className="logo_wrap">
                     <h1 className="logo">
-                        <Link to="/console">{siteId} 관리자</Link>
+                        <Link to="/console">관리자</Link>
                     </h1>
-                    <span>{siteId} Company Dashboard</span>
+                    <span>{user.siteId} Company Dashboard</span>
                 </div>
                 <div className="menu_wrap">
                     <nav>
