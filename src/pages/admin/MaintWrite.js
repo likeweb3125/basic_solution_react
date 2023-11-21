@@ -134,7 +134,7 @@ const MaintWrite = (props) => {
         const formData = new FormData();
 
         //첨부파일
-        if(filesData.length > 0){
+        if(filesData){
             filesData.forEach((file) => {
                 formData.append("b_file", file);
             });
