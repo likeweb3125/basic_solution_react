@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useDropzone } from 'react-dropzone';
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
@@ -19,6 +20,7 @@ import CategoryPopCont7 from "../../component/admin/CategoryPopCont7";
 
 const CategoryPop = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const menu_sub_detail = enum_api_uri.menu_sub_detail;
@@ -38,6 +40,9 @@ const CategoryPop = () => {
     const [tabList, setTabList] = useState(["HTML","빈 메뉴","고객맞춤","일반 게시판","갤러리 게시판","FAQ","문의게시판"]);
     const [tab, setTab] = useState(1);
     const [firstRender, setFirstRender] = useState(false);
+    const [titImgDelt, setTitImgDelt] = useState(false);
+    const [menuOnImgDelt, setMenuOnImgDelt] = useState(false);
+    const [menuOffImgDelt, setMenuOffImgDelt] = useState(false);
 
 
     useEffect(()=>{
@@ -99,13 +104,17 @@ const CategoryPop = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -174,6 +183,7 @@ const CategoryPop = () => {
         onDrop: acceptedFiles => {
             setTitImg(acceptedFiles[0].name);
             setTitImgData(acceptedFiles);
+            setTitImgDelt(false);
         }
     });
 
@@ -185,6 +195,7 @@ const CategoryPop = () => {
         onDrop: acceptedFiles => {
             setMenuOnImg(acceptedFiles[0].name);
             setMenuOnImgData(acceptedFiles);
+            setMenuOnImgDelt(false);
         }
     });
 
@@ -196,6 +207,7 @@ const CategoryPop = () => {
         onDrop: acceptedFiles => {
             setMenuOffImg(acceptedFiles[0].name);
             setMenuOffImgData(acceptedFiles);
+            setMenuOffImgDelt(false);
         }
     });
 
@@ -277,7 +289,9 @@ const CategoryPop = () => {
         for (const key in body) {
             if (body.hasOwnProperty(key)) {
                 const value = body[key];
-                formData.append(key, value);
+                if (key !== 'c_main_banner_file' && key !== 'c_menu_on_img' && key !== 'c_menu_off_img') {
+                    formData.append(key, value);
+                }
             }
         }
 
@@ -285,37 +299,47 @@ const CategoryPop = () => {
             titImgData.forEach((file) => {
                 formData.append("c_main_banner_file", file);
             });
+        }else{
+            formData.append("c_main_banner_file", "");
         }
 
         if(menuOnImgData){
             menuOnImgData.forEach((file) => {
                 formData.append("c_menu_on_img", file);
             });
+        }else{
+            formData.append("c_menu_on_img", "");
         }
 
         if(menuOffImgData){
             menuOffImgData.forEach((file) => {
                 formData.append("c_menu_off_img", file);
             });
+        }else{
+            formData.append("c_menu_off_img", "");
         }
 
+
         // 제목이미지 삭제했으면 삭제
-        if(titImg == null){
+        if(titImgDelt){
             formData.append("c_main_banner_file_del", "Y");
         }
 
         // 메뉴 UI 텍스트일때 on,off 이미지 삭제
-        if(body.c_menu_ui.includes("TXT")){
-            formData.append("c_menu_on_img_del", "Y");
-            formData.append("c_menu_off_img_del", "Y");
-        }
+        // if(body.c_menu_ui.includes("TXT")){
+        //     if(body.c_menu_on_img){
+        //         formData.append("c_menu_on_img_del", "Y");
+        //     }if(body.c_menu_ff_img){
+        //         formData.append("c_menu_off_img_del", "Y");
+        //     }
+        // }
 
         // 메뉴 UI 이미지일때 on,off 이미지 삭제했으면 삭제
         else if(body.c_menu_ui.includes("IMG")){
-            if(menuOnImg == null){
+            if(menuOnImgDelt){
                 formData.append("c_menu_on_img_del", "Y");
             }
-            if(menuOffImg == null){
+            if(menuOffImgDelt){
                 formData.append("c_menu_off_img_del", "Y");
             }
         }
@@ -336,13 +360,17 @@ const CategoryPop = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -431,6 +459,7 @@ const CategoryPop = () => {
                                                                     onClick={()=>{
                                                                         setTitImg(null);
                                                                         setTitImgData(null);
+                                                                        setTitImgDelt(true);
                                                                     }}
                                                                 >파일삭제</button>
                                                             </li>
@@ -462,6 +491,7 @@ const CategoryPop = () => {
                                                                         onClick={()=>{
                                                                             setMenuOnImg(null);
                                                                             setMenuOnImgData(null);
+                                                                            setMenuOnImgDelt(true);
                                                                         }}
                                                                     >파일삭제</button>
                                                                 </li>
@@ -491,6 +521,7 @@ const CategoryPop = () => {
                                                                         onClick={()=>{
                                                                             setMenuOffImg(null);
                                                                             setMenuOffImgData(null);
+                                                                            setMenuOffImgDelt(true);
                                                                         }}
                                                                     >파일삭제</button>
                                                                 </li>

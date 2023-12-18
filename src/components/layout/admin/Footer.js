@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import f_admin_logo from "../../../images/f_admin_logo.png";
 
 const Footer = (props) => {
+    const common = useSelector((state)=>state.common);
     const [info, setInfo] = useState({});
 
     useEffect(()=>{
-        setInfo(props.info);
-    },[props.info]);
+        setInfo(common.siteInfo);
+    },[common.siteInfo]);
 
     return(
         <footer id="footer" className="footer">

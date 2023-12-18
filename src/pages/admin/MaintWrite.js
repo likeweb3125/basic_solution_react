@@ -1,36 +1,30 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDropzone } from 'react-dropzone';
-import { v4 as uuidv4 } from 'uuid';
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import InputBox from "../../components/component/admin/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
-import SelectBox from "../../components/component/admin/SelectBox";
 
 
-const MaintWrite = (props) => {
+const MaintWrite = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const maint_detail = enum_api_uri.maint_detail;
     const maint_create = enum_api_uri.maint_create;
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
-    const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
     const [boardData, setBoardData] = useState({});
     const [content, setContent] = useState("");
     const [files, setFiles] = useState(null);
     const [filesData, setFilesData] = useState(null);
-    const [deltFiles, setDeltFiles] = useState(null);
     const [showRaw, setShowRaw] = useState(false);
     const [rawHtml, setRawHtml] = useState('');
 
-    
 
 
     // Confirm팝업 닫힐때
@@ -76,10 +70,10 @@ const MaintWrite = (props) => {
 
 
     //에디터 기본내용 적용
-    useEffect(()=>{
-        const txt = "<p>## 빠른 처리를 위해 아래 고객님 정보를 입력해주시길 바랍니다. ##</p><br/><p>- (필수)담당자 :</p><p>- (필수)담당자연락처(직통) :</p><p>- 담당자이메일 :</p><p>- (필수)도메인 :</p><p>- 보수내용 :</p>"
-        setContent(txt);
-    },[]);
+    // useEffect(()=>{
+    //     const txt = "<p>## 빠른 처리를 위해 아래 고객님 정보를 입력해주시길 바랍니다. ##</p><br/><p>- (필수)담당자 :</p><p>- (필수)담당자연락처(직통) :</p><p>- 담당자이메일 :</p><p>- (필수)도메인 :</p><p>- 보수내용 :</p>"
+    //     setContent(txt);
+    // },[]);
 
 
     //첨부파일 등록
@@ -115,6 +109,38 @@ const MaintWrite = (props) => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
+        }else if(!boardData.company){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'담당자를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(!boardData.m_tel){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'담당자 연락처를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(!boardData.email){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'담당자 이메일을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(!boardData.m_email){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'도메인을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         }else if(!cont){
             dispatch(confirmPop({
                 confirmPop:true,
@@ -134,7 +160,7 @@ const MaintWrite = (props) => {
         const formData = new FormData();
 
         //첨부파일
-        if(filesData){
+        if(filesData != null && filesData.length > 0){
             filesData.forEach((file) => {
                 formData.append("b_file", file);
             });
@@ -149,11 +175,17 @@ const MaintWrite = (props) => {
             cont = content;
         }
 
+        let contents = "<p>## 빠른 처리를 위해 아래 고객님 정보를 입력해주시길 바랍니다. ##</p><br/><p>- (필수)담당자 :"+boardData.company+
+                        "</p><p>- (필수)담당자연락처(직통) :"+boardData.m_tel+
+                        "</p><p>- 담당자이메일 :"+boardData.email+
+                        "</p><p>- (필수)도메인 :"+boardData.m_email+
+                        "</p><p>- 보수내용 :"+cont+"</p>";
+        
         formData.append("category", user.maintName);
         formData.append("name", user.maintName);
         formData.append("password", "");
         formData.append("subject", boardData.subject);
-        formData.append("contents", cont);
+        formData.append("contents", contents);
 
         axios.post(maint_create, formData, {
             headers: {
@@ -168,13 +200,17 @@ const MaintWrite = (props) => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -195,11 +231,14 @@ const MaintWrite = (props) => {
                                 <colgroup>
                                     <col style={{width: "140px"}}/>
                                     <col style={{width: "auto"}}/>
+                                    <col style={{width: "24px"}}/>
+                                    <col style={{width: "140px"}}/>
+                                    <col style={{width: "auto"}}/>
                                 </colgroup>
                                 <tbody>
                                     <tr>
                                         <th>제목</th>
-                                        <td>
+                                        <td colSpan={4}>
                                             <InputBox 
                                                 type={`text`}
                                                 placeholder={`제목을 입력해주세요.`}
@@ -213,7 +252,53 @@ const MaintWrite = (props) => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td colSpan={2}>
+                                        <th>담당자</th>
+                                        <td>
+                                            <InputBox 
+                                                type={`text`}
+                                                placeholder={`담당자를 입력해주세요.`}
+                                                value={boardData.company || ""}
+                                                onChangeHandler={onInputChangeHandler}
+                                                id={`company`}
+                                            />
+                                        </td>
+                                        <td></td>
+                                        <th>담당자연락처(직통)</th>
+                                        <td>
+                                            <InputBox 
+                                                type={`text`}
+                                                placeholder={`연락처를 입력해주세요.`}
+                                                value={boardData.m_tel || ""}
+                                                onChangeHandler={onInputChangeHandler}
+                                                id={`m_tel`}
+                                            />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>담당자이메일</th>
+                                        <td>
+                                            <InputBox 
+                                                type={`text`}
+                                                placeholder={`이메일을 입력해주세요.`}
+                                                value={boardData.email || ""}
+                                                onChangeHandler={onInputChangeHandler}
+                                                id={`email`}
+                                            />
+                                        </td>
+                                        <td></td>
+                                        <th>도메인</th>
+                                        <td>
+                                            <InputBox 
+                                                type={`text`}
+                                                placeholder={`도메인을 입력해주세요.`}
+                                                value={boardData.m_email || ""}
+                                                onChangeHandler={onInputChangeHandler}
+                                                id={`m_email`}
+                                            />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={5}>
                                             <div className="edit_box">
                                                 <Editor 
                                                     value={content}
@@ -236,8 +321,25 @@ const MaintWrite = (props) => {
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th>파일첨부</th>
-                                        <td>
+                                        <th>
+                                            <div className="tip_box">
+                                                <p className="tip_txt">파일첨부</p>
+                                                <div className="box">
+                                                    <p>1개의 파일만 첨부 가능합니다. <br/>여러개 파일 등록시에는 압축하여 등록해주세요.</p>
+                                                    <ul>
+                                                        <li className="flex_top">
+                                                            <p>첨부가능 파일</p>
+                                                            <p>문서, 압축 파일, 이미지</p>
+                                                        </li>
+                                                        <li className="flex_top">
+                                                            <p>첨부가능 확장자</p>
+                                                            <p>zip, doc, docx, xls, xlsx, ppt, pptx, hwp, pdf, txt, jpg, jpeg, gif, bmp, png, psd, bmp, emf, exif, gif, ico, jpg, jpeg, png</p>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <td colSpan={4}>
                                             <div className="file_box2">
                                                 <div className="input_file">
                                                     <div {...getRootProps1({className: 'dropzone'})}>

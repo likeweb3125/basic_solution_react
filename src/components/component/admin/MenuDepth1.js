@@ -139,11 +139,11 @@ const MenuDepth1 = (props) => {
                     collisionDetection={closestCenter}
                     onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
-                > */}
+                >
                     <SortableContext
                         items={menuIdList}
                         strategy={verticalListSortingStrategy}
-                    >
+                    > */}
                         {data && data.list && data.list.length > 0 ?
                             data.list.map((depth2,i)=>{
                                 const isLiOn = li2Classes[`${props.idx}_${i}`] ? 'on' : '';
@@ -188,8 +188,8 @@ const MenuDepth1 = (props) => {
                             })
                             : <li className="none_category">카테고리가 없습니다.</li>
                         }
-                    </SortableContext>
-                {/* </DndContext> */}
+                    {/* </SortableContext>
+                </DndContext> */}
             </ul>
         </li>
     );

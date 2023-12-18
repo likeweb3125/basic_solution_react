@@ -9,6 +9,29 @@ body,input,select,textarea,button,table {
 	/* letter-spacing: -0.05em; */
 }
 
+.test_box>ul{border: 1px solid #ddd;}
+.test_box>ul .depth1{background: #ddd;}
+
+
+
+/* 공통 */
+.flex{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
+.flex_end{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-pack: end; -ms-flex-pack: end;-webkit-justify-content: flex-end; justify-content: flex-end;}
+.flex_between{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-pack: justify; -ms-flex-pack: justify;-webkit-justify-content: space-between; justify-content: space-between;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
+.flex_center{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-pack: center; -ms-flex-pack: center;-webkit-justify-content: center; justify-content: center;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
+.flex_wrap{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;-ms-flex-wrap: wrap;flex-wrap: wrap;}
+.flex_top{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: start; -ms-flex-align: start;-webkit-align-items: flex-start; align-items: flex-start;}
+.flex_bottom{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: end; -ms-flex-align: end;-webkit-align-items: flex-end; align-items: flex-end;}
+.tip_box{position: relative;cursor: default;display: inline-block;}
+.tip_box .tip_txt{padding-right: 30px;background: url(../images/ic_tip.svg) no-repeat center right;display: inline-block;cursor: pointer;}
+.tip_box .box{position: absolute;top: 20px;left: 0; width: 400px;background: #fff;padding:20px 15px;box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.08); z-index: 1;font-size: 15px;color: #666;border-radius: 10px;display: none;}
+.tip_box .box ul{padding-top: 15px;}
+.tip_box .box ul li{padding-bottom: 5px;color: #999;font-size: 14px;}
+.tip_box .box ul li:last-child{padding-bottom: 0;}
+.tip_box .box ul li p:first-child{width: 105px;}
+.tip_box .box ul li p:last-child{width: calc(100% - 105px);}
+.tip_box:hover .box{display: block;}
+
 
 /* ADMIN LOGIN */
 .page_admin_login {display: flex; justify-content: center; align-items: center; height: 100vh; background: #f7f6fb;}
@@ -309,6 +332,7 @@ body,input,select,textarea,button,table {
 .board_view .board_tit .board_info .view_cnt:before {content: ''; width: 24px; height: 24px; position: absolute; left: 0; top: 50%; transform: translateY(-50%); background: url('../images/ic_view_cnt.svg') no-repeat 50% 50%/100%;}
 .board_view .board_con {border-bottom: 1px solid #222;}
 .board_view .board_con .con {padding: 30px 5px 45px; min-height: 200px; /*font-size: 18px; color: #666;*/}
+.board_view .board_con .con img{max-width: 100%;}
 .board_view .board_con .write_btn_wrap {padding-bottom: 40px; text-align: right; display: flex; justify-content: flex-end;}
 .board_view .file_section {padding: 25px 0; display: flex; border-top: 1px solid #ddd; }
 .board_view .file_section span {flex: 0 0 120px; font-size: 20px; font-weight: 500; color: #222; line-height: 30px;}
@@ -513,7 +537,7 @@ body,input,select,textarea,button,table {
 
 /* 유지보수 */
 .page_admin_maint .maint_status {color: #666;}
-.page_admin_maint .maint_notice {background: url('../images/img_maint.png') no-repeat 50% 50%/cover; position: relative; margin-bottom: 20px; padding: 60px 70px 0;}
+.page_admin_maint .maint_notice {background: url('../images/img_maint.png') no-repeat 50% 50%/cover; position: relative; margin-bottom: 44px; padding: 60px 70px 0;}
 .page_admin_maint .maint_notice .maint_box {width: 800px;position: relative;}
 .page_admin_maint .maint_box .btn_likeweb {text-align: center; line-height: 30px; padding: 10px; max-width: 240px; width: 100%; position: absolute; right: 60px; top: 40px; border-radius: 5px; background: var(--admin-color1); font-size: 18px; font-weight: 500; color: #fff;}
 .page_admin_maint .maint_box .btn_likeweb strong {font-weight: 400;}

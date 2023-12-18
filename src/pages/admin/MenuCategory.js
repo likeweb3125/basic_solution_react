@@ -59,7 +59,7 @@ const MenuCategory = () => {
 
     },[]);
 
-    return(
+    return(<>
         <div className="page_admin_menu">
             <div className="content_box">
                 <div className="tit">
@@ -227,7 +227,7 @@ const MenuCategory = () => {
                 </div>
             </div>
         </div>
-    );
+    </>);
 };
 
 export default MenuCategory;

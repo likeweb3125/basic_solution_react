@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
+import { siteInfo, siteInfoEdit } from "../../store/commonSlice";
 import InputBox from "../../components/component/admin/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 
@@ -12,6 +14,7 @@ const SettingSiteInfo = () => {
     const site_info = enum_api_uri.site_info;
     const site_info_modify = enum_api_uri.site_info_modify;
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const [cancelConfirm, setCancelConfirm] = useState(false);
@@ -43,13 +46,17 @@ const SettingSiteInfo = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -117,6 +124,9 @@ const SettingSiteInfo = () => {
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(siteInfo(body));
+                dispatch(siteInfoEdit(true));
+
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
@@ -128,13 +138,17 @@ const SettingSiteInfo = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -194,7 +208,7 @@ const SettingSiteInfo = () => {
                                     {error.c_site_name && <em className="txt_err">사이트이름을 입력해주세요.</em>}
                                 </td>
                                 <td></td>
-                                <th>웹 브라우저 타이틀</th>
+                                {/* <th>웹 브라우저 타이틀</th>
                                 <td>
                                     <InputBox 
                                         type={`text`}
@@ -206,7 +220,7 @@ const SettingSiteInfo = () => {
                                         onChangeHandler={onInputChangeHandler}
                                         id={`c_web_title`}
                                     />
-                                </td>
+                                </td> */}
                             </tr>
                             <tr>
                                 <th>대표자</th>
@@ -359,7 +373,7 @@ const SettingSiteInfo = () => {
                                     />
                                 </td>
                                 <td></td>
-                                <th>메타 분류</th>
+                                {/* <th>메타 분류</th>
                                 <td>
                                     <InputBox 
                                         type={`text`}
@@ -368,7 +382,7 @@ const SettingSiteInfo = () => {
                                         onChangeHandler={onInputChangeHandler}
                                         id={`c_meta_type`}
                                     />
-                                </td>
+                                </td> */}
                             </tr>
                         </tbody>
                     </table>

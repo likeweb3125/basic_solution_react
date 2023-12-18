@@ -44,6 +44,7 @@ const CategoryPopCont5 = (props) => {
 
 
     useEffect(()=>{
+        console.table(props.info);
         //하위카테고리 새로등록이 아닐때만 상세정보 가져오기
         if(Object.keys(props.info).length > 0){
             setInfo(props.info);

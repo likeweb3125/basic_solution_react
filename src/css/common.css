@@ -18,6 +18,7 @@
 .txt_color4 {font-weight: 500; color: var(--admin-color4) !important;}
 .ellipsis {display: block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%;}
 .tm30{margin-top: 30px;}
+.none_data{text-align: center;padding: 30px 0;font-size: 16px;color: #666;}
 
 .tab_wrap .tab_inner {padding-top: 10px;}
 /* 탭메뉴 스타일 */
@@ -172,7 +173,7 @@ table td .txt_light {font-size: 14px; color: #999;}
 .pop_display .popup_wrap {position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
 .pop_display .popup {width: 1200px; z-index: 10; background: #f7f6fb; border-radius: 8px; position: relative; max-height: 95vh; overflow: auto;}
 .pop_display .popup::-webkit-scrollbar {-webkit-appearance: none; width: 15px;}
-.pop_display .popup::-webkit-scrollbar-thumb {background-color: #666; border-left: 6px solid #f7f6fb; border-top: 6px solid #f7f6fb; border-right: 6px solid #f7f6fb; border-radius: 16px;}
+.pop_display .popup::-webkit-scrollbar-thumb {background-color: #666; border-left: 6px solid #f7f6fb; border-top: 6px solid #f7f6fb; border-right: 6px solid #f7f6fb;border-bottom:  6px solid #fff; border-radius: 16px;}
 .pop_display .pop_tit {display: flex; align-items: center; padding: 30px 40px 15px; border-bottom: 1px solid rgba(221, 221, 221, 0.4);}
 .pop_display .pop_tit h3 {font-size: 24px; font-weight: 700; color: #222;}
 .pop_display .pop_tit .tit_txt {display: flex; align-items: center; column-gap: 12px; margin-left: 12px;}

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
@@ -11,6 +11,7 @@ import ConfirmPop from "../../popup/ConfirmPop";
 
 const Header = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { board_category } = useParams();
     const { board_idx } = useParams();
     const board_menu_list = enum_api_uri.board_menu_list;
@@ -29,6 +30,7 @@ const Header = () => {
     const settingRef = useRef();
     const statsRef = useRef();
     const location = useLocation();
+
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
@@ -91,13 +93,17 @@ const Header = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -116,11 +122,11 @@ const Header = () => {
     //메뉴 on 변경시 슬라이드애니메이션 
     useEffect(() => {
         if(menuOn){
-            // if(menuOn === "menu" || menuOn === "menu1") {
-            //     menuRef.current.style.height = `${menuRef.current.scrollHeight}px`;
-            // }else{
-            //     menuRef.current.style.height = "0";
-            // }
+            if(menuOn === "menu" || menuOn === "menu1") {
+                menuRef.current.style.height = `${menuRef.current.scrollHeight}px`;
+            }else{
+                menuRef.current.style.height = "0";
+            }
 
             if(menuOn === "board" || menuOn.includes("board1") || menuOn.includes("board2")) {
                 let boardH = boardHeight;
@@ -210,14 +216,14 @@ const Header = () => {
                 <div className="menu_wrap">
                     <nav>
                         <ul className="admin_gnb">
-                            {/* <li className={menuOn && menuOn.includes("menu") ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("menu") ? "on" : ""}>
                                 <button type="button" className="btn_menu admin_menu" onClick={()=>{setMenuOn("menu")}}><span>메뉴 관리</span></button>
                                 <ul className="depth2" ref={menuRef}>
                                     <li className={menuOn === "menu1" ? "on" : ""} >
                                         <Link to="/console/menu/category" className="menu">카테고리 관리</Link>
                                     </li>
                                 </ul>
-                            </li> */}
+                            </li>
                             <li className={menuOn && menuOn.includes("board") ? "on" : ""}>
                                 <button type="button" className="btn_menu admin_board" onClick={()=>{setMenuOn("board")}}><span>게시판 관리</span></button>
                                 <ul className="depth2" ref={boardRef}>

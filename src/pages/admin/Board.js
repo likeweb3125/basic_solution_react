@@ -144,13 +144,17 @@ const Board = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -229,13 +233,17 @@ const Board = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -313,13 +321,17 @@ const Board = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     }
 
@@ -366,13 +378,17 @@ const Board = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -400,11 +416,11 @@ const Board = () => {
                         />
                     </h3>
                     <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
-                    <button type="button" className="btn_type10" style={{marginLeft:"20px"}}
+                    {/* <button type="button" className="btn_type10" style={{marginLeft:"20px"}}
                         onClick={()=>{
                             dispatch(adminCategoryPop({adminCategoryPop:true,adminCategoryPopIdx:board_category}));
                         }}
-                    >설정</button>
+                    >설정</button> */}
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">
@@ -495,9 +511,11 @@ const Board = () => {
                             lastPage={boardData.last_page} //총페이지 끝
                         />
                     }
-                    <div className={`board_btn_wrap${boardData.board_list && boardData.board_list.length > 0 ? "" : " none_list"}`}>
-                        <Link to={`/console/board/post/write/${board_category}`} className="btn_type4">작성하기</Link>                                        
-                    </div>
+                    {board_category != 50 && //제휴문의 일때만 작성하기 버튼없애기
+                        <div className={`board_btn_wrap${boardData.board_list && boardData.board_list.length > 0 ? "" : " none_list"}`}>
+                            <Link to={`/console/board/post/write/${board_category}`} className="btn_type4">작성하기</Link>                                        
+                        </div>
+                    }
                 </div>
             </div>
         </div>

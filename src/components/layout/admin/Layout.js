@@ -11,6 +11,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import NotiPop from "../../popup/admin/NotiPop";
 import ConfirmPop from "../../popup/ConfirmPop";
+import { Link } from "react-router-dom";
 
 
 const Layout = (props) => {
@@ -23,9 +24,7 @@ const Layout = (props) => {
     const location = useLocation();
     const { board_category } = useParams();
     const alarm_list = enum_api_uri.alarm_list;
-    const site_info = enum_api_uri.site_info;
     const navigate = useNavigate();
-    const [siteInfo, setSiteInfo] = useState({});
 
 
     // Confirm팝업 닫힐때
@@ -102,45 +101,23 @@ const Layout = (props) => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        });
-    };
-
-
-    //사이트정보 가져오기
-    const getSiteInfo = () => {
-        axios.get(`${site_info.replace(":site_id",user.siteId)}`,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
-        .then((res)=>{
-            if(res.status === 200){
-                let data = res.data.data;
-                    data.site_id = user.siteId;
-                setSiteInfo(data);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
             }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
         });
     };
 
 
     useEffect(()=>{
         getAlarmList();
-        getSiteInfo();
     },[]);
 
 
@@ -176,7 +153,7 @@ const Layout = (props) => {
                             </ul>
                             <div className="header_util">
                                 <div className="admin_util">
-                                    <button type="button" className="btn_user">사용자화면 바로가기</button>
+                                    <Link to="/" className="btn_user">사용자화면 바로가기</Link>
                                     {/* 알림 있을 경우 active */}
                                     <button type="button" className={`btn_noti${common.alarm ? " active" : ""}`}
                                         onClick={()=>{
@@ -200,7 +177,7 @@ const Layout = (props) => {
                         </div>
                     </section>
                 </main>
-                <Footer info={siteInfo} />
+                <Footer/>
             </div>
         </div>
 

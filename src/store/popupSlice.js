@@ -9,6 +9,15 @@ const popup = createSlice({
         confirmPopTxt: "",
         confirmPopBtn: "",
 
+        // 사용자-------------------------------
+        //클리어병원상세 팝업
+        hospitalPop: false,
+        hospitalPopData: null,
+
+        //클리어병원 제휴문의 팝업
+        inquirePop: false,
+
+
         // 관리자-------------------------------
         //알림 팝업
         adminNotiPop: false,
@@ -46,6 +55,18 @@ const popup = createSlice({
             state.confirmPopTxt = action.payload.confirmPopTxt;
             state.confirmPopBtn = action.payload.confirmPopBtn;
         },
+
+        // 사용자-------------------------------
+        hospitalPop: (state, action) => {
+            state.hospitalPop = action.payload.hospitalPop;
+            state.hospitalPopData = action.payload.hospitalPopData;
+        },
+        inquirePop: (state, action) => {
+            state.inquirePop = action.payload;
+        },
+
+
+
         // 관리자-------------------------------
         adminNotiPop: (state, action) => {
             state.adminNotiPop = action.payload;
@@ -96,6 +117,11 @@ const popup = createSlice({
 
 export const {
     confirmPop, 
+
+    hospitalPop,
+    inquirePop,
+
+
     adminNotiPop,
     adminPolicyPop,
     adminPolicyPopModify,

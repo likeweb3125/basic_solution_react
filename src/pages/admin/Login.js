@@ -7,6 +7,7 @@ import * as CF from "../../config/function";
 import { loginUser, siteId, maintName } from "../../store/userSlice";
 import { confirmPop } from "../../store/popupSlice";
 import ConfirmPop from "../../components/popup/ConfirmPop";
+import { Link } from "react-router-dom";
 
 const Login = () => {
     const login = enum_api_uri.login;
@@ -50,10 +51,10 @@ const Login = () => {
     //로그인하기
     const loginHandler = () => {
         const body = {
-            // m_email:email,
-            // m_password:password,
-            m_email:"likeweb@likeweb.co.kr",
-            m_password:"test!@#$",
+            m_email:email,
+            m_password:password,
+            // m_email:"likeweb@likeweb.co.kr",
+            // m_password:"test!@#$!",
             m_level:"9" //관리자 회원레벨 9
         };
 
@@ -65,12 +66,10 @@ const Login = () => {
                 dispatch(loginUser(data));
 
                 //siteId store 에 저장 (고정값)
-                // dispatch(siteId(process.env.REACT_APP_SITE_ID));
-                dispatch(siteId("likeweb"));
+                dispatch(siteId(process.env.REACT_APP_SITE_ID));
 
                 //maintName store 에 저장 (고정값) 유지보수업체이름
-                // dispatch(maintName(process.env.REACT_APP_MAINT_NAME));
-                dispatch(maintName("라이크웹테스트"));
+                dispatch(maintName(process.env.REACT_APP_MAINT_NAME));
 
                 //관리자단 메인으로 페이지이동
                 navigate('/console');
@@ -94,7 +93,7 @@ const Login = () => {
             <div className="page_admin_login"> 
                 <div className="admin_login">
                     <div className="login_tit">
-                        <h1 className="logo">Lorem ipsum</h1>
+                        <h1 className="logo">관리자</h1>
                         <strong>로그인</strong>
                     </div>
                     <div className="form_inner">
@@ -113,6 +112,12 @@ const Login = () => {
                                                 setError(newError);
                                             }
                                         }} 
+                                        onKeyDown={(e)=>{
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault(); // Enter 키의 기본 동작(줄 바꿈)을 막음
+                                                loginBtnClickHandler(); // 엔터 키를 눌렀을 때 이벤트 핸들러 실행
+                                            }
+                                        }}
                                     />
                                 </div>
                                 {error.email && <em className="txt_err">이메일을 입력해주세요.</em>}
@@ -133,6 +138,12 @@ const Login = () => {
                                                 setError(newError);
                                             }
                                         }}
+                                        onKeyDown={(e)=>{
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault(); // Enter 키의 기본 동작(줄 바꿈)을 막음
+                                                loginBtnClickHandler(); // 엔터 키를 눌렀을 때 이벤트 핸들러 실행
+                                            }
+                                        }}
                                     /> 
                                     <button type="button" className="view_pwd" onClick={()=>setPassView(!passView)}>비밀번호 보기</button>
                                 </div>
@@ -141,7 +152,7 @@ const Login = () => {
                         </div>
                         <div className="btn_wrap">
                             <button type="button" className="btn_type25" onClick={loginBtnClickHandler}>로그인</button>
-                            <button type="button" className="btn_type26">사용자 화면 바로가기</button>
+                            <Link to="/" className="btn_type26">사용자 화면 바로가기</Link>
                         </div>
                     </div>
                 </div>

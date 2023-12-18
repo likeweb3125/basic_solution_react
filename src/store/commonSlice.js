@@ -6,6 +6,8 @@ const common = createSlice({
         boardMenu:[],
         boardSettingData:{},
         alarm:false,
+        siteInfo:{},
+        siteInfoEdit:false,
     },
     reducers:{
         boardMenu: (state, action) => {
@@ -17,12 +19,20 @@ const common = createSlice({
         alarm: (state, action) => {
             state.alarm = action.payload;
         },
+        siteInfo: (state, action) => {
+            state.siteInfo = action.payload;
+        },
+        siteInfoEdit: (state, action) => {
+            state.siteInfoEdit = action.payload;
+        },
     }
 });
 
 export const { 
     boardMenu,
     boardSettingData,
-    alarm
+    alarm,
+    siteInfo,
+    siteInfoEdit
 } = common.actions;
 export default common;

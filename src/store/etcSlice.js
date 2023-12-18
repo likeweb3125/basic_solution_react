@@ -8,7 +8,8 @@ const etc = createSlice({
         checkedList: [],
         detailPageBack: false,
         listPageData: {},
-        scrollY: null
+        scrollY: null,
+        closePopIdx: null,
     },
     reducers:{
         pageNo: (state, action) => {
@@ -29,6 +30,9 @@ const etc = createSlice({
         scrollY: (state, action) => {
             state.scrollY = action.payload;
         },
+        closePopIdx: (state, action) => {
+            state.closePopIdx = action.payload;
+        },
     }
 });
 
@@ -38,6 +42,7 @@ export const {
     checkedList, 
     detailPageBack,
     listPageData,
-    scrollY
+    scrollY,
+    closePopIdx
 } = etc.actions;
 export default etc;
