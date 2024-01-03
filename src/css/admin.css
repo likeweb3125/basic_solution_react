@@ -219,6 +219,7 @@ body,input,select,textarea,button,table {
 .menu_list_box .list_menu1 > li:first-of-type {margin-top: 0;}
 .menu_list_box .list_menu1 .menu {border-radius: 5px; background: #fff; position: relative; padding: 15px 150px 15px 24px; cursor: pointer; transition: all .3s;}
 .menu_list_box .list_menu1 span {font-size: 18px; font-weight: 500; color: #222; display: block; line-height: 24px; position: relative;}
+.menu_list_box .menu.on span{color:var(--admin-color1) !important;}
 .menu_list_box .menu .btn_wrap {position: absolute; right: 24px; top: 50%; transform: translateY(-50%); display: flex; align-items: center; column-gap: 20px;}
 .menu_list_box .menu .btn_wrap button {text-indent: -9999px; width: 24px; height: 24px; position: relative;}
 .menu_list_box .menu .btn_wrap .btn_move {cursor: grab;}
@@ -244,7 +245,8 @@ body,input,select,textarea,button,table {
 .menu_list_box .list_menu2 > li.on > .menu .btn_wrap .btn_folder:after {transform: rotateX(180deg);}
 .menu_list_box .list_menu2 > li.on .list_menu3 {display: block;}
 .menu_list_box .list_menu2 > li.on .list_menu3 .menu {background:#F1F1F7;}
-.menu_list_box .list_menu1 > li.disable_menu_wrap {border: 1px solid #999; border-radius: 5px; transition: all .3s; margin-top: 8px;}
+
+/* .menu_list_box .list_menu1 > li.disable_menu_wrap {border: 1px solid #999; border-radius: 5px; transition: all .3s; margin-top: 8px;}
 .menu_list_box .list_menu1 > li.disable_menu_wrap .btn_disable_menu {position: relative; display: block; background: transparent; font-size: 18px; font-weight: 500; color: #999; width: 100%; text-align: left; line-height: 24px; padding: 15px 24px; transition: all .3s;}
 .menu_list_box .list_menu1 > li.disable_menu_wrap .btn_disable_menu:after {content: ''; position: absolute; right: 24px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_catetory_arrow.svg') no-repeat 50% 50%/100%; transition: all .3s}
 .menu_list_box .list_menu1 > li.disable_menu_wrap .disable_menu {padding: 5px 20px 20px; display: none;}
@@ -257,11 +259,46 @@ body,input,select,textarea,button,table {
 .menu_list_box .list_menu1 > li.disable_menu_wrap.on {border-color: var(--admin-color1);}
 .menu_list_box .list_menu1 > li.disable_menu_wrap.on .disable_menu {display: block;}
 .menu_list_box .list_menu1 > li.disable_menu_wrap.on .btn_disable_menu {color: var(--admin-color1);}
-.menu_list_box .list_menu1 > li.disable_menu_wrap.on .btn_disable_menu:after {transform: translateY(-50%); background-image: url('../images/ic_catetory_arrow_c.svg');}
+.menu_list_box .list_menu1 > li.disable_menu_wrap.on .btn_disable_menu:after {transform: translateY(-50%); background-image: url('../images/ic_catetory_arrow_c.svg');} */
+
+.menu_list_box .disable_menu_wrap {border: 1px solid #999; border-radius: 5px; transition: all .3s; margin-top: 8px;}
+.menu_list_box .disable_menu_wrap .btn_disable_menu {position: relative; display: block; background: transparent; font-size: 18px; font-weight: 500; color: #999; width: 100%; text-align: left; line-height: 24px; padding: 15px 24px; transition: all .3s;}
+.menu_list_box .disable_menu_wrap .btn_disable_menu:after {content: ''; position: absolute; right: 24px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_catetory_arrow.svg') no-repeat 50% 50%/100%; transition: all .3s}
+.menu_list_box .disable_menu_wrap .disable_menu {padding: 5px 20px 20px; display: none;}
+.menu_list_box .disable_menu_wrap .disable_menu .list_disable_menu > li {margin-top: 8px;}
+.menu_list_box .disable_menu_wrap .disable_menu .list_disable_menu > li:first-of-type {margin-top: 0;}
+.menu_list_box .disable_menu_wrap .disable_menu .list_disable_menu .menu {border: 1px solid transparent; position: relative; border-radius: 5px; font-size: 18px; font-weight: 500; color: #222; cursor: pointer; line-height: 24px; padding: 15px 24px;}
+.menu_list_box .disable_menu_wrap .disable_menu .list_disable_menu .menu.menu1 {border-color: #fff; background: #fff;}
+.menu_list_box .disable_menu_wrap .disable_menu .list_disable_menu .menu.menu2 {border-color: #ddd; background: #f8f8f8; font-size: 16px; padding-left: 58px;}
+.menu_list_box .disable_menu_wrap .disable_menu .list_disable_menu .menu.menu2:before {content: ''; position: absolute; left: 24px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_category_b.svg') no-repeat 50% 50%/100%;}
+.menu_list_box .disable_menu_wrap.on {border-color: var(--admin-color1);}
+.menu_list_box .disable_menu_wrap.on .disable_menu {display: block;}
+.menu_list_box .disable_menu_wrap.on .btn_disable_menu {color: var(--admin-color1);}
+.menu_list_box .disable_menu_wrap.on .btn_disable_menu:after {transform: translateY(-50%); background-image: url('../images/ic_catetory_arrow_c.svg');}
+
+
 .page_admin_menu .reg_category_wrap {flex: 1;}
 .page_admin_menu .reg_category_wrap h4 {font-size: 20px; font-weight: 600; color: #222; padding-bottom: 15px; border-bottom: 1px solid #222;}
 .page_admin_menu .reg_category_wrap .chk_rdo_wrap > div {min-width: 160px;}
 .none_category{text-align: center;font-size: 16px;padding: 10px 0;}
+
+/* 메뉴 dnd 테스트 */
+.menu_list_box .list_menu>li{border-radius: 5px; position: relative; padding: 15px 24px !important; cursor: pointer;}
+.menu_list_box .list_menu .menu{background: var(--admin-color2);margin-top: 20px;}
+.menu_list_box .list_menu .menu .txt{color: #fff;}
+/* .menu_list_box .list_menu .menu.off{background: #fff;}
+.menu_list_box .list_menu .menu.off .txt{color: #222;} */
+.menu_list_box .list_menu .menu_1{background: #E7E6F6;}
+.menu_list_box .list_menu .menu_1.off{background: #F8F8F8;}
+.menu_list_box .list_menu .menu_2{background: #F1F1F7;}
+.menu_list_box .list_menu .menu_3{background: #ddd;}
+.menu_list_box .list_menu>li>div{padding: 0;border: none;padding-right: 68px;}
+.menu_list_box .list_menu>li .dnd-sortable-tree_simple_handle{position: absolute;top: 50%;right: 0;transform: translateY(-50%);width: 24px;height: 24px;background: url(../images/ic_catetory_move.svg) no-repeat center;}
+.menu_list_box .list_menu>li .dnd-sortable-tree_simple_tree-item-collapse_button{position: absolute;right: 44px;width: 24px;height: 24px;background: url(../images/ic_catetory_arrow.svg) no-repeat center;}
+.menu_list_box .list_menu>li .dnd-sortable-tree_folder_simple-item-collapse_button-collapsed{transform: rotate(-180deg);}
+.menu_list_box .list_menu .menu_1 .txt{padding-left: 34px;background: url(../images/ic_category_b.svg) no-repeat center left;}
+.menu_list_box .list_menu .menu_2 .txt{padding-left: 58px;background: url(../images/ic_category_b.svg) no-repeat center left 24px;}
+
 
 
 /* 하위카테고리 등록 팝업 */

@@ -1,63 +1,241 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { enum_api_uri } from "../../config/enum";
+import * as CF from "../../config/function";
+import { confirmPop } from "../../store/popupSlice";
 
 import MenuListBox from "../../components/component/admin/MenuListBox";
+import InputBox from "../../components/component/admin/InputBox";
 
 
 const MenuCategory = () => {
-    const [menuList, setMenuList] = useState([
-        {   name:"About Us",
-            list:[
-                {   name:"회사소개 2depth",
-                    list:[{name:"회사소개1 3depth"},{name:"회사소개2 3depth"}]
-                },
-                {   name:"회사비전 2depth",
-                    list:[]
-                },
-            ]
-        },
-        {   name:"Service",
-            list:[
-                {   name:"서비스 2depth",
-                    list:[]
-                },
-                {   name:"서비스2 2depth",
-                    list:[{name:"서비스2-1 3depth"},{name:"서비스2-2 3depth"}]
-                },
-            ]
-        },
-    ]);
-    const [unusedMenuList, setUnusedMenuList] = useState([
-        {   
-            list:[{name:"서비스2-1 3depth"},{name:"서비스2-2 3depth"}]
-        },
-        {   
-            list:[{name:"서비스2-1 3depth"},{name:"서비스2-2 3depth"}]
-        },
-    ]);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const menu_list = enum_api_uri.menu_list;
+    const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
+    const etc = useSelector((state)=>state.etc);
+    const [confirm, setConfirm] = useState(false);
+    const [menuList, setMenuList] = useState([]);
+    const [unusedMenuList, setUnusedMenuList] = useState([]);
+    const [depth1Num, setDepth1Num] = useState(0);
+    const [depth2Num, setDepth2Num] = useState(0);
+    const [info, setInfo] = useState({});
+    const [error, setError] = useState({});
 
-    // useEffect(()=>{
-    //     const newList = menuList.map((menu, index) => `menu${index + 1}`);
-    //     console.log(newList);
-    // },[]);
 
+    // Confirm팝업 닫힐때
+    useEffect(()=>{
+        if(popup.confirmPop === false){
+            setConfirm(false);
+        }
+    },[popup.confirmPop]);
+
+    
+    // 전체카테고리 가져오기
+    const getMenuList = () => {
+        axios.get(menu_list,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                // let data = res.data.data;
+                let data = [
+                    {
+                        "id": 45,
+                        "c_depth": 1,
+                        "c_depth_parent": 0,
+                        "c_num": 1,
+                        "c_name": "클리어라식",
+                        "c_main_banner": "",
+                        "c_main_banner_file": null,
+                        "c_menu_ui": "TXT",
+                        "c_menu_on_img": null,
+                        "c_menu_off_img": null,
+                        "c_content_type": null
+                    },
+                    {
+                        "id": 46,
+                        "c_depth": 1,
+                        "c_depth_parent": 0,
+                        "c_num": 2,
+                        "c_name": "지머",
+                        "c_main_banner": "",
+                        "c_main_banner_file": null,
+                        "c_menu_ui": "TXT",
+                        "c_menu_on_img": null,
+                        "c_menu_off_img": null,
+                        "c_content_type": null,
+                    },
+                    {
+                        "id": 47,
+                        "c_depth": 1,
+                        "c_depth_parent": 0,
+                        "c_num": 3,
+                        "c_name": "매거진",
+                        "c_main_banner": "",
+                        "c_main_banner_file": null,
+                        "c_menu_ui": "TXT",
+                        "c_menu_on_img": null,
+                        "c_menu_off_img": null,
+                        "c_content_type": null,
+                        "submenu": [
+                            {
+                                "id": 49,
+                                "c_depth": 2,
+                                "c_depth_parent": 47,
+                                "c_num": 1,
+                                "c_name": "뉴스",
+                                "c_main_banner": "",
+                                "c_main_banner_file": "",
+                                "c_menu_ui": "TXT",
+                                "c_menu_on_img": null,
+                                "c_menu_off_img": null,
+                                "c_content_type": [
+                                    5,
+                                    "GALLERY"
+                                ],
+                                "submenu": [
+                                    {
+                                        "id": 51,
+                                        "c_depth": 3,
+                                        "c_depth_parent": 49,
+                                        "c_num": 1,
+                                        "c_name": "활동사진",
+                                        "c_main_banner": "",
+                                        "c_main_banner_file": null,
+                                        "c_menu_ui": "TXT",
+                                        "c_menu_on_img": null,
+                                        "c_menu_off_img": null,
+                                        "c_content_type": [
+                                            5,
+                                            "GALLERY"
+                                        ],
+                                    }
+                                ]
+                            },
+                            {
+                                "id": 50,
+                                "c_depth": 2,
+                                "c_depth_parent": 47,
+                                "c_num": 2,
+                                "c_name": "제휴문의",
+                                "c_main_banner": "",
+                                "c_main_banner_file": null,
+                                "c_menu_ui": "TXT",
+                                "c_menu_on_img": null,
+                                "c_menu_off_img": null,
+                                "c_content_type": [
+                                    7,
+                                    "QNA"
+                                ]
+                            }
+                        ]
+                    },
+                    // {
+                    //     "id": 48,
+                    //     "c_depth": 1,
+                    //     "c_depth_parent": 0,
+                    //     "c_num": 4,
+                    //     "c_name": "클리어병원 찾기",
+                    //     "c_main_banner": "",
+                    //     "c_main_banner_file": null,
+                    //     "c_menu_ui": "TXT",
+                    //     "c_menu_on_img": null,
+                    //     "c_menu_off_img": null,
+                    //     "c_content_type": null
+                    // },
+                    {
+                        "id": "0",
+                        "c_depth": "1",
+                        "c_depth_parent": "0",
+                        "c_num": "0",
+                        "c_name": "미사용 카테고리",
+                        "submenu": [
+                            {
+                                "id": 48,
+                                "c_depth": 1,
+                                "c_depth_parent": 0,
+                                "c_num": 4,
+                                "c_name": "클리어병원 찾기",
+                                "c_main_banner": "",
+                                "c_main_banner_file": null,
+                                "c_menu_ui": "TXT",
+                                "c_menu_on_img": null,
+                                "c_menu_off_img": null,
+                                "c_content_type": null
+                            },
+                        ]
+                    }
+                ];
+                const list = data.filter(item => item.id != 0);
+                let list2 = data.filter(item => item.id == 0);
+                // list2 = list2.submenu;
+                setMenuList(list);
+                setUnusedMenuList(list2);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
+    
 
     useEffect(()=>{
-        const menuListWithIds = menuList.map((menu, menuIndex) => ({
-            ...menu,
-            id: `depth1_${menuIndex}`,
-            list: menu.list.map((depth2, depth2Index) => ({
-                ...depth2,
-                id: `depth2_${menuIndex}_${depth2Index}`,
-                list: depth2.list.map((depth3, depth3Index) => ({
-                    ...depth3,
-                    id: `depth3_${menuIndex}_${depth2Index}_${depth3Index}`,
-                })),
-            })),
-        }));
-
-        setMenuList(menuListWithIds);
-
+        getMenuList();
     },[]);
+
+
+    //1차, 하위카테고리 개수
+    useEffect(()=>{
+        const depth1_num = menuList.filter(item => item.c_depth === 1).length;
+        const depth2_list = menuList.filter(item => item.c_depth === 1) // 1단계에서 c_depth가 1인 항목을 필터링
+        .flatMap(item => item.submenu || []) // 필터링된 항목의 submenu를 flatMap으로 추출
+        .filter(subItem => subItem.c_depth === 2); 
+        const depth3_num = depth2_list.flatMap(item => item.submenu || [])
+        .filter(subItem => subItem.c_depth === 3).length; 
+        const depth2_num = depth2_list.length + depth3_num;
+        
+        setDepth1Num(depth1_num);
+        setDepth2Num(depth2_num);
+    },[menuList]);
+
+
+    //인풋값 변경시
+    const onInputChangeHandler = (e) => {
+        const id = e.currentTarget.id;
+        const val = e.currentTarget.value;
+
+        let newInfo = {...info};
+            newInfo[id] = val;
+            
+        setInfo(newInfo);
+
+        if(id == "c_site_name" && val.length > 0){
+            let newError = {...error};
+                newError.c_site_name = false;
+            setError(newError);
+        }
+        if(id == "c_b_title" && val.length > 0){
+            let newError = {...error};
+                newError.c_b_title = false;
+            setError(newError);
+        }
+    };
+
 
     return(<>
         <div className="page_admin_menu">
@@ -67,11 +245,11 @@ const MenuCategory = () => {
                     <ul className="list_category_txt">
                         <li>
                             <span>1차 카테고리</span>
-                            <strong>총 4개</strong>
+                            <strong>총 {CF.MakeIntComma(depth1Num)}개</strong>
                         </li>
                         <li>
                             <span>2차 카테고리</span>
-                            <strong>총 10개</strong>
+                            <strong>총 {CF.MakeIntComma(depth2Num)}개</strong>
                         </li>
                     </ul>
                 </div>
@@ -85,11 +263,11 @@ const MenuCategory = () => {
                             <button type="button" className="btn_type7">삭제</button>
                         </div>
                         <div className="menu_list_box">
-                            <MenuListBox 
+                            <MenuListBox
                                 list={menuList}
                                 unusedList={unusedMenuList}
                             />
-                            <p>* 드래그앤드랍으로 카테고리 순서를 변경할 수 있습니다.<br/>* 드래그앤드랍으로 하위 카테고리는 상위 카테고리 추가 및 미사용 카테고리로 등록할 수 있습니다.</p>
+                            {/* <p>* 드래그앤드랍으로 카테고리 순서를 변경할 수 있습니다.<br/>* 드래그앤드랍으로 하위 카테고리는 상위 카테고리 추가 및 미사용 카테고리로 등록할 수 있습니다.</p> */}
                         </div>
                         <div className="btn_util">
                             <div className="add_wrap">
@@ -111,12 +289,18 @@ const MenuCategory = () => {
                                             <div className="form_input">
                                                 <h6>카테고리명 <i>*</i></h6>
                                                 <div className="input_wrap">
-                                                    <div className="input_box">
-                                                        <div className="char_cnt">
-                                                            <b>8</b> / 16
-                                                        </div>
-                                                        <input type="text" placeholder="카테고리명을 입력해주세요."/>
-                                                    </div>
+                                                    <InputBox 
+                                                        type={`text`}
+                                                        placeholder={`카테고리명을 입력해주세요.`}
+                                                        countShow={true}
+                                                        countMax={16}
+                                                        count={info.c_site_name ? info.c_site_name.length : 0}
+                                                        value={info.c_site_name || ""}
+                                                        onChangeHandler={onInputChangeHandler}
+                                                        id={`c_site_name`}
+                                                        className={error.c_site_name ? "wrong_input" : ""}
+                                                    />
+                                                    {error.c_site_name && <em className="txt_err">카테고리명을 입력해주세요.</em>}
                                                 </div>
                                             </div>
                                             <div className="form_input">

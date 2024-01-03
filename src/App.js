@@ -35,6 +35,8 @@ import './css/default.css';
 import bg_magazine1 from "./images/user_images/bg_magazine1.png";
 import bg_magazine2 from "./images/user_images/bg_magazine2.png";
 
+import Test from './pages/admin/Test';
+
 
 
 
@@ -154,7 +156,8 @@ function App() {
                 <Route path="/console/login" element={<AdminLogin />} />
 
                 {/* 메인 */}
-                <Route path="/console" element={<AdminLayout><AdminMain/></AdminLayout>} />
+                {/* <Route path="/console" element={<AdminLayout><AdminMain/></AdminLayout>} /> */}
+                <Route path="/console" element={<AdminLayout><Test/></AdminLayout>} />
 
                 {/* ---- 메뉴관리 ---- */}
                 {/* 카테고리관리 */}

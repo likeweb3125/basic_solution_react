@@ -40,8 +40,11 @@ exports.enum_api_uri = {
     alarm_modify: `${api_uri}v1/admin/first/alarm-read-delete/`,
 
     //메뉴관리
+    menu_list: `${api_uri}v1/admin/menu`,
     menu_sub_detail: `${api_uri}v1/admin/menu/sub/:id`,
     menu_sub: `${api_uri}v1/admin/menu/sub`,
+
+
 
     //디자인관리
     popup_list: `${api_uri}v1/admin/popup`,

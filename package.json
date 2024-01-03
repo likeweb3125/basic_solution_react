@@ -30,7 +30,6 @@
     "redux-persist": "^6.0.0",
     "smooth-scrollbar-react": "^2.4.1",
     "swiper": "^11.0.4",
-    "typescript": "^5.3.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
