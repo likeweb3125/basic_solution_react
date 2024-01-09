@@ -7,7 +7,7 @@ import * as CF from "../../config/function";
 import history from "../../config/history";
 import { confirmPop } from "../../store/popupSlice";
 import { detailPageBack } from "../../store/etcSlice";
-import CommentWrap from "../../components/component/admin/CommentWrap";
+import CommentWrap2 from "../../components/component/admin/CommentWrap2";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import InputBox from "../../components/component/admin/InputBox";
 
@@ -30,6 +30,8 @@ const BoardDetail = () => {
     const [boardData, setBoardData] = useState({});
     const [boardSettingData, setBoardSettingData] = useState({});
     const [answerTxt, setAnswerTxt] = useState(null);
+    const [commentList, setCommentList] = useState([]);
+    const [comment, setComment] = useState("");
 
 
     //상세페이지 뒤로가기
@@ -248,6 +250,78 @@ const BoardDetail = () => {
     };
 
 
+    //댓글 300자초과시 알림팝업 띄우기
+    useEffect(()=>{
+        if(comment.length === 300){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'300 자 초과하였습니다.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    },[comment]);
+
+
+    //댓글 textarea 값 변경시
+    const onTextChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setComment(val);
+    };
+
+
+    //댓글등록버튼 클릭시
+    const enterBtnClickHandler = () => {
+        if(comment.length == 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'댓글을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else{
+            enterHandler();
+        }
+    };
+
+
+    //댓글등록하기
+    const enterHandler = () => {
+        // const body = {
+        //     list_no: list_no,
+        //     c_name: user.maintName,
+        //     c_content: comment,
+        //     m_id: "",
+        //     c_password: "",
+        //     c_table: "admin",
+        // };
+        // axios.post(`${maint_comment}`, body, 
+        //     {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        // )
+        // .then((res)=>{
+        //     if(res.status === 200){
+        //         getCommentList();
+        //     }
+        // })
+        // .catch((error) => {
+        //     const err_msg = CF.errorMsgHandler(error);
+        //     if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+        //         navigate("/console/login");
+        //     }else{
+        //         dispatch(confirmPop({
+        //             confirmPop:true,
+        //             confirmPopTit:'알림',
+        //             confirmPopTxt: err_msg,
+        //             confirmPopBtn:1,
+        //         }));
+        //         setConfirm(true);
+        //     }
+        // });
+    };
+
+
     return(<>
         <div className="page_admin_board">
             <div className="content_box">
@@ -338,7 +412,13 @@ const BoardDetail = () => {
                                     </li>
                                 </ul>
                             }
-                            {/* <CommentWrap /> */}
+                            <CommentWrap2 
+                                list={commentList}
+                                name={user.maintName}
+                                comment={comment}
+                                onTextChangeHandler={onTextChangeHandler}
+                                onEnterHandler={enterBtnClickHandler}
+                            />
                         </div> 
                     </div>
                     {boardSettingData.c_content_type == 7 ?

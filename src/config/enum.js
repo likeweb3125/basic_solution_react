@@ -21,6 +21,10 @@ exports.enum_api_uri = {
     board_group: `${api_uri}v1/admin/menu/boardGroup`,
     board_group_view: `${api_uri}v1/admin/menu/boardGroup/view/:id`,
     board_group_move: `${api_uri}v1/admin/menu/boardGroupMove`,
+    //게시판댓글
+    board_comment_list: `${api_uri}v1/comment/user/:category/:board_idx`,
+    board_comment: `${api_uri}v1/comment/user`,
+
 
 
 

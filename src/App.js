@@ -106,7 +106,7 @@ function App() {
 
     //맨처음 사이트정보 가져오기
     useEffect(()=>{
-        // getSiteInfo();
+        getSiteInfo();
     },[]);
 
 

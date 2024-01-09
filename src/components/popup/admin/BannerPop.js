@@ -360,6 +360,8 @@ const BannerPop = () => {
     const saveHandler = () => {
         //새로 작성일때
         if(popup.adminBannerPopWrite){
+            const formData = new FormData();
+
             let sDate = "";
             if(startDate){
                 sDate = moment(startDate).format("YYYY.MM.DD");
@@ -375,28 +377,49 @@ const BannerPop = () => {
             }else{
                 cont = content;
             }
+
+            formData.append("b_type", popup.adminBannerPopType);
+            formData.append("b_open", useBtn);
+            formData.append("b_title", info.b_title);
+            formData.append("b_s_date", sDate);
+            formData.append("b_e_date", eDate);
+            formData.append("b_width_size", info.b_width_size);
+            formData.append("b_height_size", info.b_height_size);
+            formData.append("b_size", sizeCheck);
+            formData.append("b_c_type", tab);
+            formData.append("b_file", bannerFileData[0]);
+            formData.append("b_url", info.b_url || '');
+            formData.append("b_url_target", linkCheck);
+            formData.append("b_mov_type", movTypeCheck);
+            formData.append("b_mov_url", info.b_mov_url || '');
+            formData.append("b_mov_play", info.b_mov_play || '');
+            formData.append("b_mov_sound", info.b_mov_sound || '');
+            formData.append("b_content", cont || '');
             const body = {
-                b_type:popup.adminBannerPopType,
-                b_open:useBtn,
-                b_title:info.b_title,
-                b_s_date:sDate,
-                b_e_date:eDate,
-                b_width_size:info.b_width_size,
-                b_height_size:info.b_height_size,
-                b_size:sizeCheck,
-                b_c_type:tab,
-                b_file:bannerFileData[0],
-                b_url:info.b_url,
-                b_url_target:linkCheck,
-                b_mov_type:movTypeCheck,
-                b_mov_url:info.b_mov_url,
-                b_mov_play:info.b_mov_play || '',
-                b_mov_sound:info.b_mov_sound || '',
-                b_content:cont || ''
+                // b_type:popup.adminBannerPopType,
+                // b_open:useBtn,
+                // b_title:info.b_title,
+                // b_s_date:sDate,
+                // b_e_date:eDate,
+                // b_width_size:info.b_width_size,
+                // b_height_size:info.b_height_size,
+                // b_size:sizeCheck,
+                // b_c_type:tab,
+                // b_file:bannerFileData[0],
+                // b_url:info.b_url,
+                // b_url_target:linkCheck,
+                // b_mov_type:movTypeCheck,
+                // b_mov_url:info.b_mov_url,
+                // b_mov_play:info.b_mov_play || '',
+                // b_mov_sound:info.b_mov_sound || '',
+                // b_content:cont || ''
             };
-            axios.post(`${banner_list}`, body, 
-                {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-            )
+            axios.post(banner_list, formData, {
+                headers: {
+                    Authorization: `Bearer ${user.loginUser.accessToken}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            })
             .then((res)=>{
                 if(res.status === 200){
                     dispatch(confirmPop({
@@ -421,6 +444,8 @@ const BannerPop = () => {
         }
         //수정일때
         else{
+            const formData = new FormData();
+
             let sDate = "";
             if(startDate){
                 sDate = moment(startDate).format("YYYY.MM.DD");
@@ -444,29 +469,51 @@ const BannerPop = () => {
                 cont = content;
             }
 
-            const body = {
-                idx:popup.adminBannerPopIdx,
-                b_type:popup.adminBannerPopType,
-                b_open:useBtn,
-                b_title:info.b_title,
-                b_s_date:sDate,
-                b_e_date:eDate,
-                b_width_size:info.b_width_size,
-                b_height_size:info.b_height_size,
-                b_size:sizeCheck,
-                b_c_type:tab,
-                b_file:b_file,
-                b_url:info.b_url,
-                b_url_target:linkCheck,
-                b_mov_type:movTypeCheck,
-                b_mov_url:info.b_mov_url,
-                b_mov_play:info.b_mov_play || '',
-                b_mov_sound:info.b_mov_sound || '',
-                b_content:cont || ''
-            };
-            axios.put(`${banner_list}`, body, 
-                {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-            )
+            formData.append("idx", popup.adminBannerPopIdx);
+            formData.append("b_type", popup.adminBannerPopType);
+            formData.append("b_open", useBtn);
+            formData.append("b_title", info.b_title);
+            formData.append("b_s_date", sDate);
+            formData.append("b_e_date", eDate);
+            formData.append("b_width_size", info.b_width_size);
+            formData.append("b_height_size", info.b_height_size);
+            formData.append("b_size", sizeCheck);
+            formData.append("b_c_type", tab);
+            formData.append("b_file", b_file);
+            formData.append("b_url", info.b_url);
+            formData.append("b_url_target", linkCheck);
+            formData.append("b_mov_type", movTypeCheck);
+            formData.append("b_mov_url", info.b_mov_url);
+            formData.append("b_mov_play", info.b_mov_play || '');
+            formData.append("b_mov_sound", info.b_mov_sound || '');
+            formData.append("b_content", cont || '');
+
+            // const body = {
+            //     idx:popup.adminBannerPopIdx,
+            //     b_type:popup.adminBannerPopType,
+            //     b_open:useBtn,
+            //     b_title:info.b_title,
+            //     b_s_date:sDate,
+            //     b_e_date:eDate,
+            //     b_width_size:info.b_width_size,
+            //     b_height_size:info.b_height_size,
+            //     b_size:sizeCheck,
+            //     b_c_type:tab,
+            //     b_file:b_file,
+            //     b_url:info.b_url,
+            //     b_url_target:linkCheck,
+            //     b_mov_type:movTypeCheck,
+            //     b_mov_url:info.b_mov_url,
+            //     b_mov_play:info.b_mov_play || '',
+            //     b_mov_sound:info.b_mov_sound || '',
+            //     b_content:cont || ''
+            // };
+            axios.put(banner_list, formData, {
+                headers: {
+                    Authorization: `Bearer ${user.loginUser.accessToken}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            })
             .then((res)=>{
                 if(res.status === 200){
                     dispatch(confirmPop({
