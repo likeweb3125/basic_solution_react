@@ -50,7 +50,8 @@ function App() {
     const location = useLocation();
     const [confirm, setConfirm] = useState(false);
     const site_info = enum_api_uri.site_info;
-    const siteId = process.env.REACT_APP_SITE_ID;
+    // const siteId = process.env.REACT_APP_SITE_ID;
+    const siteId = 'likeweb';
     const [siteInfoData, setSiteInfoData] = useState({});
     
 
