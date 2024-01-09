@@ -16,7 +16,7 @@ const Footer = (props) => {
             <div className="footer_inner">
                 <address>
                     <ul>
-                        <li><h2>{info.c_site_name && info.c_site_name}</h2></li>
+                        {info.c_site_name && <li><h2>{info.c_site_name}</h2></li>}
                         {info.c_ceo && <li><span>대표이사</span>{info.c_ceo}</li>}
                         {info.c_num && <li><span>사업자등록번호</span>{info.c_num}</li>}
                     </ul>
