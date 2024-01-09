@@ -480,10 +480,10 @@ const BannerPop = () => {
             formData.append("b_size", sizeCheck);
             formData.append("b_c_type", tab);
             formData.append("b_file", b_file);
-            formData.append("b_url", info.b_url);
+            formData.append("b_url", info.b_url || '');
             formData.append("b_url_target", linkCheck);
             formData.append("b_mov_type", movTypeCheck);
-            formData.append("b_mov_url", info.b_mov_url);
+            formData.append("b_mov_url", info.b_mov_url || '');
             formData.append("b_mov_play", info.b_mov_play || '');
             formData.append("b_mov_sound", info.b_mov_sound || '');
             formData.append("b_content", cont || '');
