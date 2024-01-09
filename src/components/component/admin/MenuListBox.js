@@ -26,8 +26,8 @@ const MenuListBox = (props) => {
 
         // 미사용카테고리 개수
         let num = 0;
-        if(props.unusedList.submenu){
-            num = props.unusedList.submenu.length;
+        if(props.unusedList){
+            num = props.unusedList.length;
         }
         setUnusedMenu(num);
     },[props.unusedList]);
@@ -128,20 +128,10 @@ const MenuListBox = (props) => {
             <div className="disable_menu">
                 {unusedMenu > 0 ?
                     <ul className="list_disable_menu">
-                        {unusedList[0].submenu.map((cont,i)=>{
+                        {unusedList.map((cont,i)=>{
                             return(
                                 <li key={i}>
-                                    <div className="menu menu1">
-                                    {/* <div className={`menu${menuOnId === cont.id ? " on" : ""}`} onClick={()=>setMenuOnId(cont.id)}> */}
-                                        <span>{cont.c_name}</span>
-                                    </div>
-                                </li>
-                            );
-                        })}
-                        {unusedList[1].submenu.map((cont,i)=>{
-                            return(
-                                <li key={i}>
-                                    <div className="menu menu2">
+                                    <div className={`menu ${cont.c_depth == 1 ? ' menu1' : ' menu2'}${unMenuOnId === cont.id ? " on" : ""}`} onClick={()=>setUnMenuOnId(cont.id)}>
                                         <span>{cont.c_name}</span>
                                     </div>
                                 </li>

@@ -131,6 +131,8 @@ input::-webkit-search-results-decoration {display: none;}
 .file_txt span {line-height: 28px; display: block; padding: 0 0 0 30px; font-size: 16px; color: #222; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
 .file_txt .btn_file_remove {position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_file_remove.svg') no-repeat 50% 50%/100%; text-indent: -9999px; text-align: left;}
 .file_box1 .input_file {height: 50px; position: relative; border: 1px solid #ddd; border-radius: 5px; background: #fff;}
+.file_box1 .input_file.wrong_input {border-color: var(--admin-color3); transition: all .3s;}
+.file_box1 .input_file.wrong_input:focus {border-color: var(--admin-color1);}
 .file_box1 .input_file input[type="file"] + label {height: 100%; display: block; position: relative; cursor: pointer;}
 .file_box1 .input_file input[type="file"] + label strong {position: absolute; right: 10px; top: 50%; transform: translateY(-50%); border: 1px solid #ddd; border-radius: 5px; background: #f8f8f8; line-height: 30px; padding: 0 12px; font-size: 14px; font-weight: 400; color: #666;}
 .file_box1 .input_file input[type="file"] + label b {position: absolute; left: 0; top: 0; line-height: 28px; padding: 10px 90px 10px 40px; width: 100%; display: block; font-size: 16px; font-weight: 400; color: #999; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}
@@ -139,6 +141,7 @@ input::-webkit-search-results-decoration {display: none;}
 .file_box1 .view_file_img {position: relative; margin-top: 12px; display: inline-block; vertical-align: top;}
 .file_box1 .view_file_img .file_img {display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; border: 1px solid #ddd; min-width: 60px; min-height: 60px;}
 .file_box1 .view_file_img .file_img img {max-width: 100%; max-height: 100%;}
+.file_box1 .view_file_img .file_img video{max-width: 100%; }
 .file_box1 .view_file_img .file_img .btn_img_remove {position: absolute; right: 0; top: 0; width: 40px; height: 40px; background: url('../images/ic_file_remove2.svg') no-repeat 50% 50%/100%; text-align: left; text-indent: -9999px;}
 .file_box2 {position: relative;}
 .file_box2 .input_file {padding-top: 40px; position: relative;}

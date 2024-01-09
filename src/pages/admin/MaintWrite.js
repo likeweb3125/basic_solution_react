@@ -94,7 +94,7 @@ const MaintWrite = () => {
 
     //글 등록버튼 클릭시
     const submitClickHandler = () => {
-        let cont;
+        let cont = '';
         if(showRaw){
             cont = rawHtml;
         }else{

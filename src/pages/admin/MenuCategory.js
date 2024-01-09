@@ -116,22 +116,22 @@ const MenuCategory = () => {
                                     }
                                 ]
                             },
-                            {
-                                "id": 50,
-                                "c_depth": 2,
-                                "c_depth_parent": 47,
-                                "c_num": 2,
-                                "c_name": "제휴문의",
-                                "c_main_banner": "",
-                                "c_main_banner_file": null,
-                                "c_menu_ui": "TXT",
-                                "c_menu_on_img": null,
-                                "c_menu_off_img": null,
-                                "c_content_type": [
-                                    7,
-                                    "QNA"
-                                ]
-                            }
+                            // {
+                            //     "id": 50,
+                            //     "c_depth": 2,
+                            //     "c_depth_parent": 47,
+                            //     "c_num": 2,
+                            //     "c_name": "제휴문의",
+                            //     "c_main_banner": "",
+                            //     "c_main_banner_file": null,
+                            //     "c_menu_ui": "TXT",
+                            //     "c_menu_on_img": null,
+                            //     "c_menu_off_img": null,
+                            //     "c_content_type": [
+                            //         7,
+                            //         "QNA"
+                            //     ]
+                            // }
                         ]
                     },
                     // {
@@ -167,14 +167,29 @@ const MenuCategory = () => {
                                 "c_menu_off_img": null,
                                 "c_content_type": null
                             },
+                            {
+                                "id": 50,
+                                "c_depth": 2,
+                                "c_depth_parent": 47,
+                                "c_num": 2,
+                                "c_name": "제휴문의",
+                                "c_main_banner": "",
+                                "c_main_banner_file": null,
+                                "c_menu_ui": "TXT",
+                                "c_menu_on_img": null,
+                                "c_menu_off_img": null,
+                                "c_content_type": [
+                                    7,
+                                    "QNA"
+                                ]
+                            }
                         ]
                     }
                 ];
                 const list = data.filter(item => item.id != 0);
-                let list2 = data.filter(item => item.id == 0);
-                // list2 = list2.submenu;
+                const unList = data.find(item => item.id == 0).submenu;
                 setMenuList(list);
-                setUnusedMenuList(list2);
+                setUnusedMenuList(unList);
             }
         })
         .catch((error) => {

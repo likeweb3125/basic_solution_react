@@ -32,8 +32,8 @@ const PopupPop = () => {
     const [rawHtml, setRawHtml] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const [scrollCheck, setScrollCheck] = useState("");
-    const [linkCheck, setLinkCheck] = useState("");
+    const [scrollCheck, setScrollCheck] = useState("Y");
+    const [linkCheck, setLinkCheck] = useState("1");
 
 
     // Confirm팝업 닫힐때
@@ -204,6 +204,12 @@ const PopupPop = () => {
     const onEditorChangeHandler = (e) => {
         setContent(e);
         
+        //html 내용 에러문구 false
+        if(e){
+            let newError = { ...error };
+            newError.p_content = false;
+            setError(newError);
+        }
     };
 
 
@@ -246,6 +252,7 @@ const PopupPop = () => {
         }
         setError(newError);
 
+        //내용 html로 입력시 값 체크
         let cont;
         if(showRaw){
             cont = rawHtml;
@@ -253,15 +260,8 @@ const PopupPop = () => {
             cont = content.replace(/<p><br><\/p>/g, "");
         }
         if(!cont){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'내용을 입력해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            newError.p_content = true;
         }
-        
 
         if (!newError.p_title && !newError.p_one_day && !newError.p_layer_pop && !newError.p_size && !newError.p_point && cont) {
             saveHandler();
@@ -301,6 +301,7 @@ const PopupPop = () => {
                 p_top_point:info.p_top_point,
                 p_scroll:scrollCheck,
                 p_link_target:linkCheck,
+                p_link_url:info.p_link_url,
                 p_content:cont,
             };
             axios.post(`${popup_list}`, body, 
@@ -742,7 +743,15 @@ const PopupPop = () => {
                                                     <textarea
                                                         value={rawHtml}
                                                         onChange={(e) => {
-                                                            setRawHtml(e.target.value);
+                                                            const val = e.currentTarget.value;
+                                                            setRawHtml(val);
+
+                                                            //html 내용 에러문구 false
+                                                            if(val.length > 0){
+                                                                let newError = { ...error };
+                                                                newError.p_content = false;
+                                                                setError(newError);
+                                                            }
                                                         }}
                                                         className="raw_editor"
                                                     />
@@ -750,6 +759,7 @@ const PopupPop = () => {
                                                 }
                                             </div>
                                         </div>
+                                        {error.p_content && <em className="txt_err">내용을 입력해주세요.</em>}
                                     </div>
                                 </div>
                             </div>

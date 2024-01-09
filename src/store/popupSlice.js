@@ -40,6 +40,13 @@ const popup = createSlice({
         adminBoardGroupPopId: null,
         adminBoardGroupPopMenuOn: null,
 
+        //메인배너관리 상세 팝업
+        adminBannerPop: false,
+        adminBannerPopIdx: null,
+        adminBannerPopType: null,
+        adminBannerPopModify: false,
+        adminBannerPopWrite: false,
+
         //팝업관리 상세 팝업
         adminPopupPop: false,
         adminPopupPopIdx: null,
@@ -64,8 +71,6 @@ const popup = createSlice({
         inquirePop: (state, action) => {
             state.inquirePop = action.payload;
         },
-
-
 
         // 관리자-------------------------------
         adminNotiPop: (state, action) => {
@@ -101,6 +106,17 @@ const popup = createSlice({
         adminBoardGroupPopMenuOn: (state, action) => {
             state.adminBoardGroupPopMenuOn = action.payload;
         },
+        adminBannerPop: (state, action) => {
+            state.adminBannerPop = action.payload.adminBannerPop;
+            state.adminBannerPopIdx = action.payload.adminBannerPopIdx;
+            state.adminBannerPopType = action.payload.adminBannerPopType;
+        },
+        adminBannerPopModify: (state, action) => {
+            state.adminBannerPopModify = action.payload;
+        },
+        adminBannerPopWrite: (state, action) => {
+            state.adminBannerPopWrite = action.payload;
+        },
         adminPopupPop: (state, action) => {
             state.adminPopupPop = action.payload.adminPopupPop;
             state.adminPopupPopIdx = action.payload.adminPopupPopIdx;
@@ -132,6 +148,9 @@ export const {
     adminCategoryPopModify,
     adminBoardGroupPop,
     adminBoardGroupPopMenuOn,
+    adminBannerPop,
+    adminBannerPopModify,
+    adminBannerPopWrite,
     adminPopupPop,
     adminPopupPopModify,
     adminPopupPopWrite,

@@ -59,6 +59,9 @@ const Header = () => {
             }
         }
 
+        if(path === "/console/design/banner"){
+            setMenuOn("design1");
+        }
         if(path === "/console/design/popup"){
             setMenuOn("design2");
         }
@@ -267,9 +270,9 @@ const Header = () => {
                             <li className={menuOn && menuOn.includes("design") ? "on" : ""}>
                                 <button type="button" className="btn_menu admin_design" onClick={()=>{setMenuOn("design")}}><span>디자인 관리</span></button>
                                 <ul className="depth2" ref={designRef}>
-                                    {/* <li className={menuOn === "design1" ? "on" : ""}>
-                                        <Link to="" className="menu">메인 배너 관리</Link>
-                                    </li> */}
+                                    <li className={menuOn === "design1" ? "on" : ""}>
+                                        <Link to="/console/design/banner" className="menu">메인 배너 관리</Link>
+                                    </li>
                                     <li className={menuOn === "design2" ? "on" : ""}>
                                         <Link to="/console/design/popup" className="menu">팝업 관리</Link>
                                     </li>

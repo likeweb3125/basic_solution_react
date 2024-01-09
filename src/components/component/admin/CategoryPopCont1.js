@@ -89,7 +89,6 @@ const CategoryPopCont1 = (props) => {
                         onChange={(e)=>setTemplateText(e.currentTarget.value)}
                     />
                 }
-                
             </div>
         </div>
     );

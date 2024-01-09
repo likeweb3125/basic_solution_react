@@ -24,6 +24,7 @@ import AdminMenuCategory from './pages/admin/MenuCategory';
 import AdminBoard from "./pages/admin/Board";
 import AdminBoardDetail from "./pages/admin/BoardDetail";
 import AdminBoardWrite from "./pages/admin/BoardWrite";
+import AdminDesignBanner from "./pages/admin/DesignBanner";
 import AdminDesignPopup from "./pages/admin/DesignPopup";
 import AdminSettingSiteInfo from "./pages/admin/SettingSiteInfo";
 import AdminSettingPolicy from "./pages/admin/SettingPolicy";
@@ -104,7 +105,7 @@ function App() {
 
     //맨처음 사이트정보 가져오기
     useEffect(()=>{
-        getSiteInfo();
+        // getSiteInfo();
     },[]);
 
 
@@ -155,13 +156,16 @@ function App() {
                 {/* 로그인 */}
                 <Route path="/console/login" element={<AdminLogin />} />
 
+
                 {/* 메인 */}
-                {/* <Route path="/console" element={<AdminLayout><AdminMain/></AdminLayout>} /> */}
-                <Route path="/console" element={<AdminLayout><Test/></AdminLayout>} />
+                <Route path="/console" element={<AdminLayout><AdminMain/></AdminLayout>} />
+                {/* <Route path="/console" element={<AdminLayout><Test/></AdminLayout>} /> */}
+
 
                 {/* ---- 메뉴관리 ---- */}
                 {/* 카테고리관리 */}
                 <Route path="/console/menu/category" element={<AdminLayout><AdminMenuCategory/></AdminLayout>} />
+
 
                 {/* ---- 게시판관리 ---- */}
                 {/* 게시글관리 */}
@@ -173,12 +177,17 @@ function App() {
                 </Route>
 
                 {/* ---- 디자인관리 ---- */}
+                {/* 메인배너관리 */}
+                <Route path="/console/design/banner" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />
+
                 {/* 팝업관리 */}
                 <Route path="/console/design/popup" element={<AdminLayout><AdminDesignPopup/></AdminLayout>} />
                 
+
                 {/* ---- 환경설정 ---- */}
                 {/* 사이트정보 */}
                 <Route path="/console/setting/site" element={<AdminLayout><AdminSettingSiteInfo/></AdminLayout>} />
+
 
                 {/* 운영정책 설정 */}
                 <Route path="/console/setting/policy" element={<AdminLayout><AdminSettingPolicy/></AdminLayout>} />

@@ -1,5 +1,5 @@
-// const api_uri = "http://api.likeweb.co.kr/";
-const api_uri = "http://api.clearlasik.kr/";
+const api_uri = "http://api.likeweb.co.kr/";
+// const api_uri = "http://api.clearlasik.kr/";
 
 exports.enum_api_uri = {
     api_uri: `${api_uri}`,
@@ -47,6 +47,10 @@ exports.enum_api_uri = {
 
 
     //디자인관리
+    banner_list: `${api_uri}v1/admin/banner`,
+    banner_open: `${api_uri}v1/admin/banner/open`,
+    banner_detail: `${api_uri}v1/admin/banner/:idx`,
+
     popup_list: `${api_uri}v1/admin/popup`,
     popup_open: `${api_uri}v1/admin/popup/open`,
     popup_detail: `${api_uri}v1/admin/popup/:idx`,

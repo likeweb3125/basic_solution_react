@@ -2,13 +2,15 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import * as CF from "../../../config/function";
+import { enum_api_uri } from "../../../config/enum";
 import { checkedList, scrollY } from "../../../store/etcSlice";
-import { adminPolicyPop, adminPopupPop } from "../../../store/popupSlice";
+import { adminPolicyPop, adminPopupPop, adminBannerPop } from "../../../store/popupSlice";
 
 
 const TableWrap = (props) => {
     const dispatch = useDispatch();
     const etc = useSelector((state)=>state.etc);
+    const api_uri = enum_api_uri.api_uri;
     const [colgroup, setColgroup] = useState([]);
     const [thList, setThList] = useState([]);
 
@@ -208,6 +210,48 @@ const TableWrap = (props) => {
                                                 :   <em className="txt_color2">중단</em>
                                             }
                                         </td>
+                                    </tr>
+                                );
+                            }
+                            //디자인관리 - 메인배너관리 일때
+                            if(props.type === "banner"){
+                                const file = api_uri+cont.b_file;
+
+                                return(
+                                    <tr key={i} className={cont.b_open[0] == "Y" ? "" : "disabled"}>
+                                        <td>
+                                            <div className="chk_box2">
+                                                <input type="checkbox" id={`check_${cont.idx}`} className="blind"
+                                                    value={cont.idx}
+                                                    onChange={(e) => {
+                                                        const isChecked = e.currentTarget.checked;
+                                                        const value = e.currentTarget.value;
+                                                        checkHandler(isChecked, value);
+                                                    }}
+                                                    checked={etc.checkedList.includes(cont.idx)}
+                                                />
+                                                <label htmlFor={`check_${cont.idx}`}>선택</label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {cont.b_file &&
+                                                <div className="img_box">
+                                                    <img src={file} alt="썸네일이미지" />
+                                                </div>
+                                            }
+                                        </td>
+                                        <td>
+                                            <button type="button" className="link" 
+                                                onClick={()=>{
+                                                    dispatch(adminBannerPop({adminBannerPop:true,adminBannerPopIdx:cont.idx,adminBannerPopType:props.popType}));
+                                                }}>{cont.b_title}</button>
+                                        </td>
+                                        <td>{cont.b_s_date}{cont.b_e_date && " ~ "+cont.b_e_date}</td>
+                                        <td>커버</td>
+                                        <td>
+                                            <em className={cont.b_open[0] == "Y" ? "txt_color1" : "txt_color2"}>{cont.b_open[1]}</em>
+                                        </td>
+                                        <td><button type="button" className="btn_move">카테고리 이동</button></td>
                                     </tr>
                                 );
                             }

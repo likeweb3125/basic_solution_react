@@ -8,6 +8,7 @@ import InquirePop from "./user/InquirePop";
 import AdminPoilicyPop from "./admin/PolicyPop";
 import AdminCategoryPop from "./admin/CategoryPop";
 import AdminBoardGroupPop from "./admin/BoardGroupPop";
+import AdminBannerPop from "./admin/BannerPop";
 import AdminPopupPop from "./admin/PopupPop";
 
 
@@ -34,6 +35,9 @@ const Popup = () => {
 
             {/* 게시판분류 팝업 */}
             {popup.adminBoardGroupPop && <AdminBoardGroupPop />}
+
+            {/* 메인배너관리 팝업 */}
+            {popup.adminBannerPop && <AdminBannerPop />}
 
             {/* 팝업관리 팝업 */}
             {popup.adminPopupPop && <AdminPopupPop />}

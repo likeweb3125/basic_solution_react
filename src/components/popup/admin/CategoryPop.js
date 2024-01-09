@@ -152,12 +152,6 @@ const CategoryPop = () => {
             newInfo[id] = val;
             
         setInfo(newInfo);
-
-        if(id == "p_title" && val.length > 0){
-            let newError = {...error};
-                newError.p_title = false;
-            setError(newError);
-        }
     };
 
 

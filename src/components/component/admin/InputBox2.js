@@ -11,6 +11,7 @@ const InputBox2 = (props) => {
                 <NumericFormat 
                     thousandSeparator="," 
                     decimalScale={0} 
+                    allowNegative={false} // '-' 입력 막기
                     placeholder={props.placeholder}
                     value={props.value}
                     onChange={props.onChangeHandler}

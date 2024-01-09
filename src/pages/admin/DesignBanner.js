@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { confirmPop, adminPopupPop ,adminPopupPopWrite, adminPopupPopModify } from "../../store/popupSlice";
+import { confirmPop, adminBannerPop ,adminBannerPopWrite, adminBannerPopModify } from "../../store/popupSlice";
 import { pageNoChange, checkedList } from "../../store/etcSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
@@ -13,11 +13,11 @@ import ConfirmPop from "../../components/popup/ConfirmPop";
 import Pagination from "../../components/component/admin/Pagination";
 
 
-const DesignPopup = () => {
+const DesignBanner = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const popup_list = enum_api_uri.popup_list;
-    const popup_open = enum_api_uri.popup_open;
+    const banner_list = enum_api_uri.banner_list;
+    const banner_open = enum_api_uri.banner_open;
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);
@@ -55,7 +55,7 @@ const DesignPopup = () => {
             txt = searchTxt;
         }
 
-        axios.get(`${popup_list.replace(":limit",limit)}?p_type=${tab}&page=${page ? page : 1}${txt.length > 0 ? "&searchtxt="+txt : ""}`,
+        axios.get(`${banner_list.replace(":limit",limit)}?b_type=${tab}&page=${page ? page : 1}${txt.length > 0 ? "&searchtxt="+txt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -88,7 +88,7 @@ const DesignPopup = () => {
     },[]);
 
 
-    //탭 변경시 PC팝업 리스트, MO팝업 리스트 변경
+    //탭 변경시 PC배너 리스트, MO배너 리스트 변경
     useEffect(()=>{
         if(firstRender){
             setSearchTxt("");
@@ -115,8 +115,8 @@ const DesignPopup = () => {
 
     //맨처음 리스트 idx값만 배열로 (전체 체크박스리스트 만들기)
     useEffect(()=>{
-        if(boardData.hasOwnProperty("popup_list")){
-            const idxList = boardData.popup_list.map((item) => item.idx).filter(Boolean);
+        if(boardData.hasOwnProperty("banner_list")){
+            const idxList = boardData.banner_list.map((item) => item.idx).filter(Boolean);
             setCheckList([...idxList]);
         }
     },[boardData]);
@@ -135,7 +135,7 @@ const DesignPopup = () => {
     //체크박스 변경시 
     useEffect(()=>{
         //체크된 수 변경
-        const list = boardData.popup_list;
+        const list = boardData.banner_list;
         const list2 = etc.checkedList;
         const num = etc.checkedList.length;
         setCheckedNum(num);
@@ -143,8 +143,8 @@ const DesignPopup = () => {
         //체크된 리스트에 따라 노출,중단 버튼 on,off
         if(list && list2){
             const newList = list.filter((item)=>list2.includes(item.idx));
-            const hasYValue = newList.some(item => item.p_open[0] === "Y");
-            const hasNValue = newList.some(item => item.p_open[0] === "N");
+            const hasYValue = newList.some(item => item.b_open[0] === "Y");
+            const hasNValue = newList.some(item => item.b_open[0] === "N");
             if(hasYValue){
                 setHideBtn(true);
             }else{
@@ -172,20 +172,20 @@ const DesignPopup = () => {
         dispatch(confirmPop({
             confirmPop:true,
             confirmPopTit:'알림',
-            confirmPopTxt: '해당 팝업을 '+ txt +'하시겠습니까?',
+            confirmPopTxt: '해당 배너를 '+ txt +'하시겠습니까?',
             confirmPopBtn:2,
         }));
         setUseConfirm(true);
     };
 
 
-    //팝업 노출,중단하기
+    //배너 노출,중단하기
     const useHandler = () => {
         const body = {
             idx:etc.checkedList,
-            p_open:use
+            b_open:use
         };
-        axios.post(popup_open, body, 
+        axios.post(banner_open, body, 
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -211,19 +211,19 @@ const DesignPopup = () => {
     };
 
 
-    //팝업 변경시 게시판리스트정보 가져오기
+    //배너 변경시 게시판리스트정보 가져오기
     useEffect(()=>{
-        if(popup.adminPopupPopModify){
-            dispatch(adminPopupPopModify(false));
+        if(popup.adminBannerPopModify){
+            dispatch(adminBannerPopModify(false));
             getBoardData();
         }
-    },[popup.adminPopupPopModify]);
+    },[popup.adminBannerPopModify]);
 
 
-    //팝업등록 버튼클릭시
+    //배너등록 버튼클릭시
     const writeBtnClickHandler = () => {
-        dispatch(adminPopupPopWrite(true));
-        dispatch(adminPopupPop({adminPopupPop:true,adminPopupPopIdx:null,adminPopupPopType:tab}));
+        dispatch(adminBannerPopWrite(true));
+        dispatch(adminBannerPop({adminBannerPop:true,adminBannerPopIdx:null,adminBannerPopType:tab}));
     };
 
 
@@ -233,7 +233,7 @@ const DesignPopup = () => {
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
-                confirmPopTxt:'해당 팝업을 삭제하시겠습니까?',
+                confirmPopTxt:'해당 배너를 삭제하시겠습니까?',
                 confirmPopBtn:2,
             }));
             setDeltConfirm(true);
@@ -241,7 +241,7 @@ const DesignPopup = () => {
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
-                confirmPopTxt:'팝업을 선택해주세요.',
+                confirmPopTxt:'배너를 선택해주세요.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -249,12 +249,12 @@ const DesignPopup = () => {
     };
 
 
-    //팝업 삭제하기
+    //배너 삭제하기
     const deltHandler = () => {
         const body = {
             idx: etc.checkedList,
         };
-        axios.delete(popup_list,
+        axios.delete(banner_list,
             {
                 data: body,
                 headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
@@ -285,8 +285,8 @@ const DesignPopup = () => {
     return(<>
         <div className="page_admin_design">
             <div className="top_txt">
-                <strong>팝업 등록시 노출될 기기와 이미지 사이즈, 팝업 이미지가 들어갈 자리를 고려하여 등록해주세요.</strong>
-                <button type="button" className="btn_type15" onClick={writeBtnClickHandler}>팝업 등록</button>
+                <strong>배너 등록시 노출될 기기와 이미지 사이즈, 배너 이미지가 들어갈 자리를 고려하여 등록해주세요.</strong>
+                <button type="button" className="btn_type15" onClick={writeBtnClickHandler}>메인 배너 등록</button>
             </div>
             <div className="content_box">
                 <ul className="tab_type3">
@@ -360,13 +360,13 @@ const DesignPopup = () => {
                     </div>
                     <TableWrap 
                         class="tbl_wrap1 tbl_wrap1_1"
-                        colgroup={["80px","10%","auto","auto","15%","12%","9%","9%"]}
-                        thList={["","번호","제목","기간","팝업창전체크기/1일여부","팝업창위치","사용여부","팝업/레이어"]}
-                        tdList={boardData.popup_list}
-                        type={"popup"}
+                        colgroup={["80px","15%","auto","15%","15%","12%","7%"]}
+                        thList={["","썸네일","제목","기간","배너 노출 사이즈","사용여부","순서"]}
+                        tdList={boardData.banner_list}
+                        type={"banner"}
                         popType={tab}
                     />
-                    {boardData.popup_list && boardData.popup_list.length > 0 &&
+                    {boardData.banner_list && boardData.banner_list.length > 0 &&
                         <Pagination 
                             currentPage={boardData.current_page} //현재페이지 번호
                             startPage={boardData.start_page} //시작페이지 번호 
@@ -375,7 +375,7 @@ const DesignPopup = () => {
                         />
                     }
                     <div className="board_btn_wrap">
-                        <button type="button" className="btn_type20" onClick={writeBtnClickHandler}>팝업 등록</button>                                        
+                        <button type="button" className="btn_type20" onClick={writeBtnClickHandler}>메인 배너 등록</button>                                        
                     </div>
                 </div>
             </div>
@@ -392,4 +392,4 @@ const DesignPopup = () => {
     </>);
 };
 
-export default DesignPopup;
+export default DesignBanner;
