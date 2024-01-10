@@ -469,21 +469,24 @@ const BannerPop = () => {
             }
 
             let b_file = '';
-            
+            let cont = '';
             //카테고리종류 이미지 일때
             if(tab == '1'){
                 b_file = bannerFileData[0];
-            }else if (tab == '2'){
+            }
+            //카테고리종류 동영상 일때
+            else if (tab == '2'){
                 b_file = bannerFileData2[0];
             }
-
-            let cont = '';
-            if(showRaw){
-                cont = rawHtml;
-            }else{
-                cont = content;
+            //카테고리종류 HTML 일때
+            else if (tab == '3'){
+                if(showRaw){
+                    cont = rawHtml;
+                }else{
+                    cont = content;
+                }
             }
-
+            
             formData.append("b_type", popup.adminBannerPopType);
             formData.append("b_open", useBtn);
             formData.append("b_title", info.b_title);
@@ -544,21 +547,26 @@ const BannerPop = () => {
             }
 
             let b_file = '';
+            let cont = '';
+            //카테고리종류 이미지 일때
             if(tab == '1'){
                 if(bannerFileData){
                     b_file = bannerFileData[0];
                 }
-            }else if (tab == '2'){
+            }
+            //카테고리종류 동영상 일때
+            else if (tab == '2'){
                 if(bannerFileData2){
                     b_file = bannerFileData2[0];
                 }
             }
-
-            let cont = '';
-            if(showRaw){
-                cont = rawHtml;
-            }else{
-                cont = content;
+            //카테고리종류 HTML 일때
+            else if (tab == '3'){
+                if(showRaw){
+                    cont = rawHtml;
+                }else{
+                    cont = content;
+                }
             }
 
             formData.append("idx", popup.adminBannerPopIdx);
@@ -933,7 +941,7 @@ const BannerPop = () => {
                                                                                 <div className={`input_file${error.b_file2 ? " wrong_input" : ""}`}>
                                                                                     <input {...getInputProps2({className: 'blind'})} />
                                                                                     <label>
-                                                                                        {bannerFile2 == null && 
+                                                                                        {bannerFile2 == null && savedBannerFile2 == null &&
                                                                                             <b>파일을 마우스로 끌어 오세요.</b>
                                                                                         }
                                                                                         <strong>파일선택</strong>

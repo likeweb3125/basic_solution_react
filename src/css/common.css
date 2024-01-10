@@ -71,7 +71,8 @@ table td .txt_light {font-size: 14px; color: #999;}
 .tbl_wrap1 .answer_status.on {color: var(--admin-color1);}
 .tbl_wrap1.tbl_wrap1_1 tbody tr {background: none;}
 .tbl_wrap1.tbl_wrap1_1 tbody tr:hover {background: none;}
-.tbl_wrap1.tbl_wrap1_1 tbody tr.disabled {background: #f8f8f8;}
+.tbl_wrap1.tbl_wrap1_1 tbody tr.disabled {background: #f8f8f8 !important;}
+.tbl_wrap1.tbl_wrap1_1 tbody tr.disabled td{background: #f8f8f8 !important;}
 .tbl_wrap1.tbl_wrap1_1 tbody tr.disabled .show_status {color: var(--admin-color3);}
 .tbl_wrap1 .img_box {width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; margin: 0 auto;}
 .tbl_wrap1 .img_box img {max-width: 100%; max-height: 100%;}

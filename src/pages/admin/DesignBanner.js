@@ -360,7 +360,7 @@ const DesignBanner = () => {
                     </div>
                     <TableWrap 
                         class="tbl_wrap1 tbl_wrap1_1"
-                        colgroup={["80px","15%","auto","15%","15%","12%","7%"]}
+                        colgroup={["80px","15%","calc(36% - 80px)","15%","15%","12%","7%"]}
                         thList={["","썸네일","제목","기간","배너 노출 사이즈","사용여부","순서"]}
                         tdList={boardData.banner_list}
                         type={"banner"}
