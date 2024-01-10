@@ -21,6 +21,7 @@ const BoardDetail = () => {
     const board_modify = enum_api_uri.board_modify;
     const board_file_down = enum_api_uri.board_file_down;
     const board_reply = enum_api_uri.board_reply;
+    const board_comment_list = enum_api_uri.board_comment_list;
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);

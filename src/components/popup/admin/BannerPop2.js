@@ -44,11 +44,8 @@ const BannerPop = () => {
     const [bannerFile, setBannerFile] = useState(null);
     const [bannerFileData, setBannerFileData] = useState(null);
     const [bannerFileThumbs, setBannerFileThumbs] = useState([]);
-    const [bannerFile2, setBannerFile2] = useState(null);
-    const [bannerFileData2, setBannerFileData2] = useState(null);
-    const [bannerFileThumbs2, setBannerFileThumbs2] = useState([]);
+    const [editPop, setEditPop] = useState(false);
     const [savedBannerFile, setSavedBannerFile] = useState(null);
-    const [savedBannerFile2, setSavedBannerFile2] = useState(null);
 
     
 
@@ -96,24 +93,14 @@ const BannerPop = () => {
                 setSizeCheck(data.b_size[0]);        //배너노출사이즈 종류 커버 or 원본사이즈고정
                 setLinkCheck(data.b_url_target[0]);  //배너 링크 열림창
 
-                //카테고리 종류가 이미지일때 
-                if(data.b_c_type[0] == '1'){
-                    //배너파일 이미지값 넣기
-                    if(data.b_file){
-                        setSavedBannerFile(data.b_file);
-                    }
+                if(data.b_file){
+                    setSavedBannerFile(data.b_file);
                 }
-                //카테고리 종류가 동영상일때 
+
+                //카테고리 종류가 동여상일때 동영상업로드 체크값 넣기
                 if(data.b_c_type[0] == '2'){
-                    //동영상업로드 체크값 넣기
                     setMovTypeCheck(data.b_mov_type[0]);
-
-                    //배너파일 동영상값 넣기
-                    if(data.b_file){
-                        setSavedBannerFile2(data.b_file);
-                    }
                 }
-
             }
         })
         .catch((error) => {
@@ -150,11 +137,11 @@ const BannerPop = () => {
         if(Object.keys(info).length > 0){
             setInfo(info);
             
-            if(info.b_open){
-                setUseBtn(info.b_open[0]);
+            if(info.p_open){
+                setUseBtn(info.p_open[0]);
             }
-            if(info.b_s_date){
-                let dateString = info.b_s_date;
+            if(info.p_s_date){
+                let dateString = info.p_s_date;
                 let dateParts = dateString.split('.');
                 let year = parseInt(dateParts[0]);
                 let month = parseInt(dateParts[1]) - 1; // 월은 0부터 시작하므로 1을 빼줍니다.
@@ -163,8 +150,8 @@ const BannerPop = () => {
                 let date = new Date(year, month, day);
                 setStartDate(date);
             }
-            if(info.b_e_date){
-                let dateString = info.b_e_date;
+            if(info.p_e_date){
+                let dateString = info.p_e_date;
                 let dateParts = dateString.split('.');
                 let year = parseInt(dateParts[0]);
                 let month = parseInt(dateParts[1]) - 1; // 월은 0부터 시작하므로 1을 빼줍니다.
@@ -173,13 +160,19 @@ const BannerPop = () => {
                 let date = new Date(year, month, day);
                 setEndDate(date);
             }
+            setContent(info.p_content);
 
-            setContent(info.b_content);
-
-            if(info.b_width_size && info.b_height_size){
-                if(info.b_width_size.length > 0 && info.b_height_size.length > 0){
+            if(info.p_width_size && info.p_height_size){
+                if(info.p_width_size.length > 0 && info.p_height_size.length > 0){
                     let newError = {...error};
-                    newError.b_size = false;
+                    newError.p_size = false;
+                    setError(newError);
+                }
+            }
+            if(info.p_left_point && info.p_top_point){
+                if(info.p_left_point.length > 0 && info.p_top_point.length > 0){
+                    let newError = {...error};
+                    newError.p_point = false;
                     setError(newError);
                 }
             }
@@ -187,30 +180,10 @@ const BannerPop = () => {
     },[info]);
 
 
-    //카테고리종류 탭 변경시 기본값으로 변경
+    //카테고리종류 탭 변경시
     useEffect(()=>{
         //첨부한 배너파일 삭제
-        bannerFileDeltHandler();
-        bannerFileDeltHandler2();
-
-        let newInfo = {...info};
-            newInfo.b_url = '';
-            newInfo.b_mov_url = '';
-            newInfo.b_mov_play = '';
-            newInfo.b_mov_sound = '';
-            
-        setInfo(newInfo);
-
-        setLinkCheck('1');
-        setMovTypeCheck('1');
-
-        //카테고리종류 HTML
-        setHtmlTab(1);
-        setShowRaw(false);
-        setContent('');
-        setRawHtml('');
-        setTemplateText('');
-        
+        // bannerFileDeltHandler();
     },[tab]);
 
 
@@ -290,10 +263,10 @@ const BannerPop = () => {
     },[showRaw]);
 
 
-    //배너파일 이미지 첨부
+    //배너파일 첨부
     const { getRootProps: getRootProps1, getInputProps: getInputProps1 } = useDropzone({
         accept: {
-            'image/*': []
+            [tab == '1' ? 'image/*' : 'video/*']: []
         },
         multiple: false, // 여러 개의 파일 선택 불가능하도록 설정
         onDrop: acceptedFiles => {
@@ -311,31 +284,9 @@ const BannerPop = () => {
         }
     });
 
-
-    //배너파일 동영상 첨부
-    const { getRootProps: getRootProps2, getInputProps: getInputProps2 } = useDropzone({
-        accept: {
-            'video/*': []
-        },
-        multiple: false, // 여러 개의 파일 선택 불가능하도록 설정
-        onDrop: acceptedFiles => {
-            setBannerFileThumbs2(acceptedFiles.map(file => Object.assign(file, {
-                preview: URL.createObjectURL(file)
-            })));
-
-            setBannerFile2(acceptedFiles[0].name);
-            setBannerFileData2(acceptedFiles);
-
-            //배너파일 에러문구 false
-            let newError = {...error};
-            newError.b_file2 = false;
-            setError(newError);
-        }
-    });
-
-
-    //배너파일 이미지 썸네일
+    //배너파일 썸네일
     const bannerFileThumb = bannerFileThumbs[0];
+
     useEffect(() => {
         return () => {
             if (bannerFileThumb) {
@@ -345,30 +296,11 @@ const BannerPop = () => {
     }, [bannerFileThumb]);
 
 
-    //배너파일 동영상 썸네일
-    const bannerFileThumb2 = bannerFileThumbs2[0];
-    useEffect(() => {
-        return () => {
-            if (bannerFileThumb2) {
-                URL.revokeObjectURL(bannerFileThumb2.preview);
-            }
-        };
-    }, [bannerFileThumb2]);
-
-
-    // 첨부한 배너파일 이미지 삭제
+    // 첨부한 배너파일 삭제
     const bannerFileDeltHandler = () => {
         setBannerFile(null);
         setBannerFileData(null);
         setBannerFileThumbs([]);
-    };
-
-
-    // 첨부한 배너파일 동영상 삭제
-    const bannerFileDeltHandler2 = () => {
-        setBannerFile2(null);
-        setBannerFileData2(null);
-        setBannerFileThumbs2([]);
     };
 
 
@@ -386,28 +318,15 @@ const BannerPop = () => {
             newError.b_height_size = true;
         }
         //카테고리종류가 이미지 일때
-        if(tab == '1'){
-            //배너새로등록일때 배너파일체크
-            if(popup.adminBannerPopWrite && !bannerFileData){
-                newError.b_file = true;
-            }
-            //배너수정일때 배너파일체크
-            if(!popup.adminBannerPopWrite && (!bannerFileData && !savedBannerFile)){
+        if(tab !== '3'){
+            if(!bannerFileData){
                 newError.b_file = true;
             }
         }
         //카테고리종류가 동영상 일때
         if(tab == '2'){
-            //동영상 직접업로드 일때
-            if(movTypeCheck == "1"){
-                //배너새로등록일때 배너파일체크
-                if(popup.adminBannerPopWrite && !bannerFileData2){
-                    newError.b_file2 = true;
-                }
-                //배너수정일때 배너파일체크
-                if(!popup.adminBannerPopWrite && (!bannerFileData2 && !savedBannerFile2)){
-                    newError.b_file2 = true;
-                }
+            if(movTypeCheck != "2" && !bannerFileData){
+                newError.b_file = true;
             }
             //동영상 업로드 URL입력 일때
             if(movTypeCheck == "2" && !info.b_mov_url){
@@ -438,17 +357,9 @@ const BannerPop = () => {
         
         setError(newError);
 
-
-        if (!newError.b_title && !newError.b_width_size && !newError.b_height_size && !newError.b_mov_url && !newError.b_content) {
-            if(tab == '1' && !newError.b_file){
-                saveHandler();
-            }
-            if(tab == '2' && !newError.b_file2){
-                saveHandler();
-            }
-            if(tab == '3'){
-                saveHandler();
-            }
+        
+        if (!newError.b_title && !newError.b_width_size && !newError.b_height_size && !newError.b_file && !newError.b_mov_url && !newError.b_content) {
+            saveHandler();
         }
     };
 
@@ -468,16 +379,7 @@ const BannerPop = () => {
                 eDate = moment(endDate).format("YYYY.MM.DD");
             }
 
-            let b_file = '';
-            
-            //카테고리종류 이미지 일때
-            if(tab == '1'){
-                b_file = bannerFileData[0];
-            }else if (tab == '2'){
-                b_file = bannerFileData2[0];
-            }
-
-            let cont = '';
+            let cont;
             if(showRaw){
                 cont = rawHtml;
             }else{
@@ -493,14 +395,14 @@ const BannerPop = () => {
             formData.append("b_height_size", info.b_height_size);
             formData.append("b_size", sizeCheck);
             formData.append("b_c_type", tab);
-            formData.append("b_file", b_file);
+            formData.append("b_file", bannerFileData[0]);
             formData.append("b_url", info.b_url || '');
             formData.append("b_url_target", linkCheck);
             formData.append("b_mov_type", movTypeCheck);
             formData.append("b_mov_url", info.b_mov_url || '');
             formData.append("b_mov_play", info.b_mov_play || '');
             formData.append("b_mov_sound", info.b_mov_sound || '');
-            formData.append("b_content", cont);
+            formData.append("b_content", cont || '');
 
             axios.post(banner_list, formData, {
                 headers: {
@@ -544,17 +446,13 @@ const BannerPop = () => {
             }
 
             let b_file = '';
-            if(tab == '1'){
-                if(bannerFileData){
-                    b_file = bannerFileData[0];
-                }
-            }else if (tab == '2'){
-                if(bannerFileData2){
-                    b_file = bannerFileData2[0];
-                }
+            if(bannerFileData){
+                bannerFileData.forEach((file) => {
+                    b_file = file;
+                });
             }
 
-            let cont = '';
+            let cont;
             if(showRaw){
                 cont = rawHtml;
             }else{
@@ -578,7 +476,7 @@ const BannerPop = () => {
             formData.append("b_mov_url", info.b_mov_url || '');
             formData.append("b_mov_play", info.b_mov_play || '');
             formData.append("b_mov_sound", info.b_mov_sound || '');
-            formData.append("b_content", cont);
+            formData.append("b_content", cont || '');
 
             axios.put(banner_list, formData, {
                 headers: {
@@ -662,6 +560,11 @@ const BannerPop = () => {
             }
         });
     };
+
+
+    useEffect(()=>{
+        console.log(savedBannerFile);
+    },[savedBannerFile]);
 
 
     return(<>
@@ -853,7 +756,24 @@ const BannerPop = () => {
                                                             </div>
                                                         }
 
-                                                        {tab == '1' ? //카테고리종류 이미지일때만 노출
+                                                        {tab == '2' && movTypeCheck == '2' ? //카테고리종류 동영상 && 동영상url 입력선택시 노출
+                                                            <div className="form_box form_box2">
+                                                                <div className="form_input">
+                                                                    <h6>동영상 URL</h6>
+                                                                    <div className="input_wrap">
+                                                                        <InputBox 
+                                                                            type={`text`}
+                                                                            placeholder={`URL을 입력해주세요.`}
+                                                                            value={info.b_mov_url || ""}
+                                                                            onChangeHandler={onInputChangeHandler}
+                                                                            id={`b_mov_url`}
+                                                                            className={error.b_mov_url ? "wrong_input" : ""}
+                                                                        />
+                                                                        {error.b_mov_url && <em className="txt_err">동영상 URL을 입력해주세요.</em>}
+                                                                    </div>
+                                                                </div>
+                                                            </div> 
+                                                            :
                                                             <div className="form_box form_box2">
                                                                 <div className="form_input">
                                                                     <h6>배너 파일 선택</h6>
@@ -885,7 +805,9 @@ const BannerPop = () => {
                                                                                 {bannerFileThumb &&
                                                                                     <div className="view_file_img">
                                                                                         <div className="file_img">
-                                                                                            <img src={bannerFileThumb.preview} alt="배너이미지"/>
+                                                                                            {tab == '1' ? <img src={bannerFileThumb.preview} alt="배너이미지"/>
+                                                                                                : tab == '2' && <video src={bannerFileThumb.preview} controls />
+                                                                                            }
                                                                                             <button type="button" className="btn_img_remove"
                                                                                                 onClick={bannerFileDeltHandler}
                                                                                             >이미지 삭제</button>
@@ -907,7 +829,9 @@ const BannerPop = () => {
                                                                                     </ul>
                                                                                     <div className="view_file_img">
                                                                                         <div className="file_img">
-                                                                                            <img src={api_uri+savedBannerFile} alt="배너이미지"/>
+                                                                                            {info.b_c_type[0] == '1' ? <img src={api_uri+savedBannerFile} alt="배너이미지"/>
+                                                                                                : info.b_c_type[0] == '2' && <video src={api_uri+savedBannerFile} controls />
+                                                                                            }
                                                                                             <button type="button" className="btn_img_remove"
                                                                                                 onClick={()=>{
                                                                                                     setSavedBannerFile(null);
@@ -917,100 +841,12 @@ const BannerPop = () => {
                                                                                     </div>
                                                                                 </>
                                                                             }
-
                                                                         </div>
                                                                         {error.b_file && <em className="txt_err">배너 파일을 첨부해주세요.</em>}
                                                                     </div>
                                                                 </div>
-                                                            </div> 
-                                                            : tab == '2' && movTypeCheck == '1' ? //카테고리종류가 동영상이고 동영상직접업로드 체크시 노출
-                                                            <div className="form_box form_box2">
-                                                                <div className="form_input">
-                                                                    <h6>배너 파일 선택</h6>
-                                                                    <div className="input_wrap">
-                                                                        <div className="file_box1">
-                                                                            <div {...getRootProps2({className: 'dropzone'})}>
-                                                                                <div className={`input_file${error.b_file2 ? " wrong_input" : ""}`}>
-                                                                                    <input {...getInputProps2({className: 'blind'})} />
-                                                                                    <label>
-                                                                                        {bannerFile2 == null && 
-                                                                                            <b>파일을 마우스로 끌어 오세요.</b>
-                                                                                        }
-                                                                                        <strong>파일선택</strong>
-                                                                                    </label>
-                                                                                </div>
-                                                                            </div>
-                                                                            {savedBannerFile2 == null ? //배너수정팝업이 아니여서 등록된 배너파일이 없을때
-                                                                                <>
-                                                                                {bannerFile2 != null &&
-                                                                                    <ul className="file_txt">
-                                                                                        <li>
-                                                                                            <span>{bannerFile2}</span>
-                                                                                            <button type="button" className="btn_file_remove" 
-                                                                                                onClick={bannerFileDeltHandler2}
-                                                                                            >파일삭제</button>
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                }
-                                                                                {bannerFileThumb2 &&
-                                                                                    <div className="view_file_img">
-                                                                                        <div className="file_img">
-                                                                                            <video src={bannerFileThumb2.preview} controls />
-                                                                                            <button type="button" className="btn_img_remove"
-                                                                                                onClick={bannerFileDeltHandler2}
-                                                                                            >이미지 삭제</button>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                }
-                                                                                </>
-                                                                                ://배너수정팝업이고 등록된 배너파일이 있을때
-                                                                                <>
-                                                                                    <ul className="file_txt">
-                                                                                        <li>
-                                                                                            <span>{savedBannerFile2.substring(savedBannerFile2.lastIndexOf('/') + 1)}</span>
-                                                                                            <button type="button" className="btn_file_remove" 
-                                                                                                onClick={()=>{
-                                                                                                    setSavedBannerFile2(null);
-                                                                                                }}
-                                                                                            >파일삭제</button>
-                                                                                        </li>
-                                                                                    </ul>
-                                                                                    <div className="view_file_img">
-                                                                                        <div className="file_img">
-                                                                                            <video src={api_uri+savedBannerFile2} controls />
-                                                                                            <button type="button" className="btn_img_remove"
-                                                                                                onClick={()=>{
-                                                                                                    setSavedBannerFile2(null);
-                                                                                                }}
-                                                                                            >이미지 삭제</button>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </>
-                                                                            }
-                                                                        </div>
-                                                                        {error.b_file2 && <em className="txt_err">배너 파일을 첨부해주세요.</em>}
-                                                                    </div>
-                                                                </div>
-                                                            </div> 
-                                                            : tab == '2' && movTypeCheck == '2' && //카테고리종류가 동영상이고 동영상url입력 체크시 노출
-                                                            <div className="form_box form_box2">
-                                                                <div className="form_input">
-                                                                    <h6>동영상 URL</h6>
-                                                                    <div className="input_wrap">
-                                                                        <InputBox 
-                                                                            type={`text`}
-                                                                            placeholder={`URL을 입력해주세요.`}
-                                                                            value={info.b_mov_url || ""}
-                                                                            onChangeHandler={onInputChangeHandler}
-                                                                            id={`b_mov_url`}
-                                                                            className={error.b_mov_url ? "wrong_input" : ""}
-                                                                        />
-                                                                        {error.b_mov_url && <em className="txt_err">동영상 URL을 입력해주세요.</em>}
-                                                                    </div>
-                                                                </div>
-                                                            </div> 
+                                                            </div>  
                                                         }
-
                                                         <div className="form_box">
                                                             <div className="form_input">
                                                                 <h6>배너 링크</h6>
