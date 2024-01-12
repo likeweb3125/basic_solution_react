@@ -22,17 +22,24 @@ const BoardDetail = () => {
     const board_file_down = enum_api_uri.board_file_down;
     const board_reply = enum_api_uri.board_reply;
     const board_comment_list = enum_api_uri.board_comment_list;
+    const board_comment = enum_api_uri.board_comment;
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
+    const [commentDeltConfirm, setCommentDeltConfirm] = useState(false);
     const [title, setTitle] = useState("");
     const [boardData, setBoardData] = useState({});
     const [boardSettingData, setBoardSettingData] = useState({});
     const [answerTxt, setAnswerTxt] = useState(null);
     const [commentList, setCommentList] = useState([]);
     const [comment, setComment] = useState("");
+    const [replyComment, setReplyComment] = useState("");
+    const [editComment, setEditComment] = useState("");
+    const [editShow, setEditShow] = useState(null);
+    const [replyEnterOk, setReplyEnterOk] = useState(false);
+    const [deltCommentIdx, setDeltCommentIdx] = useState(null);
 
 
     //상세페이지 뒤로가기
@@ -56,6 +63,7 @@ const BoardDetail = () => {
         if(popup.confirmPop === false){
             setConfirm(false);
             setDeltConfirm(false);
+            setCommentDeltConfirm(false);
         }
     },[popup.confirmPop]);
 
@@ -100,8 +108,37 @@ const BoardDetail = () => {
     };
 
 
+    //게시글댓글리스트 가져오기
+    const getCommentList = () => {
+        axios.get(`${board_comment_list.replace(":category",board_category).replace(":board_idx",board_idx)}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                setCommentList(data);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
+
+
     useEffect(()=>{
         getBoardData();
+        getCommentList();
 
         //게시판설정정보 가져오기
         setBoardSettingData(common.boardSettingData);
@@ -272,9 +309,17 @@ const BoardDetail = () => {
     };
 
 
+    //대댓글 textarea 값 변경시
+    const onReplyTextChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setReplyComment(val);
+    };
+
+
     //댓글등록버튼 클릭시
-    const enterBtnClickHandler = () => {
-        if(comment.length == 0){
+    const enterBtnClickHandler = (depth, txt, idx) => {
+        console.log(depth)
+        if(txt.length == 0){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -283,43 +328,173 @@ const BoardDetail = () => {
             }));
             setConfirm(true);
         }else{
-            enterHandler();
+            // enterHandler(depth, txt, idx);
         }
     };
 
 
     //댓글등록하기
-    const enterHandler = () => {
-        // const body = {
-        //     list_no: list_no,
-        //     c_name: user.maintName,
-        //     c_content: comment,
-        //     m_id: "",
-        //     c_password: "",
-        //     c_table: "admin",
-        // };
-        // axios.post(`${maint_comment}`, body, 
-        //     {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        // )
-        // .then((res)=>{
-        //     if(res.status === 200){
-        //         getCommentList();
-        //     }
-        // })
-        // .catch((error) => {
-        //     const err_msg = CF.errorMsgHandler(error);
-        //     if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-        //         navigate("/console/login");
-        //     }else{
-        //         dispatch(confirmPop({
-        //             confirmPop:true,
-        //             confirmPopTit:'알림',
-        //             confirmPopTxt: err_msg,
-        //             confirmPopBtn:1,
-        //         }));
-        //         setConfirm(true);
-        //     }
-        // });
+    const enterHandler = (depth, txt, idx) => {
+        const body = {
+            category: board_category,
+            board_idx: board_idx,
+            parent_idx: idx || 0,
+            depth: depth,
+            m_email: user.loginUser.m_email,
+            m_name: user.loginUser.m_name,
+            m_pwd: '',
+            c_contents: txt,
+        };
+        axios.post(`${board_comment}`, body, 
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getCommentList();
+
+                //대댓글 등록시 대댓글영역 닫기 && 대댓글 textarea 값 비우기
+                if(idx){
+                    setReplyEnterOk(true);
+                    setReplyComment('');
+                }
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
+
+
+    //대댓글 등록시 replyEnterOk 값 다시 초기화 = false
+    useEffect(()=>{
+        if(replyEnterOk){
+            setReplyEnterOk(false);
+        }
+    },[replyEnterOk]);
+
+
+    //댓글수정버튼 클릭시
+    const onEditBtnClickHandler = (idx, txt) => {
+        setEditShow(idx);
+
+        //댓글내용값 있을때 값넣기
+        if(txt){
+            setEditComment(txt);
+        }else{//없을때 지우기
+            setEditComment('');
+        }
+    };
+
+
+    //댓글수정 textarea 값 변경시
+    const onEditTextChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setEditComment(val);
+    };
+
+
+    //댓글수정 등록버튼 클릭시
+    const enterEditBtnClickHandler = (idx) => {
+        if(editComment.length == 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'댓글을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else{
+            enterEditHandler(idx);
+        }
+    };
+
+
+    //댓글 수정하기
+    const enterEditHandler = (idx) => {
+        const body = {
+            category: board_category,
+            idx: idx,
+            c_contents: editComment,
+        };
+        axios.put(`${board_comment}`, body, 
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getCommentList();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
+
+
+    //댓글 삭제버튼 클릭시
+    const commentDeltBtnClickHandler = (idx) => {
+        setDeltCommentIdx(idx);//삭제할 댓글 idx 저장
+
+        dispatch(confirmPop({
+            confirmPop:true,
+            confirmPopTit:'알림',
+            confirmPopTxt:'해당 댓글을 삭제하시겠습니까?',
+            confirmPopBtn:2,
+        }));
+        setCommentDeltConfirm(true);
+    };
+
+    //댓글 삭제하기
+    const commentDeltHandler = () => {
+        const body = {
+            idx: deltCommentIdx,
+        };
+        axios.delete(`${board_comment}`,
+            {
+                data: body,
+                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
     };
 
 
@@ -414,11 +589,24 @@ const BoardDetail = () => {
                                 </ul>
                             }
                             <CommentWrap2 
-                                list={commentList}
-                                name={user.maintName}
+                                commentList={commentList}
+                                name={`관리자`}
+                                // 댓글
                                 comment={comment}
                                 onTextChangeHandler={onTextChangeHandler}
                                 onEnterHandler={enterBtnClickHandler}
+                                // 대댓글
+                                replyComment={replyComment}
+                                onReplyTextChangeHandler={onReplyTextChangeHandler}
+                                replyEnterOk={replyEnterOk}
+                                //댓글수정
+                                editComment={editComment}
+                                onEditTextChangeHandler={onEditTextChangeHandler}
+                                onEditEnterHandler={enterEditBtnClickHandler}
+                                onEditBtnClickHandler={onEditBtnClickHandler}
+                                editShow={editShow}
+                                //댓글삭제
+                                onDeltHandler={commentDeltBtnClickHandler}
                             />
                         </div> 
                     </div>
@@ -438,6 +626,9 @@ const BoardDetail = () => {
 
         {/* 게시글삭제 confirm팝업 */}
         {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
+
+        {/* 댓글삭제 confirm팝업 */}
+        {commentDeltConfirm && <ConfirmPop onClickHandler={commentDeltHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

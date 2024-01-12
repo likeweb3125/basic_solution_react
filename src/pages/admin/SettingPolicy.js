@@ -53,9 +53,7 @@ const SettingPolicy = () => {
             search = "title";
         }else if(searchType == "제목+내용"){
             search = "titlecontents";
-        }else if(searchType == "작성자"){
-            search = "name";
-        } 
+        }
 
         axios.get(`${site_policy.replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}

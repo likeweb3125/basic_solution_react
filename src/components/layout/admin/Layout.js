@@ -44,10 +44,12 @@ const Layout = (props) => {
         if(path === "/console"){
             setLocationList(["관리자 메인","전체 통계"]);
         }
+
         //메뉴관리 - 카테고리관리
         if(path === "/console/menu/category"){
             setLocationList(["메뉴 관리","카테고리 관리"]);
         }
+
         //게시판관리 - 게시글관리 전부
         if(path.includes("/console/board/post")){
             if(board_category){
@@ -56,6 +58,24 @@ const Layout = (props) => {
                 setLocationList(["게시판 관리","게시글 관리",txt]);
             }
         }
+        //게시판관리 - 댓글관리 전체
+        if(path.includes("/console/comment/all")){
+            setLocationList(["게시판 관리","댓글 관리","전체"]);
+        }
+
+        //회원관리 - 회원관리   
+        if(path === "/console/member/user"){
+            setLocationList(["회원관리","등록회원 관리"]);
+        }
+        //회원관리 - 관리자 관리   
+        if(path === "/console/member/manager"){
+            setLocationList(["회원관리","관리자 관리"]);
+        }
+        //회원관리 - 탈퇴회원     
+        if(path === "/console/member/cancel"){
+            setLocationList(["회원관리","탈퇴회원"]);
+        }
+
 
         //디자인관리 - 팝업관리
         if(path === "/console/design/popup"){

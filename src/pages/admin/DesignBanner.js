@@ -374,7 +374,7 @@ const DesignBanner = () => {
                             lastPage={boardData.last_page} //총페이지 끝
                         />
                     }
-                    <div className="board_btn_wrap">
+                    <div className={`board_btn_wrap${boardData.banner_list && boardData.banner_list.length > 0 ? "" : " none_list"}`}>
                         <button type="button" className="btn_type20" onClick={writeBtnClickHandler}>메인 배너 등록</button>                                        
                     </div>
                 </div>

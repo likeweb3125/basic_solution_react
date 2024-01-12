@@ -108,21 +108,21 @@ const TableWrap = (props) => {
     return(
         <div className={props.class}>
             {props.tdList && props.tdList.length > 0 ?
-                <table>
-                    <colgroup>
-                        {colgroup.map((cont,i)=>{
-                            return(<col key={i} style={{width: cont}}/>);
-                        })}
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            {props.thList.map((cont,i)=>{
-                                return(<th key={i}>{cont}</th>);
+                //디자인관리 - 메인배너관리 아닐때
+                props.type !== "banner" ?
+                    <table>
+                        <colgroup>
+                            {colgroup.map((cont,i)=>{
+                                return(<col key={i} style={{width: cont}}/>);
                             })}
-                        </tr>
-                    </thead>
-                    {/* 디자인관리 - 메인배너관리 아닐때 */}
-                    {props.type !== "banner" ? 
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                {props.thList.map((cont,i)=>{
+                                    return(<th key={i}>{cont}</th>);
+                                })}
+                            </tr>
+                        </thead>
                         <tbody>
                             {props.tdList && props.tdList.map((cont,i)=>{
                                 //메인페이지 최근게시판조회 일때
@@ -212,6 +212,40 @@ const TableWrap = (props) => {
                                                     className={`btn_type10${cont.b_notice == '1' ? " on" : ""}`}
                                                     onClick={()=>props.onNotiSettingHandler(cont)}
                                                 >{`공지${cont.b_notice == '1' ? " 해제" : " 설정"}`}</button>
+                                            </td>
+                                        </tr>
+                                    );
+                                }
+                                //게시판관리 - 댓글관리 일때
+                                if(props.type === "comment"){
+                                    return(
+                                        <tr key={i}>
+                                            <td>
+                                                <div className="chk_box2">
+                                                    <input type="checkbox" id={`check_${cont.idx}`} className="blind"
+                                                        value={cont.idx}
+                                                        onChange={(e) => {
+                                                            const isChecked = e.currentTarget.checked;
+                                                            const value = e.currentTarget.value;
+                                                            checkHandler(isChecked, value);
+                                                        }}
+                                                        checked={etc.checkedList.includes(cont.idx)}
+                                                    />
+                                                    <label htmlFor={`check_${cont.idx}`}>선택</label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div className="txt_left">
+                                                    <span onClick={()=>{dispatch(scrollY(window.scrollY))}}>
+                                                        <Link to={``}>{cont.c_contents}</Link> 
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>{cont.boardName}</td>
+                                            <td>{cont.boardTitle}</td>
+                                            <td>{cont.m_name}</td>
+                                            <td>
+                                                <span className="txt_light">{cont.p_reg_date}</span>
                                             </td>
                                         </tr>
                                     );
@@ -328,13 +362,27 @@ const TableWrap = (props) => {
                                 }
                             })}
                         </tbody>
-                        : //디자인관리 - 메인배너관리 일때
-                        <tbody>
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}
-                            >
+                    </table>
+                ://디자인관리 - 메인배너관리 일때
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <table>
+                            <colgroup>
+                                {colgroup.map((cont,i)=>{
+                                    return(<col key={i} style={{width: cont}}/>);
+                                })}
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    {props.thList.map((cont,i)=>{
+                                        return(<th key={i}>{cont}</th>);
+                                    })}
+                                </tr>
+                            </thead>
+                            <tbody>
                                 <SortableContext
                                     items={props.tdList.map(({idx}) => idx)}
                                     strategy={rectSortingStrategy}
@@ -353,11 +401,10 @@ const TableWrap = (props) => {
                                             </tr>                                                                                                                                                                            
                                         ))}
                                 </SortableContext>
-                            </DndContext>
-                        </tbody>
-                    }
-                </table>
-                : props.tdList && props.tdList.length === 0 && <div className="none_data">게시글이 없습니다.</div>
+                            </tbody>
+                        </table>
+                    </DndContext>
+            : props.tdList && props.tdList.length === 0 && <div className="none_data">게시글이 없습니다.</div>
             }
         </div>
     );

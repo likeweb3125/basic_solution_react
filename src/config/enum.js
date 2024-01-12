@@ -47,14 +47,15 @@ exports.enum_api_uri = {
     menu_list: `${api_uri}v1/admin/menu`,
     menu_sub_detail: `${api_uri}v1/admin/menu/sub/:id`,
     menu_sub: `${api_uri}v1/admin/menu/sub`,
+    
+    //게시판관리 - 댓글관리
+    comment_list: `${api_uri}v1/comment/admin`,
 
-
-
-    //디자인관리
+    //디자인관리 - 메인배너관리
     banner_list: `${api_uri}v1/admin/banner`,
     banner_open: `${api_uri}v1/admin/banner/open`,
     banner_detail: `${api_uri}v1/admin/banner/:idx`,
-
+    //디자인관리 - 팝업관리
     popup_list: `${api_uri}v1/admin/popup`,
     popup_open: `${api_uri}v1/admin/popup/open`,
     popup_detail: `${api_uri}v1/admin/popup/:idx`,

@@ -24,6 +24,7 @@ import AdminMenuCategory from './pages/admin/MenuCategory';
 import AdminBoard from "./pages/admin/Board";
 import AdminBoardDetail from "./pages/admin/BoardDetail";
 import AdminBoardWrite from "./pages/admin/BoardWrite";
+import AdminCommentAll from "./pages/admin/CommentAll";
 import AdminDesignBanner from "./pages/admin/DesignBanner";
 import AdminDesignPopup from "./pages/admin/DesignPopup";
 import AdminSettingSiteInfo from "./pages/admin/SettingSiteInfo";
@@ -177,6 +178,21 @@ function App() {
                     <Route path="modify/:board_category/:board_idx" element={<AdminBoardWrite/>} />     {/* 수정 */}
                 </Route>
 
+                {/* 댓글관리 */}
+                <Route path="/console/comment/all" element={<AdminLayout><AdminCommentAll/></AdminLayout>} />
+
+
+                {/* ---- 회원관리 ---- */}
+                {/* 회원관리 */}
+                <Route path="/console/member/user" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />
+
+                {/* 관리자관리 */}
+                <Route path="/console/member/manager" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />
+
+                {/* 탈퇴회원 */}
+                <Route path="/console/member/cancel" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />
+
+
                 {/* ---- 디자인관리 ---- */}
                 {/* 메인배너관리 */}
                 <Route path="/console/design/banner" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />
@@ -188,7 +204,6 @@ function App() {
                 {/* ---- 환경설정 ---- */}
                 {/* 사이트정보 */}
                 <Route path="/console/setting/site" element={<AdminLayout><AdminSettingSiteInfo/></AdminLayout>} />
-
 
                 {/* 운영정책 설정 */}
                 <Route path="/console/setting/policy" element={<AdminLayout><AdminSettingPolicy/></AdminLayout>} />

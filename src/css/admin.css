@@ -422,7 +422,8 @@ body,input,select,textarea,button,table {
 .comment_item .btn_comment_util {display: none;}
 .comment .reply_wrap {position: static;}
 .comment .reply_comment {position: relative;}
-.comment .reply_wrap:before {content: ''; position: absolute; left: 0; top: 24px; width: 1px; height: calc(100% - 48px); background: #ddd;}
+.comment .reply_wrap:before {content: ''; position: absolute; left: 0; top: 24px; width: 1px; height:0; background: #ddd;}
+.comment .reply_wrap.on::before{height: calc(100% - 48px);}
 .comment .reply_wrap .comment:after {content: ''; position: absolute; left: -28px; top: -10px; width: 15px; height: 24px; border-bottom: 1px solid #ddd; border-left: 1px solid #ddd;}
 .comment .btn_reply_toggle {position: absolute; left: -28px; top: -17px; width: 16px; height: 16px; background: url('../images/ic_reply_open.svg') no-repeat 50% 50%/100%; border-radius: 100%; text-indent: -9999px; transform: translate(-50%, -50%); z-index: 5;}
 .comment .btn_reply_toggle.on {background: url('../images/ic_reply_close.svg') no-repeat 50% 50%/100%; z-index: 10;}

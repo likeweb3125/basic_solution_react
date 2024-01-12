@@ -416,11 +416,11 @@ const Board = () => {
                         />
                     </h3>
                     <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
-                    {/* <button type="button" className="btn_type10" style={{marginLeft:"20px"}}
+                    <button type="button" className="btn_type10" style={{marginLeft:"20px"}}
                         onClick={()=>{
                             dispatch(adminCategoryPop({adminCategoryPop:true,adminCategoryPopIdx:board_category}));
                         }}
-                    >설정</button> */}
+                    >설정</button>
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">

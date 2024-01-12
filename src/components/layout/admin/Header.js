@@ -43,13 +43,17 @@ const Header = () => {
     //url 변경될때마다 헤더메뉴 on값 변경
     useEffect(()=>{
         const path = location.pathname;
-        // console.log(path);
+        //메인
         if(path === "/console"){
             setMenuOn(null);
         }
+
+        //메뉴관리
         if(path === "/console/menu/category"){
             setMenuOn("menu1");
         }
+
+        //게시판관리
         if(path.includes("/console/board/post")){
             if(!path.includes("/detail") && board_category){
                 setMenuOn(`board1_${board_category}`);
@@ -58,7 +62,22 @@ const Header = () => {
                 setMenuOn(`board1_${board_category}`);
             }
         }
+        if(path === "/console/comment/all"){
+            setMenuOn("board2_1");
+        }
 
+        //회원관리  
+        if(path === "/console/member/user"){
+            setMenuOn("member1");
+        }
+        if(path === "/console/member/manager"){
+            setMenuOn("member2");
+        }
+        if(path === "/console/member/cancel"){
+            setMenuOn("member3");
+        }
+
+        //디자인관리
         if(path === "/console/design/banner"){
             setMenuOn("design1");
         }
@@ -66,7 +85,7 @@ const Header = () => {
             setMenuOn("design2");
         }
 
-        
+        //환경설정
         if(path === "/console/setting/site"){
             setMenuOn("setting1");
         }
@@ -74,6 +93,7 @@ const Header = () => {
             setMenuOn("setting2");
         }
 
+        //유지보수게시판
         if(path === "/console/maint"){
             setMenuOn("maint");
         }
@@ -125,12 +145,14 @@ const Header = () => {
     //메뉴 on 변경시 슬라이드애니메이션 
     useEffect(() => {
         if(menuOn){
+            //메뉴관리
             if(menuOn === "menu" || menuOn === "menu1") {
                 menuRef.current.style.height = `${menuRef.current.scrollHeight}px`;
             }else{
                 menuRef.current.style.height = "0";
             }
 
+            //게시판관리
             if(menuOn === "board" || menuOn.includes("board1") || menuOn.includes("board2")) {
                 let boardH = boardHeight;
 
@@ -143,30 +165,33 @@ const Header = () => {
                     }
                 }
                 
-                // if (menuOn.includes("board2")) {
-                //     boardH = boardH + board2Ref.current.scrollHeight;
-                //     board2Ref.current.style.height = `${board2Ref.current.scrollHeight}px`;
-                // }else{
-                //     board2Ref.current.style.height = "0";
-                // }
+                if (menuOn.includes("board2")) {
+                    boardH = boardH + board2Ref.current.scrollHeight;
+                    board2Ref.current.style.height = `${board2Ref.current.scrollHeight}px`;
+                }else{
+                    board2Ref.current.style.height = "0";
+                }
 
                 boardRef.current.style.height = `${boardH}px`;
             }else{
                 boardRef.current.style.height = "0";
             }
             
-            // if(menuOn === "member" || menuOn === "member1" || menuOn === "member2") {
-            //     memberRef.current.style.height = `${memberRef.current.scrollHeight}px`;
-            // }else{
-            //     memberRef.current.style.height = "0";
-            // }
+            //회원관리
+            if(menuOn === "member" || menuOn === "member1" || menuOn === "member2" || menuOn === "member3") {
+                memberRef.current.style.height = `${memberRef.current.scrollHeight}px`;
+            }else{
+                memberRef.current.style.height = "0";
+            }
 
+            //디자인관리
             if(menuOn === "design" || menuOn === "design1" || menuOn === "design2") {
                 designRef.current.style.height = `${designRef.current.scrollHeight}px`;
             }else{
                 designRef.current.style.height = "0";
             }
 
+            //환경설정
             if(menuOn === "setting" || menuOn === "setting1" || menuOn === "setting2" || menuOn === "setting3") {
                 settingRef.current.style.height = `${settingRef.current.scrollHeight}px`;
             }else{
@@ -205,6 +230,7 @@ const Header = () => {
             }
         }
     }, [menuOn, boardHeight]);
+
 
 
     return(<>
@@ -246,27 +272,30 @@ const Header = () => {
                                             </ul>
                                         </li>
                                     }
-                                    {/* <li className={`is_depth${menuOn && menuOn.includes("board2") ? " on" :""}`}>
+                                    <li className={`is_depth${menuOn && menuOn.includes("board2") ? " on" :""}`}>
                                         <button type="button" className="menu" onClick={()=>{setMenuOn("board2")}}>댓글 관리</button>
                                         <ul className="depth3" ref={board2Ref}>
                                             <li className={menuOn === "board2_1" ? "on" : ""}>
-                                                <Link to="">전체</Link>
+                                                <Link to="/console/comment/all">전체</Link>
                                             </li>
                                         </ul>
-                                    </li> */}
+                                    </li>
                                 </ul>
                             </li>
-                            {/* <li className={menuOn && menuOn.includes("member") ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("member") ? "on" : ""}>
                                 <button type="button" className="btn_menu admin_member" onClick={()=>{setMenuOn("member")}}><span>회원 관리</span></button>
                                 <ul className="depth2" ref={memberRef}>
                                     <li className={menuOn === "member1" ? "on" : ""}>
-                                        <Link to="" className="menu">회원 관리</Link>
+                                        <Link to="/console/member/user" className="menu">회원 관리</Link>
                                     </li>
                                     <li className={menuOn === "member2" ? "on" : ""}>
-                                        <Link to="" className="menu">관리자 관리</Link>
+                                        <Link to="/console/member/manager" className="menu">관리자 관리</Link>
+                                    </li>
+                                    <li className={menuOn === "member3" ? "on" : ""}>
+                                        <Link to="/console/member/cancel" className="menu">탈퇴회원</Link>
                                     </li>
                                 </ul>
-                            </li> */}
+                            </li>
                             <li className={menuOn && menuOn.includes("design") ? "on" : ""}>
                                 <button type="button" className="btn_menu admin_design" onClick={()=>{setMenuOn("design")}}><span>디자인 관리</span></button>
                                 <ul className="depth2" ref={designRef}>
