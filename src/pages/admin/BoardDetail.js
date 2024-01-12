@@ -328,7 +328,7 @@ const BoardDetail = () => {
             }));
             setConfirm(true);
         }else{
-            // enterHandler(depth, txt, idx);
+            enterHandler(depth, txt, idx);
         }
     };
 
@@ -356,6 +356,10 @@ const BoardDetail = () => {
                 if(idx){
                     setReplyEnterOk(true);
                     setReplyComment('');
+                }
+                //댓글등록시 댓글 textarea 값 비우기
+                else{
+                    setComment('');
                 }
             }
         })
@@ -433,6 +437,7 @@ const BoardDetail = () => {
         .then((res)=>{
             if(res.status === 200){
                 getCommentList();
+                setEditShow(null); //댓글수정 영역 미노출
             }
         })
         .catch((error) => {
@@ -468,6 +473,7 @@ const BoardDetail = () => {
     //댓글 삭제하기
     const commentDeltHandler = () => {
         const body = {
+            category: board_category,
             idx: deltCommentIdx,
         };
         axios.delete(`${board_comment}`,
@@ -478,7 +484,7 @@ const BoardDetail = () => {
         )
         .then((res)=>{
             if(res.status === 200){
-                
+                getCommentList();
             }
         })
         .catch((error) => {

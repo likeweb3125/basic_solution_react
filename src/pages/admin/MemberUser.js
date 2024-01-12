@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { confirmPop, adminPolicyPopWrite, adminPolicyPop, adminPolicyPopModify } from "../../store/popupSlice";
+import { confirmPop } from "../../store/popupSlice";
 import { pageNoChange, checkedList } from "../../store/etcSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import SearchInput from "../../components/component/admin/SearchInput";
@@ -19,20 +19,16 @@ const MemberUser = () => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);
-    const site_policy = enum_api_uri.site_policy;
+    const comment_list = enum_api_uri.comment_list;
     const policy_use = enum_api_uri.policy_use;
     const [confirm, setConfirm] = useState(false);
-    const [useConfirm, setUseConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [searchTxt, setSearchTxt] = useState("");
     const [boardData, setBoardData] = useState({});
     const [limit, setLimit] = useState(10);
-    const [searchType, setSearchType] = useState("제목만");
+    const [searchType, setSearchType] = useState("댓글내용");
     const [checkList, setCheckList] = useState([]);
     const [checkedNum, setCheckedNum] = useState(0);
-    const [showBtn, setShowBtn] = useState(false);
-    const [hideBtn, setHideBtn] = useState(false);
-    const [use, setUse] = useState("");
 
 
 
@@ -40,7 +36,6 @@ const MemberUser = () => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
-            setUseConfirm(false);
             setDeltConfirm(false);
         }
     },[popup.confirmPop]);
@@ -49,19 +44,24 @@ const MemberUser = () => {
      //게시판정보 가져오기
      const getBoardData = (page) => {
         let search;
-        if(searchType == "제목만"){
+        if(searchType == "댓글내용"){
+            // search = "title";
+        }else if(searchType == "제목만"){
             search = "title";
         }else if(searchType == "제목+내용"){
             search = "titlecontents";
-        }
+        }else if(searchType == "작성자"){
+            search = "name";
+        } 
 
-        axios.get(`${site_policy.replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
+        axios.get(`${comment_list.replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
                 setBoardData(data);
+                console.log(data)
             }
         })
         .catch((error) => {
@@ -99,8 +99,8 @@ const MemberUser = () => {
 
     //맨처음 리스트 idx값만 배열로 (전체 체크박스리스트 만들기)
     useEffect(()=>{
-        if(boardData.hasOwnProperty("policy_list")){
-            const list = boardData.policy_list.map((item) => item.idx).filter(Boolean);
+        if(boardData.hasOwnProperty("comment_list")){
+            const list = boardData.comment_list.map((item) => item.idx).filter(Boolean);
             setCheckList([...list]);
         }
     },[boardData]);
@@ -116,47 +116,11 @@ const MemberUser = () => {
     };
 
 
-    //체크박스 변경시 
+    //체크박스 변경시 체크된 수 변경
     useEffect(()=>{
-        //체크된 수 변경
-        const list = boardData.policy_list;
-        const list2 = etc.checkedList;
         const num = etc.checkedList.length;
         setCheckedNum(num);
-
-        //체크된 리스트에 따라 노출,중단 버튼 on,off
-        if(list && list2){
-            const newList = list.filter((item)=>list2.includes(item.idx));
-            const hasYValue = newList.some(item => item.p_use_yn === "Y");
-            const hasNValue = newList.some(item => item.p_use_yn === "N");
-            if(hasYValue){
-                setHideBtn(true);
-            }else{
-                setHideBtn(false);
-            }
-            if(hasNValue){
-                setShowBtn(true);
-            }else{
-                setShowBtn(false);
-            }
-        }
     },[etc.checkedList]);
-
-
-    //운영정책 상세내용 변경시 게시판리스트정보 가져오기
-    useEffect(()=>{
-        if(popup.adminPolicyPopModify){
-            dispatch(adminPolicyPopModify(false));
-            getBoardData();
-        }
-    },[popup.adminPolicyPopModify]);
-
-
-    //작성하기 버튼클릭시 작성팝업 띄우기
-    const writeBtnClickHandler = () => {
-        dispatch(adminPolicyPopWrite(true));
-        dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:null}));
-    };
 
 
     //삭제버튼 클릭시
@@ -165,7 +129,7 @@ const MemberUser = () => {
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
-                confirmPopTxt:'해당 운영정책을 삭제하시겠습니까?',
+                confirmPopTxt:'해당 댓글을 삭제하시겠습니까?',
                 confirmPopBtn:2,
             }));
             setDeltConfirm(true);
@@ -173,7 +137,7 @@ const MemberUser = () => {
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
-                confirmPopTxt:'운영정책을 선택해주세요.',
+                confirmPopTxt:'댓글을 선택해주세요.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -181,7 +145,7 @@ const MemberUser = () => {
     };
 
 
-    //팝업 삭제하기
+    //댓글 삭제하기
     const deltHandler = () => {
         const body = {
             idx: etc.checkedList,
@@ -218,18 +182,82 @@ const MemberUser = () => {
     return(<>
         <div className="page_admin_setting">
             <div className="content_box">
+
+            <div class="search_detail_wrap search_detail_wrap2">
+                <div class="search_detail_box">
+                    <div class="search_wrap">
+                        <div class="select_type2">
+                            <div class="txt_select">
+                                <span>회원 등급별 보기</span>
+                                {/* <em>lv.9</em> */}
+                            </div>
+                            <select name="" id="" title="회원 등급별 선택">
+                                <option value="">aaa</option>
+                                <option value="">bbb</option>
+                                <option value="">ccc</option>
+                            </select>
+                        </div>
+                        <div className="search_box">
+                            <SelectBox 
+                                class="select_type3"
+                                list={["이메일","회원명","휴대폰번호"]}
+                                selected={searchType}
+                                onChangeHandler={(e)=>{
+                                    const val = e.currentTarget.value;
+                                    setSearchType(val);
+                                }}
+                                selHidden={true}
+                            />
+                            <SearchInput 
+                                placeholder="검색어를 입력해주세요."
+                                onChangeHandler={(e)=>{
+                                    const val = e.currentTarget.value;
+                                    setSearchTxt(val);
+                                }}
+                                value={searchTxt}
+                                onSearchHandler={()=>getBoardData()}
+                            />
+                        </div>
+                    </div>
+                    <div class="search_chk">
+                        <div class="chk_box1">
+                            <input type="checkbox" id="chkMail" class="blind"/>
+                            <label for="chkMail">메일 수신</label>
+                        </div>
+                        <div class="chk_box1">
+                            <input type="checkbox" id="chkMsg" class="blind"/>
+                            <label for="chkMsg">문자수신</label>
+                        </div>
+                    </div>
+                    <div class="search_date">
+                        <div class="date_input">
+                            <span>시작일</span>
+                            <input type="text" placeholder="YYYY.MM.DD"/>
+                        </div>
+                        <em>~</em>
+                        <div class="date_input">
+                            <span>종료일</span>
+                            <input type="text" placeholder="YYYY.MM.DD"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn_wrap">
+                    <button type="button" class="btn_type15">검색</button>
+                </div>
+            </div>
+
                 <div className="tit tit2">
                     <h3>
-                        <b>운영정책</b>
+                        <b>전체 회원</b>
                     </h3>
-                    <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
+                    <strong>총 {CF.MakeIntComma(boardData.total_count)}명</strong>
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">
                         <div className="search_wrap">
                             <SelectBox 
                                 class="select_type3 search_row_select"
-                                list={[10,15,30,50]}
+                                list={[10]}
                                 selected={limit}
                                 onChangeHandler={(e)=>{
                                     const val = e.currentTarget.value;
@@ -238,27 +266,6 @@ const MemberUser = () => {
                                 selHidden={true}
                                 limitSel={true}
                             />
-                            <div className="search_box">
-                                <SelectBox 
-                                    class="select_type3"
-                                    list={["제목만","제목+내용"]}
-                                    selected={searchType}
-                                    onChangeHandler={(e)=>{
-                                        const val = e.currentTarget.value;
-                                        setSearchType(val);
-                                    }}
-                                    selHidden={true}
-                                />
-                                <SearchInput 
-                                    placeholder="검색어를 입력해주세요."
-                                    onChangeHandler={(e)=>{
-                                        const val = e.currentTarget.value;
-                                        setSearchTxt(val);
-                                    }}
-                                    value={searchTxt}
-                                    onSearchHandler={()=>getBoardData()}
-                                />
-                            </div>
                         </div>
                     </div>
                     <div className="board_table_util">
@@ -271,19 +278,22 @@ const MemberUser = () => {
                                 <label htmlFor="chkAll">전체선택</label>
                             </div>
                         </div>
-
+                        <div className="util_wrap">
+                            <span>선택한 댓글</span>
+                            <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>개</span>
+                        </div>
                         <div className="util_right">
                             <button type="button" className="btn_type9" onClick={deltBtnClickHandler}>삭제</button>
                         </div>
                     </div>
                     <TableWrap 
                         class="tbl_wrap1 tbl_wrap1_1"
-                        colgroup={["80px","9%","auto","18%","12%"]}
-                        thList={["","구분","제목","작성일시","사용여부"]}
-                        tdList={boardData.policy_list}
-                        type={"policy"}
+                        colgroup={["80px","auto","9%","18%","9%","13%"]}
+                        thList={["","댓글내용","게시판명","원문 제목","작성자","작성일시"]}
+                        tdList={boardData.comment_list}
+                        type={"comment"}
                     />
-                    {boardData.policy_list && boardData.policy_list.length > 0 &&
+                    {boardData.comment_list && boardData.comment_list.length > 0 &&
                         <Pagination 
                             currentPage={boardData.current_page} //현재페이지 번호
                             startPage={boardData.start_page} //시작페이지 번호 
@@ -291,14 +301,11 @@ const MemberUser = () => {
                             lastPage={boardData.last_page} //총페이지 끝
                         />
                     }
-                    <div className="form_btn_wrap">
-                        <button type="button" className="btn_type4" onClick={writeBtnClickHandler}>작성</button>                                        
-                    </div>
                 </div>
             </div>
         </div>
 
-        {/* 운영정책 삭제 confirm팝업 */}
+        {/* 댓글 삭제 confirm팝업 */}
         {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
 
         {/* confirm팝업 */}

@@ -25,6 +25,9 @@ import AdminBoard from "./pages/admin/Board";
 import AdminBoardDetail from "./pages/admin/BoardDetail";
 import AdminBoardWrite from "./pages/admin/BoardWrite";
 import AdminCommentAll from "./pages/admin/CommentAll";
+
+import AdminMemberUser from './pages/admin/MemberUser';
+
 import AdminDesignBanner from "./pages/admin/DesignBanner";
 import AdminDesignPopup from "./pages/admin/DesignPopup";
 import AdminSettingSiteInfo from "./pages/admin/SettingSiteInfo";
@@ -184,7 +187,7 @@ function App() {
 
                 {/* ---- 회원관리 ---- */}
                 {/* 회원관리 */}
-                <Route path="/console/member/user" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />
+                <Route path="/console/member/user" element={<AdminLayout><AdminMemberUser/></AdminLayout>} />
 
                 {/* 관리자관리 */}
                 <Route path="/console/member/manager" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />

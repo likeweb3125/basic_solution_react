@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import moment from "moment";
+import 'moment/locale/ko'; 
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { checkedList, scrollY } from "../../../store/etcSlice";
@@ -218,6 +220,8 @@ const TableWrap = (props) => {
                                 }
                                 //게시판관리 - 댓글관리 일때
                                 if(props.type === "comment"){
+                                    const time = moment(cont.c_reg_date).format('YYYY-MM-DD A hh:mm:ss');
+
                                     return(
                                         <tr key={i}>
                                             <td>
@@ -245,7 +249,7 @@ const TableWrap = (props) => {
                                             <td>{cont.boardTitle}</td>
                                             <td>{cont.m_name}</td>
                                             <td>
-                                                <span className="txt_light">{cont.p_reg_date}</span>
+                                                <span className="txt_light">{time}</span>
                                             </td>
                                         </tr>
                                     );

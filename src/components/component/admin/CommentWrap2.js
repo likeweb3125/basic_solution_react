@@ -31,7 +31,7 @@ const CommentWrap2 = (
     const [listCount, setListCount] = useState(0);
     const [replyShow, setReplyShow] = useState({});
     const [writeReply, setWriteReply] = useState(null);
-    
+    const [firstTime, setFirstTime] = useState(false);
 
 
     // Confirm팝업 닫힐때
@@ -77,17 +77,17 @@ const CommentWrap2 = (
             let count = 0;
           
             function dfs(node) {
-              count++; // 각 노드 방문 시 개수 증가
-          
-              if (node.children && node.children.length > 0) {
-                for (let childNode of node.children) {
-                  dfs(childNode); // 자식 노드에 대해 재귀 호출
+                count++; // 각 노드 방문 시 개수 증가
+            
+                if (node.children && node.children.length > 0) {
+                    for (let childNode of node.children) {
+                        dfs(childNode); // 자식 노드에 대해 재귀 호출
+                    }
                 }
-              }
             }
           
             for (let rootNode of tree) {
-              dfs(rootNode); // 각 루트 노드에 대해 DFS 시작
+                dfs(rootNode); // 각 루트 노드에 대해 DFS 시작
             }
           
             return count;
@@ -95,7 +95,45 @@ const CommentWrap2 = (
           
         const total = countList(list);
         setListCount(total);
+
+        //댓글이 있고 맨처음 랜더링일때
+        if(list.length > 0 && !firstTime){
+            setFirstTime(true);
+        }
     },[list]);
+
+
+    //맨처음 랜더링될때만 댓글 2depth 까지는 기본으로 노출
+    useEffect(()=>{
+        if(firstTime){
+            //depth 가 2보다 작은 댓글 idx값 리스트 구하기
+            const filterObjectsByDepth = (objects, depthLimit) => {
+                let filteredIdxArray = [];
+
+                const traverse = (object) => {
+                    if (object.depth < depthLimit) {
+                        filteredIdxArray.push(object.idx);
+                    }
+                
+                    if (object.children && object.children.length > 0) {
+                        object.children.forEach(child => traverse(child));
+                    }
+                };
+
+                objects.forEach(item => traverse(item));
+
+                return filteredIdxArray;
+            };
+
+            const result = filterObjectsByDepth(list, 2);
+            const transformedObject = result.reduce((acc, idx) => {
+                acc[idx] = true;
+                return acc;
+            }, {});
+
+            setReplyShow(transformedObject);
+        }
+    },[firstTime]);
 
 
     return(<>
