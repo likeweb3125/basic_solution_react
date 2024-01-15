@@ -82,7 +82,7 @@ const TableWrap = (props) => {
     },[props.thList]);
 
 
-    //플로팅 회원 드래그앤드롭---------------------
+    //메인배너 드래그앤드롭---------------------
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {

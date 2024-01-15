@@ -70,11 +70,11 @@ const Header = () => {
         if(path === "/console/member/user"){
             setMenuOn("member1");
         }
+        if(path === "/console/member/cancel"){
+            setMenuOn("member1");
+        }
         if(path === "/console/member/manager"){
             setMenuOn("member2");
-        }
-        if(path === "/console/member/cancel"){
-            setMenuOn("member3");
         }
 
         //디자인관리
@@ -178,7 +178,7 @@ const Header = () => {
             }
             
             //회원관리
-            if(menuOn === "member" || menuOn === "member1" || menuOn === "member2" || menuOn === "member3") {
+            if(menuOn === "member" || menuOn === "member1" || menuOn === "member2") {
                 memberRef.current.style.height = `${memberRef.current.scrollHeight}px`;
             }else{
                 memberRef.current.style.height = "0";
@@ -290,9 +290,6 @@ const Header = () => {
                                     </li>
                                     <li className={menuOn === "member2" ? "on" : ""}>
                                         <Link to="/console/member/manager" className="menu">관리자 관리</Link>
-                                    </li>
-                                    <li className={menuOn === "member3" ? "on" : ""}>
-                                        <Link to="/console/member/cancel" className="menu">탈퇴회원</Link>
                                     </li>
                                 </ul>
                             </li>

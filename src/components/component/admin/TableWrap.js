@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import moment from "moment";
 import 'moment/locale/ko'; 
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { checkedList, scrollY } from "../../../store/etcSlice";
-import { adminPolicyPop, adminPopupPop, adminBannerPop } from "../../../store/popupSlice";
+import { confirmPop, adminPolicyPop, adminPopupPop } from "../../../store/popupSlice";
 import DndTr from "./DndTr";
 import {
     DndContext,
@@ -23,14 +24,28 @@ import {
     sortableKeyboardCoordinates,
     rectSortingStrategy,
 } from '@dnd-kit/sortable';
+import ConfirmPop from "../../popup/ConfirmPop";
 
 
 const TableWrap = (props) => {
     const dispatch = useDispatch();
     const etc = useSelector((state)=>state.etc);
+    const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
     const api_uri = enum_api_uri.api_uri;
+    const banner_move = enum_api_uri.banner_move;
+    const [confirm, setConfirm] = useState(false);
     const [colgroup, setColgroup] = useState([]);
     const [thList, setThList] = useState([]);
+    const [tdList, setTdList] = useState([]);
+
+
+    // Confirm팝업 닫힐때
+    useEffect(()=>{
+        if(popup.confirmPop === false){
+            setConfirm(false);
+        }
+    },[popup.confirmPop]);
 
     
     //체크박스 체크시
@@ -84,7 +99,12 @@ const TableWrap = (props) => {
     },[props.thList]);
 
 
-    //플로팅 회원 드래그앤드롭---------------------
+    useEffect(()=>{
+        setTdList(props.tdList);
+    },[props.tdList]);
+
+
+    //메인배너 드래그앤드롭---------------------
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -104,12 +124,48 @@ const TableWrap = (props) => {
 
     const handleDragEnd = (event) => {
         const {active, over} = event;
+
+        if (active.id !== over.id) {
+            const list = tdList;
+
+            const moveTd = list.find((item) => item.idx === over.id);
+            const moveNum = moveTd.b_moveNum;
+
+            const body = {
+                idx:active.id,
+                moveNum:moveNum,
+            };
+
+            axios.put(banner_move, body,
+                {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+            )
+            .then((res)=>{
+                if(res.status === 200){
+                    setTdList((items) => {
+                        const oldIndex = items.findIndex((item) => item.idx === active.id);
+                        const newIndex = items.findIndex((item) => item.idx === over.id);
+        
+                        return arrayMove(items, oldIndex, newIndex);
+                    });
+                }
+            })
+            .catch((error) => {
+                const err_msg = CF.errorMsgHandler(error);
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            });
+        }
     }
     
 
-    return(
+    return(<>
         <div className={props.class}>
-            {props.tdList && props.tdList.length > 0 ?
+            {tdList && tdList.length > 0 ?
                 //디자인관리 - 메인배너관리 아닐때
                 props.type !== "banner" ?
                     <table>
@@ -126,7 +182,7 @@ const TableWrap = (props) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {props.tdList && props.tdList.map((cont,i)=>{
+                            {tdList && tdList.map((cont,i)=>{
                                 //메인페이지 최근게시판조회 일때
                                 if(props.type === "main_board"){
                                     return(
@@ -254,6 +310,57 @@ const TableWrap = (props) => {
                                         </tr>
                                     );
                                 }
+                                //회원관리 - 회원관리 일때
+                                if(props.type === "member"){
+                                    return(
+                                        <tr key={i}>
+                                            <td>
+                                                <div className="chk_box2">
+                                                    <input type="checkbox" id={`check_${cont.idx}`} className="blind"
+                                                        value={cont.idx}
+                                                        onChange={(e) => {
+                                                            const isChecked = e.currentTarget.checked;
+                                                            const value = e.currentTarget.value;
+                                                            checkHandler(isChecked, value);
+                                                        }}
+                                                        checked={etc.checkedList.includes(cont.idx)}
+                                                    />
+                                                    <label htmlFor={`check_${cont.idx}`}>선택</label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button type="button" className="link" 
+                                                    onClick={()=>{
+                                                        // dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:cont.idx}));
+                                                    }}>
+                                                    <span>zzzzzzz92164156zzzz@naver.com</span>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button type="button" className="link" 
+                                                    onClick={()=>{
+                                                        // dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:cont.idx}));
+                                                    }}>
+                                                    <span>박성훈</span>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <div class="user_level">
+                                                    <strong>관리자</strong>
+                                                    <em>lv.9</em>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span className="txt_light">2018.10.10 10:20</span>
+                                            </td>
+                                            <td>010-0000-0000</td>
+                                            <td>3</td>
+                                            <td>3</td>
+                                            <td>4</td>
+                                        </tr>
+                                    );
+                                }
+
                                 //환경설정 - 운영정책설정 일때
                                 if(props.type === "policy"){
                                     return(
@@ -388,10 +495,10 @@ const TableWrap = (props) => {
                             </thead>
                             <tbody>
                                 <SortableContext
-                                    items={props.tdList.map(({idx}) => idx)}
+                                    items={tdList.map(({idx}) => idx)}
                                     strategy={rectSortingStrategy}
                                 >
-                                        {props.tdList.map((cont,i)=>(
+                                        {tdList.map((cont,i)=>(
                                             <tr key={i}
                                                 className={cont.b_open[0] == "Y" ? "" : "disabled"}
                                             >
@@ -408,10 +515,13 @@ const TableWrap = (props) => {
                             </tbody>
                         </table>
                     </DndContext>
-            : props.tdList && props.tdList.length === 0 && <div className="none_data">게시글이 없습니다.</div>
+            : tdList && tdList.length === 0 && <div className="none_data">데이터가 없습니다.</div>
             }
         </div>
-    );
+
+        {/* confirm팝업 */}
+        {confirm && <ConfirmPop />}
+    </>);
 };
 
 export default TableWrap;

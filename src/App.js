@@ -27,6 +27,8 @@ import AdminBoardWrite from "./pages/admin/BoardWrite";
 import AdminCommentAll from "./pages/admin/CommentAll";
 
 import AdminMemberUser from './pages/admin/MemberUser';
+import AdminMemberManager from './pages/admin/MemberManager';
+import AdminMemberCancel from './pages/admin/MemberCancel';
 
 import AdminDesignBanner from "./pages/admin/DesignBanner";
 import AdminDesignPopup from "./pages/admin/DesignPopup";
@@ -190,10 +192,10 @@ function App() {
                 <Route path="/console/member/user" element={<AdminLayout><AdminMemberUser/></AdminLayout>} />
 
                 {/* 관리자관리 */}
-                <Route path="/console/member/manager" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />
+                <Route path="/console/member/manager" element={<AdminLayout><AdminMemberManager/></AdminLayout>} />
 
                 {/* 탈퇴회원 */}
-                <Route path="/console/member/cancel" element={<AdminLayout><AdminDesignBanner/></AdminLayout>} />
+                <Route path="/console/member/cancel" element={<AdminLayout><AdminMemberCancel/></AdminLayout>} />
 
 
                 {/* ---- 디자인관리 ---- */}

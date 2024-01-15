@@ -55,7 +55,7 @@ const DesignBanner = () => {
             txt = searchTxt;
         }
 
-        axios.get(`${banner_list.replace(":limit",limit)}?b_type=${tab}&page=${page ? page : 1}${txt.length > 0 ? "&searchtxt="+txt : ""}`,
+        axios.get(`${banner_list}?b_type=${tab}&page=${page ? page : 1}&getLimit=${limit}${txt.length > 0 ? "&searchtxt="+txt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -313,7 +313,7 @@ const DesignBanner = () => {
                                     setLimit(val);
                                 }}
                                 selHidden={true}
-                                limitSel={true}
+                                limitSel={`개씩`}
                             />
                             <div className="search_box">
                                 <SearchInput 

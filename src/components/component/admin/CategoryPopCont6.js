@@ -150,7 +150,7 @@ const CategoryPopCont6 = (props) => {
                                             onSelectChangeHandler("b_list_cnt",val);
                                         }}
                                         selHidden={true}
-                                        limitSel={true}
+                                        limitSel={`개씩`}
                                     />
                                 </div>
                             </div>

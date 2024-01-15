@@ -10,19 +10,19 @@ const TxtSelectBox = (props) => {
 
     return(
         <div className={props.class}>
-            <div className="txt_select">
+            <div className={`txt_select${props.hiddenTxt && !props.selected ? ' none' : ''}`}>
                 {props.limitSel ?
                     <span>{props.selected ? props.selected+"개씩" : "선택"}</span>
-                    :<span>{props.selected ? props.selected : "선택"}</span>
+                    :<span>{props.selected ? props.selected : props.hiddenTxt ? props.hiddenTxt : "선택"}</span>
                 }
-                {props.objectSel === "level_list" && <em>{"lv."+props.selectedLevel}</em>}
+                {props.objectSel === "level_list" && props.selectedLevel && <em>{"lv."+props.selectedLevel}</em>}
             </div>
             <select 
                 value={props.selected}
                 onChange={props.onChangeHandler}
                 name={props.name}
             >
-                <option value="" hidden={props.selHidden}>선택</option>
+                <option value="" hidden={props.selHidden}>{props.hiddenTxt ? props.hiddenTxt : "선택"}</option>
                 {list && list.map((val,i)=>{
                     return(
                         props.objectSel === "board_title" ? //게시판관리 - 게시글들 제목일때

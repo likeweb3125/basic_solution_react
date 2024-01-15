@@ -186,7 +186,7 @@ const Maint = () => {
                                     setLimit(val);
                                 }}
                                 selHidden={true}
-                                limitSel={true}
+                                limitSel={`개씩`}
                             />
                             <div className="search_box">
                                 <SelectBox 

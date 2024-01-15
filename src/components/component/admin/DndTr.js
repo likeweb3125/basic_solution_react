@@ -6,7 +6,6 @@ import { enum_api_uri } from '../../../config/enum';
 import { adminBannerPop } from '../../../store/popupSlice';
 
 const DndTr = ({data, id, onCheckHandler, colgroup, popType}) => {
-    const common = useSelector((state)=>state.common);
     const etc = useSelector((state)=>state.etc);
     const dispatch = useDispatch();
     const api_uri = enum_api_uri.api_uri;

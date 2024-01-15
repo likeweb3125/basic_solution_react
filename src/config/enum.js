@@ -27,7 +27,6 @@ exports.enum_api_uri = {
 
 
 
-
     // 사용자단 ------------------------------------------
     //팝업
     auth_popup_list: `${api_uri}v1/auth/popup/`,
@@ -51,10 +50,14 @@ exports.enum_api_uri = {
     //게시판관리 - 댓글관리
     comment_list: `${api_uri}v1/comment/admin`,
 
+    //회원관리 - 회원관리
+    member_list: `${api_uri}v1/admin/member/list/:m_level`,
+
     //디자인관리 - 메인배너관리
     banner_list: `${api_uri}v1/admin/banner`,
     banner_open: `${api_uri}v1/admin/banner/open`,
     banner_detail: `${api_uri}v1/admin/banner/:idx`,
+    banner_move: `${api_uri}v1/admin/banner/move`,
     //디자인관리 - 팝업관리
     popup_list: `${api_uri}v1/admin/popup`,
     popup_open: `${api_uri}v1/admin/popup/open`,
