@@ -53,6 +53,8 @@ exports.enum_api_uri = {
     //회원관리 - 회원관리
     member_list: `${api_uri}v1/admin/member/list/:m_level`,
 
+    member_cancel_list: `${api_uri}v1/admin/member/sec`,
+
     //디자인관리 - 메인배너관리
     banner_list: `${api_uri}v1/admin/banner`,
     banner_open: `${api_uri}v1/admin/banner/open`,

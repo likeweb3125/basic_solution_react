@@ -165,11 +165,11 @@ const MemberUser = () => {
 
 
     return(<>
-        <div className="page_admin_setting">
+        <div className="page_admin_member">
             <div className="content_box">
-                <div class="search_detail_wrap search_detail_wrap2">
-                    <div class="search_detail_box">
-                        <div class="search_wrap">
+                <div className="search_detail_wrap search_detail_wrap2">
+                    <div className="search_detail_box">
+                        <div className="search_wrap">
                             <TxtSelectBox 
                                 class="select_type2"
                                 list={levelList}
@@ -207,7 +207,7 @@ const MemberUser = () => {
                                 />
                             </div>
                         </div>
-                        <div class="search_chk">
+                        <div className="search_chk">
                             <div className="chk_box1">
                                 <input type="checkbox" id="chkMail" className="blind" 
                                     onChange={(e)=>{
@@ -251,8 +251,8 @@ const MemberUser = () => {
                             />
                         </div>
                     </div>
-                    <div class="btn_wrap">
-                        <button type="button" class="btn_type15">검색</button>
+                    <div className="btn_wrap">
+                        <button type="button" className="btn_type15">검색</button>
                     </div>
                 </div>
                 <div className="tit tit2">
@@ -290,22 +290,22 @@ const MemberUser = () => {
                         <div className="util_wrap">
                             <span>선택한 회원</span>
                             <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>명</span>
-                            <div class="select_type3">
+                            <div className="select_type3">
                                 <select name="" id="" title="회원등급 선택">
                                     <option value="">준회원</option>
                                 </select>
                             </div>
                             <span>(으)로</span>
-                            <button type="button" class="btn_type8">변경</button>
-                            <button type="button" class="btn_type9">회원 탈퇴</button>
+                            <button type="button" className="btn_type8">변경</button>
+                            <button type="button" className="btn_type9">회원 탈퇴</button>
                         </div>
                         <div className="util_right">
-                            <div class="send_msg_wrap">
-                                <div class="txt">
+                            <div className="send_msg_wrap">
+                                <div className="txt">
                                     <strong>단체문자</strong>
                                     <span>해당 회원 총 <b>30,235</b>명</span>
                                 </div>
-                                <button type="button" class="btn_type8">전송</button>
+                                <button type="button" className="btn_type8">전송</button>
                             </div>
                         </div>
                     </div>
@@ -324,7 +324,7 @@ const MemberUser = () => {
                             lastPage={boardData.last_page} //총페이지 끝
                         />
                     }
-                    <Link to="/console/member/cancel" class="btn_type17">탈퇴 회원 목록</Link>
+                    <Link to="/console/member/cancel" className="btn_type17">탈퇴 회원 목록</Link>
                 </div>
             </div>
         </div>

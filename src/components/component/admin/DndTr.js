@@ -51,9 +51,8 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType}) => {
                 </div>
                 <div style={{'width':colgroup[1]}}>
                     <div className="img_box">
-                        {data.b_file && <img src={api_uri+data.b_file} alt="썸네일이미지" />
-                            // data.b_c_type[0] == '1' ? <img src={api_uri+data.b_file} alt="썸네일이미지" />
-                            // :data.b_c_type[0] == '2' && <video src={api_uri+data.b_file} />
+                        {data.b_c_type == '1' ? <img src={api_uri+data.b_file} alt="썸네일이미지" />
+                            : data.b_c_type == '2' && <video src={api_uri+data.b_file} />
                         }
                     </div>
                 </div>

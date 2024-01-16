@@ -74,8 +74,9 @@ table td .txt_light {font-size: 14px; color: #999;}
 .tbl_wrap1.tbl_wrap1_1 tbody tr.disabled {background: #f8f8f8 !important;}
 .tbl_wrap1.tbl_wrap1_1 tbody tr.disabled td{background: #f8f8f8 !important;}
 .tbl_wrap1.tbl_wrap1_1 tbody tr.disabled .show_status {color: var(--admin-color3);}
-.tbl_wrap1 .img_box {width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; margin: 0 auto;}
+.tbl_wrap1 .img_box {width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; margin: 0 auto;overflow: hidden;}
 .tbl_wrap1 .img_box img {max-width: 100%; max-height: 100%;}
+.tbl_wrap1 .img_box video{max-width: 100%; max-height: 100%;}
 .tbl_wrap1 .btn_move {cursor: grab; text-indent: -9999px; width: 24px; height: 24px; position: relative;}
 .tbl_wrap1 .btn_move:after {content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%; background: url('../images/ic_catetory_move.svg') no-repeat 50% 50%/100%;}
 .tbl_wrap2 th {line-height: 22px; padding: 20px 0; vertical-align: top; font-size: 16px; font-weight: 500; color: #222; position: relative;}

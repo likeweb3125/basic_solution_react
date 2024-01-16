@@ -310,7 +310,7 @@ const TableWrap = (props) => {
                                         </tr>
                                     );
                                 }
-                                //회원관리 - 회원관리 일때
+                                //회원관리 - 회원관리, 관리자관리 일때
                                 if(props.type === "member"){
                                     return(
                                         <tr key={i}>
@@ -360,7 +360,28 @@ const TableWrap = (props) => {
                                         </tr>
                                     );
                                 }
-
+                                //회원관리 - 탈퇴회원 일때
+                                if(props.type === "member_cancel"){
+                                    return(
+                                        <tr key={i}>
+                                            <td>
+                                                <div className="chk_box2">
+                                                    <input type="checkbox" id={`check_${cont.id}`} className="blind"
+                                                        value={cont.id}
+                                                        onChange={(e) => {
+                                                            const isChecked = e.currentTarget.checked;
+                                                            const value = e.currentTarget.value;
+                                                            checkHandler(isChecked, value);
+                                                        }}
+                                                        checked={etc.checkedList.includes(cont.id)}
+                                                    />
+                                                    <label htmlFor={`check_${cont.id}`}>선택</label>
+                                                </div>
+                                            </td>
+                                            <td>zzzzzzz92164156zzzz@naver.com</td>
+                                        </tr>
+                                    );
+                                }
                                 //환경설정 - 운영정책설정 일때
                                 if(props.type === "policy"){
                                     return(
