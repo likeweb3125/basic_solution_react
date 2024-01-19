@@ -16,7 +16,7 @@ import ConfirmPop from "../../components/popup/ConfirmPop";
 import Pagination from "../../components/component/admin/Pagination";
 
 
-const MemberUser = () => {
+const StatsVisitor = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const popup = useSelector((state)=>state.popup);
@@ -82,17 +82,13 @@ const MemberUser = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-                navigate("/console/login");
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         });
     };
 
@@ -466,4 +462,4 @@ const MemberUser = () => {
     </>);
 };
 
-export default MemberUser;
+export default StatsVisitor;

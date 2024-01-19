@@ -90,6 +90,19 @@ const Layout = (props) => {
         if(path === "/console/setting/policy"){
             setLocationList(["환경설정","시스템 운영정책"]);
         }
+        //환경설정 - 회원등급 관리
+        if(path === "/console/setting/level"){
+            setLocationList(["환경설정","회원 등급 관리"]);
+        }
+
+        //통계관리 - 전체통계
+        if(path === "/console/stats/chart"){
+            setLocationList(["통계 관리","전체 통계"]);
+        }
+        //통계관리 - 접속자 이력 통계
+        if(path === "/console/stats/visitor"){
+            setLocationList(["통계 관리","접속 통계"]);
+        }
 
         //유지보수게시판
         if(path.includes("/console/maint")){

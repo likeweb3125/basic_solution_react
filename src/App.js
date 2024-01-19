@@ -25,15 +25,16 @@ import AdminBoard from "./pages/admin/Board";
 import AdminBoardDetail from "./pages/admin/BoardDetail";
 import AdminBoardWrite from "./pages/admin/BoardWrite";
 import AdminCommentAll from "./pages/admin/CommentAll";
-
 import AdminMemberUser from './pages/admin/MemberUser';
 import AdminMemberManager from './pages/admin/MemberManager';
 import AdminMemberCancel from './pages/admin/MemberCancel';
-
 import AdminDesignBanner from "./pages/admin/DesignBanner";
 import AdminDesignPopup from "./pages/admin/DesignPopup";
 import AdminSettingSiteInfo from "./pages/admin/SettingSiteInfo";
 import AdminSettingPolicy from "./pages/admin/SettingPolicy";
+import AdminSettingLevel from './pages/admin/SettingLevel';
+import AdminStatsChart from './pages/admin/StatsChart';
+import AdminStatsVisitor from './pages/admin/StatsVisitor';
 import AdminMaint from "./pages/admin/Maint";
 import AdminMaintDetail from "./pages/admin/MaintDetail";
 import AdminMaintWrite from "./pages/admin/MaintWrite";
@@ -132,7 +133,7 @@ function App() {
         {/* <MetaTag info={siteInfoData}/> */}
         <div>
             <Routes>
-                {/* 사용자단---------------------------------------------- */}
+            {/* 사용자단---------------------------------------------- */}
                 {/* 메인 */}
                 <Route path="/" element={<Layout main={true}><Main /></Layout>} />
 
@@ -155,11 +156,10 @@ function App() {
 
                 {/* 클리어병원찾기 */}
                 <Route path="/hospital" element={<Layout><Hospital /></Layout>} />
-                {/* //사용자단---------------------------------------------- */}
+            {/* //사용자단---------------------------------------------- */}
 
 
-
-                {/* 관리자단---------------------------------------------- */}
+            {/* 관리자단---------------------------------------------- */}
                 {/* 로그인 */}
                 <Route path="/console/login" element={<AdminLogin />} />
 
@@ -213,6 +213,17 @@ function App() {
                 {/* 운영정책 설정 */}
                 <Route path="/console/setting/policy" element={<AdminLayout><AdminSettingPolicy/></AdminLayout>} />
 
+                {/* 회원등급 관리 */}
+                <Route path="/console/setting/level" element={<AdminLayout><AdminSettingLevel/></AdminLayout>} />
+
+
+                {/* ---- 통계관리 ---- */}
+                {/* 전체 통계 */}
+                <Route path="/console/stats/chart" element={<AdminLayout><AdminStatsChart/></AdminLayout>} />
+
+                {/* 접속자 이력 통계 */}
+                <Route path="/console/stats/visitor" element={<AdminLayout><AdminStatsVisitor/></AdminLayout>} />
+
 
                 {/* ---- 유지보수 ---- */}
                 <Route path="/console/maint" element={<AdminLayout><Outlet/></AdminLayout>}>
@@ -220,7 +231,7 @@ function App() {
                     <Route path="detail/:list_no" element={<AdminMaintDetail/>} />                  {/* 상세 */}
                     <Route path="write" element={<AdminMaintWrite/>} />                             {/* 작성 */}
                 </Route>
-                {/* //관리자단---------------------------------------------- */}
+            {/* //관리자단---------------------------------------------- */}
 
             </Routes>
 

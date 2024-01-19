@@ -23,23 +23,14 @@ const MemberCancel = () => {
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);
     const member_cancel_list = enum_api_uri.member_cancel_list;
-    const level_list = enum_api_uri.level_list;
     const [confirm, setConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
-    const [searchTxt, setSearchTxt] = useState("");
     const [boardData, setBoardData] = useState({});
     const [limit, setLimit] = useState(10);
     const [searchType, setSearchType] = useState("이메일");
     const [checkList, setCheckList] = useState([]);
     const [checkedNum, setCheckedNum] = useState(0);
-    const [levelList, setLevelList] = useState([]);
-    const [mailCheck, setMailCheck] = useState(false);
-    const [smsCheck, setSmsCheck] = useState(false);
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [memberSelect, setMemberSelect] = useState('');
-    const [memberLevel, setMemberLevel] = useState(null);
-
+    const [email, setEmail] = useState('');
 
 
     // Confirm팝업 닫힐때
@@ -51,45 +42,14 @@ const MemberCancel = () => {
     },[popup.confirmPop]);
 
 
-    //회원등급리스트 가져오기
-    const getLevelList = () => {
-        axios.get(level_list,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
-        .then((res)=>{
-            if(res.status === 200){
-                let data = res.data.data;
-                const list = data.filter((item)=>item.l_name !== null);
-                setLevelList(list);
-            }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        });
-    };
-
-
-    //맨처음 회원등급리스트 가져오기
-    useEffect(()=>{
-        getLevelList();
-    },[]);
-
-
     //게시판정보 가져오기
     const getBoardData = (page) => {
         let search;
         if(searchType == "이메일"){
-            // search = "title";
+            search = "m_email";
         }
 
-        axios.get(`${member_cancel_list}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
+        axios.get(`${member_cancel_list}?page=${page ? page : 1}&getLimit=${limit}${email.length > 0 ? "&search="+search+"&searchtxt="+email : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -171,22 +131,25 @@ const MemberCancel = () => {
                                     <InputBox 
                                         type={`text`}
                                         placeholder={`이메일을 입력해주세요.`}
-                                        value={''}
-                                        // onChangeHandler={onInputChangeHandler}
+                                        value={email}
+                                        onChangeHandler={(e)=>{
+                                            const val = e.currentTarget.value;
+                                            setEmail(val);
+                                        }}
                                     />
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="btn_wrap">
-                        <button type="button" className="btn_type15">검색</button>
+                        <button type="button" className="btn_type15" onClick={()=>getBoardData()}>검색</button>
                     </div>
                 </div>
                 <div className="tit tit2">
                     <h3>
                         <b>탈퇴 회원</b>
                     </h3>
-                    <strong>총 {CF.MakeIntComma(boardData.total_count)}명</strong>
+                    <strong>총 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}명</strong>
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">

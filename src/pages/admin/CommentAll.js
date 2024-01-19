@@ -147,34 +147,34 @@ const CommentAll = () => {
 
     //댓글 삭제하기
     const deltHandler = () => {
-        const body = {
-            idx: etc.checkedList,
-        };
-        axios.delete(policy_use,
-            {
-                data: body,
-                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
-            }
-        )
-        .then((res)=>{
-            if(res.status === 200){
-                getBoardData();
-            }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-                navigate("/console/login");
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
-        });
+        // const body = {
+        //     idx: etc.checkedList,
+        // };
+        // axios.delete(policy_use,
+        //     {
+        //         data: body,
+        //         headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+        //     }
+        // )
+        // .then((res)=>{
+        //     if(res.status === 200){
+        //         getBoardData();
+        //     }
+        // })
+        // .catch((error) => {
+        //     const err_msg = CF.errorMsgHandler(error);
+        //     if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+        //         navigate("/console/login");
+        //     }else{
+        //         dispatch(confirmPop({
+        //             confirmPop:true,
+        //             confirmPopTit:'알림',
+        //             confirmPopTxt: err_msg,
+        //             confirmPopBtn:1,
+        //         }));
+        //         setConfirm(true);
+        //     }
+        // });
     };
 
 
@@ -186,7 +186,7 @@ const CommentAll = () => {
                     <h3>
                         <b>전체</b>
                     </h3>
-                    <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
+                    <strong>총 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}개</strong>
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">

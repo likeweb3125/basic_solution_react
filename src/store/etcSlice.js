@@ -43,6 +43,6 @@ export const {
     detailPageBack,
     listPageData,
     scrollY,
-    closePopIdx
+    closePopIdx,
 } = etc.actions;
 export default etc;

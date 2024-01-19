@@ -10,6 +10,9 @@ import AdminCategoryPop from "./admin/CategoryPop";
 import AdminBoardGroupPop from "./admin/BoardGroupPop";
 import AdminBannerPop from "./admin/BannerPop";
 import AdminPopupPop from "./admin/PopupPop";
+import AdminMemberInfoPop from "./admin/MemberInfoPop";
+import AdminMsgPop from "./admin/MsgPop";
+
 
 
 
@@ -41,6 +44,11 @@ const Popup = () => {
 
             {/* 팝업관리 팝업 */}
             {popup.adminPopupPop && <AdminPopupPop />}
+
+            {/* 회원관리 - 사용자정보 팝업 */}
+            {popup.adminMemberInfoPop && <AdminMemberInfoPop />}
+            {/* 회원관리 - 단체메시지전송 팝업 */}
+            {popup.adminMsgPop && <AdminMsgPop />}
 
         </>,
         document.getElementById('modal-root')

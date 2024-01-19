@@ -3,10 +3,10 @@
 /* ADMIN CSS */
 body,input,select,textarea,button,table {
     font-family: 'Pretendard Variable', 'Pretendard', 'Noto Sans KR', '맑은 고딕', 'malgun gothic', 'Apple SD Gothic Neo',sans-serif;
-    /* font-size: 14px; */
+    font-size: 14px;
 	word-break: keep-all;
 	word-wrap: break-word;
-	/* letter-spacing: -0.05em; */
+	letter-spacing: -0.05em;
 }
 
 .test_box>ul{border: 1px solid #ddd;}
@@ -530,7 +530,7 @@ body,input,select,textarea,button,table {
 
 
 /* 회원등급 */
-.page_admin_setting .tbl_wrap1 .button_input {max-width: 600px; margin: 0 auto;}
+.page_admin_setting .tbl_wrap1 .input_box {max-width: 600px; margin: 0 auto;}
 
 
 /* 통계관리 */

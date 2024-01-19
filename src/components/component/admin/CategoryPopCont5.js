@@ -72,7 +72,9 @@ const CategoryPopCont5 = (props) => {
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
-                const list = data.filter((item)=>item.l_name !== null);
+                const list = data
+                .filter((item)=>item.l_name !== null)    //미등록등급 제외
+                .filter((item)=>item.l_name.length > 0)  //미등록등급 제외
                 setLevelList(list);
             }
         })

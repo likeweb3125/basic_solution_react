@@ -161,7 +161,7 @@ const Maint = () => {
                     </div>
                 </div>
                 <div className="tit tit2">
-                    <strong>총 {CF.MakeIntComma(boardData.total_count)}건</strong>
+                    <strong>총 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}건</strong>
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">

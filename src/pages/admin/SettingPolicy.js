@@ -274,7 +274,7 @@ const SettingPolicy = () => {
                     <h3>
                         <b>운영정책</b>
                     </h3>
-                    <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
+                    <strong>총 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}개</strong>
                 </div>
                 <div className="board_section">
                     <div className="form_search_wrap">

@@ -53,6 +53,14 @@ const popup = createSlice({
         adminPopupPopType: null,
         adminPopupPopModify: false,
         adminPopupPopWrite: false,
+
+        //회원관리 - 사용자정보 팝업
+        adminMemberInfoPop: false,
+        adminMemberInfoPopIdx: null,
+        adminMemberInfoPopModify: false,
+        //회원관리 - 단체메시지전송 팝업
+        adminMsgPop: false,
+
     },
     reducers:{
         // 공통 -----------------------------------
@@ -128,6 +136,16 @@ const popup = createSlice({
         adminPopupPopWrite: (state, action) => {
             state.adminPopupPopWrite = action.payload;
         },
+        adminMemberInfoPop: (state, action) => {
+            state.adminMemberInfoPop = action.payload.adminMemberInfoPop;
+            state.adminMemberInfoPopIdx = action.payload.adminMemberInfoPopIdx;
+        },
+        adminMemberInfoPopModify: (state, action) => {
+            state.adminMemberInfoPopModify = action.payload;
+        },
+        adminMsgPop: (state, action) => {
+            state.adminMsgPop = action.payload;
+        },
     }
 });
 
@@ -154,5 +172,8 @@ export const {
     adminPopupPop,
     adminPopupPopModify,
     adminPopupPopWrite,
+    adminMemberInfoPop,
+    adminMemberInfoPopModify,
+    adminMsgPop,
 } = popup.actions;
 export default popup;

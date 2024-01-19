@@ -16,6 +16,7 @@ const InputBox = (props) => {
                     id={props.id}
                     maxLength={props.countMax}
                     className={props.className}
+                    disabled={props.disabled}
                 />
                 :   props.phone ? 
                     <PatternFormat 
@@ -26,6 +27,7 @@ const InputBox = (props) => {
                         id={props.id}
                         maxLength={props.countMax}
                         className={props.className}
+                        disabled={props.disabled}
                     />
                 :   <input type={props.type} 
                         placeholder={props.placeholder}
@@ -34,6 +36,7 @@ const InputBox = (props) => {
                         id={props.id}
                         maxLength={props.countMax}
                         className={props.className}
+                        disabled={props.disabled}
                     />
             }
         </div>

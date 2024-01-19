@@ -70,11 +70,11 @@ const Header = () => {
         if(path === "/console/member/user"){
             setMenuOn("member1");
         }
-        if(path === "/console/member/cancel"){
-            setMenuOn("member1");
-        }
         if(path === "/console/member/manager"){
             setMenuOn("member2");
+        }
+        if(path === "/console/member/cancel"){
+            setMenuOn("member");
         }
 
         //디자인관리
@@ -91,6 +91,17 @@ const Header = () => {
         }
         if(path === "/console/setting/policy"){
             setMenuOn("setting2");
+        }
+        if(path === "/console/setting/level"){
+            setMenuOn("setting3");
+        }
+
+        //통계관리
+        if(path === "/console/stats/chart"){
+            setMenuOn("stats1");
+        }
+        if(path === "/console/stats/visitor"){
+            setMenuOn("stats2");
         }
 
         //유지보수게시판
@@ -198,11 +209,11 @@ const Header = () => {
                 settingRef.current.style.height = "0";
             }
 
-            // if(menuOn === "stats" || menuOn === "stats1" || menuOn === "stats2") {
-            //     statsRef.current.style.height = `${statsRef.current.scrollHeight}px`;
-            // }else{
-            //     statsRef.current.style.height = "0";
-            // }
+            if(menuOn === "stats" || menuOn === "stats1" || menuOn === "stats2") {
+                statsRef.current.style.height = `${statsRef.current.scrollHeight}px`;
+            }else{
+                statsRef.current.style.height = "0";
+            }
         }else{
             if(menuRef.current){
                 menuRef.current.style.height = "0";
@@ -313,22 +324,22 @@ const Header = () => {
                                     <li className={menuOn === "setting2" ? "on" : ""}>
                                         <Link to="/console/setting/policy" className="menu">시스템 운영정책</Link>
                                     </li>
-                                    {/* <li className={menuOn === "setting3" ? "on" : ""}>
-                                        <Link to="" className="menu">회원 등급 관리</Link>
-                                    </li> */}
+                                    <li className={menuOn === "setting3" ? "on" : ""}>
+                                        <Link to="/console/setting/level" className="menu">회원 등급 관리</Link>
+                                    </li>
                                 </ul>
                             </li>
-                            {/* <li className={menuOn && menuOn.includes("stats") ? "on" : ""}>
+                            <li className={menuOn && menuOn.includes("stats") ? "on" : ""}>
                                 <button type="button" className="btn_menu admin_stats" onClick={()=>{setMenuOn("stats")}}><span>통계관리</span></button>
                                 <ul className="depth2" ref={statsRef}>
                                     <li className={menuOn === "stats1" ? "on" : ""}>
-                                        <Link to="" className="menu">전체 통계</Link>
+                                        <Link to="/console/stats/chart" className="menu">전체 통계</Link>
                                     </li>
                                     <li className={menuOn === "stats2" ? "on" : ""}>
-                                        <Link to="" className="menu">접속자 이력 통계</Link>
+                                        <Link to="/console/stats/visitor" className="menu">접속자 이력 통계</Link>
                                     </li>
                                 </ul>
-                            </li> */}
+                            </li>
                             <li className={menuOn && menuOn === "maint" ? "on" : ""}>
                                 <Link to="/console/maint" className="btn_menu admin_maint" onClick={()=>{setMenuOn("maint")}}><span>유지보수 게시판</span></Link>
                             </li>

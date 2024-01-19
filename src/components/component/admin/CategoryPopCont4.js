@@ -69,7 +69,9 @@ const CategoryPopCont4 = (props) => {
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
-                const list = data.filter((item)=>item.l_name !== null);
+                const list = data
+                .filter((item)=>item.l_name !== null)    //미등록등급 제외
+                .filter((item)=>item.l_name.length > 0)  //미등록등급 제외
                 setLevelList(list);
             }
         })
@@ -104,7 +106,7 @@ const CategoryPopCont4 = (props) => {
             setReplySelect(reply.l_name);
             setCommentSelect(comment.l_name);
         }
-    },[levelList]);
+    },[levelList, info]);
 
 
     //인풋값 변경시

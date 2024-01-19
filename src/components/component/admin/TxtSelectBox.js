@@ -7,6 +7,7 @@ const TxtSelectBox = (props) => {
     useEffect(()=>{
         setList(props.list);
     },[props.list]);
+    
 
     return(
         <div className={props.class}>
@@ -15,7 +16,7 @@ const TxtSelectBox = (props) => {
                     <span>{props.selected ? props.selected+"개씩" : "선택"}</span>
                     :<span>{props.selected ? props.selected : props.hiddenTxt ? props.hiddenTxt : "선택"}</span>
                 }
-                {props.objectSel === "level_list" && props.selectedLevel && <em>{"lv."+props.selectedLevel}</em>}
+                {props.objectSel === "level_list" && props.selectedLevel !== null && (<em>{"lv."+props.selectedLevel}</em>)}
             </div>
             <select 
                 value={props.selected}

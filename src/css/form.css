@@ -65,6 +65,8 @@ input::-webkit-search-results-decoration {display: none;}
 .input_box .char_cnt + input {padding-right: 70px;}
 .input_box.button_input button {position: absolute; right: 10px; top: 50%; transform: translateY(-50%); padding: 0 12px; line-height: 30px; font-size: 14px; font-weight: 400; color: #666; border-radius: 5px; background: #f8f8f8; border: 1px solid #ddd; transition: all .3s;}
 .input_box.button_input input:focus + button {border-color: var(--admin-color1); color: var(--admin-color1); background: #fff;}
+.input_box.button_input.on input{border-color: var(--admin-color1);}
+.input_box.button_input.on button{border-color: var(--admin-color1); color: var(--admin-color1); background: #fff;}
 .input_box.pwd_input .view_pwd {position: absolute; right: 24px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background: url('../images/ic_view_pwd1.png') no-repeat 50% 50%/100%; text-indent: -9999px; transition: all .3s;}
 .input_box.pwd_input input[type="text"] + .view_pwd {background-image: url('../images/ic_view_pwd2.png');} 
 .txt_err {display: block; padding-top: 12px; font-size: 14px; font-weight: 400; color: var(--admin-color3);font-style: normal;}

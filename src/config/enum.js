@@ -50,10 +50,13 @@ exports.enum_api_uri = {
     //게시판관리 - 댓글관리
     comment_list: `${api_uri}v1/comment/admin`,
 
-    //회원관리 - 회원관리
-    member_list: `${api_uri}v1/admin/member/list/:m_level`,
-
+    //회원관리
+    member_list: `${api_uri}v1/admin/member/list`,
     member_cancel_list: `${api_uri}v1/admin/member/sec`,
+    member_info: `${api_uri}v1/admin/member/view/:idx`,
+    member_modify: `${api_uri}v1/admin/member/`,
+    sms_txt: `${api_uri}v1/admin/member/sms-txt`,
+
 
     //디자인관리 - 메인배너관리
     banner_list: `${api_uri}v1/admin/banner`,
@@ -73,6 +76,11 @@ exports.enum_api_uri = {
     policy_detail: `${api_uri}v1/admin/config/policy/:idx`,
     policy_modify: `${api_uri}v1/admin/config/policy/`,
     level_list: `${api_uri}v1/admin/config/level`,
+
+    //통계관리
+    all_stats_data: `${api_uri}v1/admin/stat`,
+    stat_data: `${api_uri}v1/admin/stat/pre`,
+
 
     //유지보수
     maint_list: `${api_uri}v1/admin/maintenance/list/:category`,

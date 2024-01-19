@@ -7,7 +7,7 @@ import 'moment/locale/ko';
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { checkedList, scrollY } from "../../../store/etcSlice";
-import { confirmPop, adminPolicyPop, adminPopupPop } from "../../../store/popupSlice";
+import { confirmPop, adminPolicyPop, adminPopupPop, adminMemberInfoPop } from "../../../store/popupSlice";
 import DndTr from "./DndTr";
 import {
     DndContext,
@@ -33,11 +33,13 @@ const TableWrap = (props) => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const api_uri = enum_api_uri.api_uri;
+    const level_list = enum_api_uri.level_list;
     const banner_move = enum_api_uri.banner_move;
     const [confirm, setConfirm] = useState(false);
     const [colgroup, setColgroup] = useState([]);
     const [thList, setThList] = useState([]);
     const [tdList, setTdList] = useState([]);
+    const [levelList, setLevelList] = useState([]);
 
 
     // Confirm팝업 닫힐때
@@ -61,7 +63,7 @@ const TableWrap = (props) => {
     };
 
 
-
+    //테이블 colgroup
     useEffect(()=>{
         const list = props.colgroup;
         
@@ -80,7 +82,7 @@ const TableWrap = (props) => {
     },[props.colgroup]);
 
 
-
+    //테이블 th
     useEffect(()=>{
         const list = props.thList;
 
@@ -99,9 +101,43 @@ const TableWrap = (props) => {
     },[props.thList]);
 
 
+    //테이블 td
     useEffect(()=>{
         setTdList(props.tdList);
     },[props.tdList]);
+
+
+    //회원등급리스트 가져오기
+    const getLevelList = () => {
+        axios.get(level_list,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                const list = data
+                .filter((item)=>item.l_name !== null)    //미등록등급 제외
+                .filter((item)=>item.l_name.length > 0)  //미등록등급 제외
+                setLevelList(list);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //맨처음 회원등급리스트 가져오기
+    useEffect(()=>{
+        getLevelList();
+    },[]);
 
 
     //메인배너 드래그앤드롭---------------------
@@ -312,6 +348,14 @@ const TableWrap = (props) => {
                                 }
                                 //회원관리 - 회원관리, 관리자관리 일때
                                 if(props.type === "member"){
+                                    //회원등급 이름
+                                    let level;
+                                    let l_name;
+                                    if(levelList.length > 0){
+                                        level = levelList.find((item) => item.l_level == cont.m_level);
+                                        l_name = level.l_name;
+                                    }
+
                                     return(
                                         <tr key={i}>
                                             <td>
@@ -331,32 +375,32 @@ const TableWrap = (props) => {
                                             <td>
                                                 <button type="button" className="link" 
                                                     onClick={()=>{
-                                                        // dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:cont.idx}));
+                                                        dispatch(adminMemberInfoPop({adminMemberInfoPop:true,adminMemberInfoPopIdx:cont.idx}));
                                                     }}>
-                                                    <span>zzzzzzz92164156zzzz@naver.com</span>
+                                                    <span>{cont.m_email}</span>
                                                 </button>
                                             </td>
                                             <td>
                                                 <button type="button" className="link" 
                                                     onClick={()=>{
-                                                        // dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:cont.idx}));
+                                                        dispatch(adminMemberInfoPop({adminMemberInfoPop:true,adminMemberInfoPopIdx:cont.idx}));
                                                     }}>
-                                                    <span>박성훈</span>
+                                                    <span>{cont.m_name}</span>
                                                 </button>
                                             </td>
                                             <td>
-                                                <div class="user_level">
-                                                    <strong>관리자</strong>
-                                                    <em>lv.9</em>
+                                                <div className="user_level">
+                                                    <strong>{l_name}</strong>
+                                                    <em>lv.{cont.m_level}</em>
                                                 </div>
                                             </td>
                                             <td>
-                                                <span className="txt_light">2018.10.10 10:20</span>
+                                                <span className="txt_light">{cont.reg_date}</span>
                                             </td>
-                                            <td>010-0000-0000</td>
-                                            <td>3</td>
-                                            <td>3</td>
-                                            <td>4</td>
+                                            <td>{cont.m_mobile}</td>
+                                            <td>{CF.MakeIntComma(cont.log_cnt)}</td>
+                                            <td>{CF.MakeIntComma(cont.board_cnt)}</td>
+                                            <td>{CF.MakeIntComma(cont.comment_cnt)}</td>
                                         </tr>
                                     );
                                 }
@@ -378,7 +422,42 @@ const TableWrap = (props) => {
                                                     <label htmlFor={`check_${cont.id}`}>선택</label>
                                                 </div>
                                             </td>
-                                            <td>zzzzzzz92164156zzzz@naver.com</td>
+                                            <td>{cont.m_email}</td>
+                                        </tr>
+                                    );
+                                }
+                                //디자인관리 - 팝업관리 일때
+                                if(props.type === "popup"){
+                                    return(
+                                        <tr key={i} className={cont.p_open[0] == "Y" ? "" : "disabled"}>
+                                            <td>
+                                                <div className="chk_box2">
+                                                    <input type="checkbox" id={`check_${cont.idx}`} className="blind"
+                                                        value={cont.idx}
+                                                        onChange={(e) => {
+                                                            const isChecked = e.currentTarget.checked;
+                                                            const value = e.currentTarget.value;
+                                                            checkHandler(isChecked, value);
+                                                        }}
+                                                        checked={etc.checkedList.includes(cont.idx)}
+                                                    />
+                                                    <label htmlFor={`check_${cont.idx}`}>선택</label>
+                                                </div>
+                                            </td>
+                                            <td>{cont.idx}</td>
+                                            <td>
+                                                <button type="button" className="link" 
+                                                    onClick={()=>{
+                                                        dispatch(adminPopupPop({adminPopupPop:true,adminPopupPopIdx:cont.idx,adminPopupPopType:props.popType}));
+                                                    }}>{cont.p_title}</button>
+                                            </td>
+                                            <td>{cont.p_s_date}{cont.p_e_date && " ~ "+cont.p_e_date}</td>
+                                            <td>{`${cont.p_width_size} X ${cont.p_height_size}`} / {cont.p_one_day == "Y" ? "사용" : "미사용"}</td>
+                                            <td>{props.popType == "P" && `${cont.p_left_point} X ${cont.p_top_point}`}</td>
+                                            <td>
+                                                <em className={cont.p_open[0] == "Y" ? "txt_color1" : "txt_color2"}>{cont.p_open[1]}</em>
+                                            </td>
+                                            <td>{cont.p_layer_pop[1]}</td>
                                         </tr>
                                     );
                                 }
@@ -420,38 +499,15 @@ const TableWrap = (props) => {
                                         </tr>
                                     );
                                 }
-                                //디자인관리 - 팝업관리 일때
-                                if(props.type === "popup"){
+                                //통계관리 - 전체통계 - 기간별현황통계 일때
+                                if(props.type === "stats"){
                                     return(
-                                        <tr key={i} className={cont.p_open[0] == "Y" ? "" : "disabled"}>
-                                            <td>
-                                                <div className="chk_box2">
-                                                    <input type="checkbox" id={`check_${cont.idx}`} className="blind"
-                                                        value={cont.idx}
-                                                        onChange={(e) => {
-                                                            const isChecked = e.currentTarget.checked;
-                                                            const value = e.currentTarget.value;
-                                                            checkHandler(isChecked, value);
-                                                        }}
-                                                        checked={etc.checkedList.includes(cont.idx)}
-                                                    />
-                                                    <label htmlFor={`check_${cont.idx}`}>선택</label>
-                                                </div>
-                                            </td>
-                                            <td>{cont.idx}</td>
-                                            <td>
-                                                <button type="button" className="link" 
-                                                    onClick={()=>{
-                                                        dispatch(adminPopupPop({adminPopupPop:true,adminPopupPopIdx:cont.idx,adminPopupPopType:props.popType}));
-                                                    }}>{cont.p_title}</button>
-                                            </td>
-                                            <td>{cont.p_s_date}{cont.p_e_date && " ~ "+cont.p_e_date}</td>
-                                            <td>{`${cont.p_width_size} X ${cont.p_height_size}`} / {cont.p_one_day == "Y" ? "사용" : "미사용"}</td>
-                                            <td>{props.popType == "P" && `${cont.p_left_point} X ${cont.p_top_point}`}</td>
-                                            <td>
-                                                <em className={cont.p_open[0] == "Y" ? "txt_color1" : "txt_color2"}>{cont.p_open[1]}</em>
-                                            </td>
-                                            <td>{cont.p_layer_pop[1]}</td>
+                                        <tr key={i}>
+                                            <td><em className="tbl_bold">{cont.date}</em></td>
+                                            <td>{CF.MakeIntComma(cont.logsCnt)}</td>
+                                            <td>{CF.MakeIntComma(cont.userCnt)}</td>
+                                            <td>{CF.MakeIntComma(cont.boardCnt)}</td>
+                                            <td>{CF.MakeIntComma(cont.commentCnt)}</td>
                                         </tr>
                                     );
                                 }

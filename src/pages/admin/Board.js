@@ -415,7 +415,7 @@ const Board = () => {
                             objectSel={`board_title`}
                         />
                     </h3>
-                    <strong>총 {CF.MakeIntComma(boardData.total_count)}개</strong>
+                    <strong>총 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}개</strong>
                     <button type="button" className="btn_type10" style={{marginLeft:"20px"}}
                         onClick={()=>{
                             dispatch(adminCategoryPop({adminCategoryPop:true,adminCategoryPopIdx:board_category}));
