@@ -333,7 +333,7 @@ const TableWrap = (props) => {
                                             <td>
                                                 <div className="txt_left">
                                                     <span onClick={()=>{dispatch(scrollY(window.scrollY))}}>
-                                                        <Link to={``}>{cont.c_contents}</Link> 
+                                                        <Link to={`/console/board/post/detail/${cont.category}/${cont.board_idx}`}>{cont.c_contents}</Link> 
                                                     </span>
                                                 </div>
                                             </td>
@@ -508,6 +508,19 @@ const TableWrap = (props) => {
                                             <td>{CF.MakeIntComma(cont.userCnt)}</td>
                                             <td>{CF.MakeIntComma(cont.boardCnt)}</td>
                                             <td>{CF.MakeIntComma(cont.commentCnt)}</td>
+                                        </tr>
+                                    );
+                                }
+                                //통계관리 - 접속자이력통계 일때
+                                if(props.type === "visitor"){
+                                    return(
+                                        <tr key={i}>
+                                            <td></td>
+                                            <td>{cont.user}</td>
+                                            <td>{cont.clientIp}</td>
+                                            <td>{cont.previousUrl}</td>
+                                            <td>{cont.userAgent}</td>
+                                            <td>{cont.reg_date}</td>
                                         </tr>
                                     );
                                 }

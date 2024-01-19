@@ -8,7 +8,6 @@ import * as CF from "../../config/function";
 import { confirmPop, adminMemberInfoPopModify, adminMsgPop } from "../../store/popupSlice";
 import { pageNoChange, checkedList } from "../../store/etcSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
-import TxtSelectBox from "../../components/component/admin/TxtSelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
 import SearchInput from "../../components/component/admin/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
@@ -24,6 +23,8 @@ const MemberManager = () => {
     const etc = useSelector((state)=>state.etc);
     const member_list = enum_api_uri.member_list;
     const level_list = enum_api_uri.level_list;
+    const member_level = enum_api_uri.member_level;
+    const member_modify = enum_api_uri.member_modify;
     const [confirm, setConfirm] = useState(false);
     const [changeConfirm, setChangeConfirm] = useState(false);
     const [cancelConfirm, setCancelConfirm] = useState(false);
@@ -242,7 +243,33 @@ const MemberManager = () => {
     
     //회원등급 변경하기
     const onLevelChangeHandler = () => {
+        const body = {
+            idx: etc.checkedList,
+            m_level: changeLevelSelect
+        };
 
+        axios.put(member_level, body,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getBoardData(etc.pageNo);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
     };
 
 
@@ -270,12 +297,33 @@ const MemberManager = () => {
 
     //회원탈퇴하기
     const onMemberCancelHandler = () => {
-
+        const body = {
+            idx: etc.checkedList,
+        };
+        axios.delete(member_modify,
+            {
+                data: body,
+                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getBoardData();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
     };
 
 
-
-   
 
 
     return(<>

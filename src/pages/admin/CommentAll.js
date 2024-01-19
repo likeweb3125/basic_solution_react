@@ -20,7 +20,7 @@ const CommentAll = () => {
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);
     const comment_list = enum_api_uri.comment_list;
-    const policy_use = enum_api_uri.policy_use;
+    const comment_delt = enum_api_uri.comment_delt;
     const [confirm, setConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [searchTxt, setSearchTxt] = useState("");
@@ -147,34 +147,34 @@ const CommentAll = () => {
 
     //댓글 삭제하기
     const deltHandler = () => {
-        // const body = {
-        //     idx: etc.checkedList,
-        // };
-        // axios.delete(policy_use,
-        //     {
-        //         data: body,
-        //         headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
-        //     }
-        // )
-        // .then((res)=>{
-        //     if(res.status === 200){
-        //         getBoardData();
-        //     }
-        // })
-        // .catch((error) => {
-        //     const err_msg = CF.errorMsgHandler(error);
-        //     if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-        //         navigate("/console/login");
-        //     }else{
-        //         dispatch(confirmPop({
-        //             confirmPop:true,
-        //             confirmPopTit:'알림',
-        //             confirmPopTxt: err_msg,
-        //             confirmPopBtn:1,
-        //         }));
-        //         setConfirm(true);
-        //     }
-        // });
+        const body = {
+            idx: etc.checkedList,
+        };
+        axios.delete(comment_delt,
+            {
+                data: body,
+                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getBoardData();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
     };
 
 

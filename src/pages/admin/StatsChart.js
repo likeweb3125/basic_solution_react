@@ -77,17 +77,17 @@ const StatsChart = () => {
 
 
     //기간별현황 통계 가져오기
-    const getStatsData = () => {
-        let sdate;
-        if(startDate){
-            sdate = moment(startDate).format('YYYY.MM.DD');
+    const getStatsData = (sDate, eDate) => {
+        let start_date;
+        if(sDate){
+            start_date = moment(sDate).format('YYYY.MM.DD');
         }
-        let edate;
-        if(endDate){
-            edate = moment(endDate).format('YYYY.MM.DD');
+        let end_date;
+        if(eDate){
+            end_date = moment(eDate).format('YYYY.MM.DD');
         }
 
-        axios.get(`${stat_data}${startDate ? "?start="+sdate : ""}${endDate ? "&end="+edate : ""}`,
+        axios.get(`${stat_data}${sDate ? "?start="+start_date : ""}${eDate ? "&end="+end_date : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -113,22 +113,68 @@ const StatsChart = () => {
     };
 
 
-    //맨처음 전체통계, 기간별현황 통계 가져오기
+    //맨처음
     useEffect(()=>{
+        //전체통계 가져오기
         getAllStatsData();
-        getStatsData();
+
+        //최근 1주 기간별현황 통계 가져오기
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const sDate = oneWeekAgo;
+        const eDate = new Date();
+        getStatsData(sDate, eDate);
     },[]);
 
 
-    //기간별현황통계 날짜 셀렉트박스 값 변경시
+    //기간별현황통계 날짜 셀렉트박스 값 변경시 datepicker 값 변경
     useEffect(()=>{
-        if(dateType == '최근 1주'){
+        let sDate = '';
+        let eDate = new Date();
 
+        if (dateType === '최근 1주') {
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            sDate = oneWeekAgo;
+
+        } else if (dateType === '1개월') {
+            const oneMonthAgo = new Date();
+            oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+            sDate = oneMonthAgo;
+
+        } else if (dateType === '3개월') {
+            const threeMonthsAgo = new Date();
+            threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+            sDate = threeMonthsAgo;
+
+        } else if (dateType === '6개월') {
+            const sixMonthsAgo = new Date();
+            sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+            sDate = sixMonthsAgo;
+
+        } else if (dateType === '직접 입력') {
+            eDate = '';
         }
+
+        setStartDate(sDate);
+        setEndDate(eDate);
     },[dateType]);
 
 
-
+    //기간별 현황 통계 검색하기
+    const onSearchHandler = () => {
+        if(!startDate || !endDate){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'날짜를 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else{
+            getStatsData(startDate, endDate);
+        }
+    };
    
 
 
@@ -209,17 +255,21 @@ const StatsChart = () => {
                                     selectedDate={startDate} 
                                     ChangeHandler={(date)=>setStartDate(date)} 
                                     txt={`시작일`}
+                                    minDate={dateType != '직접 입력' && startDate}
+                                    maxDate={dateType != '직접 입력' && startDate}
                                 />
                                 <em>~</em>
                                 <InputDatepicker 
                                     selectedDate={endDate} 
                                     ChangeHandler={(date)=>setEndDate(date)} 
                                     txt={`종료일`}
+                                    minDate={dateType != '직접 입력' && endDate}
+                                    maxDate={dateType != '직접 입력' && endDate}
                                 />
                             </div>
                         </div>
                         <div className="btn_wrap">
-                            <button type="button" className="btn_type15">검색</button>
+                            <button type="button" className="btn_type15" onClick={onSearchHandler}>검색</button>
                         </div>
                     </div>
 

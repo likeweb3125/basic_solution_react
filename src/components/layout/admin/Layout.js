@@ -5,6 +5,7 @@ import axios from "axios";
 import { adminNotiPop, confirmPop } from "../../../store/popupSlice";
 import { alarm } from "../../../store/commonSlice";
 import { loginUser, siteId, maintName } from "../../../store/userSlice";
+import { checkedList } from "../../../store/etcSlice";
 import { enum_api_uri } from "../../../config/enum";
 import * as CF from "../../../config/function";
 import Header from "./Header";
@@ -39,6 +40,8 @@ const Layout = (props) => {
     useEffect(()=>{
         const path = location.pathname;
 
+        //페이지 변경시 store 에 저장된 checkedList 값 삭제
+        dispatch(checkedList([]));
 
         //메인
         if(path === "/console"){
@@ -108,7 +111,7 @@ const Layout = (props) => {
         if(path.includes("/console/maint")){
             setLocationList(["유지보수 게시판"]);
         }
-    },[location.pathname, common.boardMenu]);
+    },[location, common.boardMenu]);
 
 
     //알림 가져오기

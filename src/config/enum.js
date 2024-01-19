@@ -49,12 +49,14 @@ exports.enum_api_uri = {
     
     //게시판관리 - 댓글관리
     comment_list: `${api_uri}v1/comment/admin`,
+    comment_delt: `${api_uri}v1/comment/adminDelete`,
 
     //회원관리
     member_list: `${api_uri}v1/admin/member/list`,
     member_cancel_list: `${api_uri}v1/admin/member/sec`,
     member_info: `${api_uri}v1/admin/member/view/:idx`,
     member_modify: `${api_uri}v1/admin/member/`,
+    member_level: `${api_uri}v1/admin/member/lvUpdate`,
     sms_txt: `${api_uri}v1/admin/member/sms-txt`,
 
 
@@ -80,6 +82,7 @@ exports.enum_api_uri = {
     //통계관리
     all_stats_data: `${api_uri}v1/admin/stat`,
     stat_data: `${api_uri}v1/admin/stat/pre`,
+    stat_history: `${api_uri}v1/admin/stat/history`,
 
 
     //유지보수
