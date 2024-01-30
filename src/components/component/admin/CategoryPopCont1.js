@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { adminCategoryPopData } from "../../../store/popupSlice";
+import { adminSubCategoryPopData } from "../../../store/popupSlice";
 import Editor from "../Editor";
 
 
@@ -22,8 +22,8 @@ const CategoryPopCont1 = (props) => {
 
 
     useEffect(()=>{
-        //카테고리 값 변경시 adminCategoryPopData store 에 저장
-        dispatch(adminCategoryPopData(info));
+        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
+        dispatch(adminSubCategoryPopData(info));
     },[info]);
 
 

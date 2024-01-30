@@ -6,7 +6,7 @@ import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { adminMemberInfoPop, confirmPop, adminMemberInfoPopModify } from "../../../store/popupSlice";
 import ConfirmPop from "../ConfirmPop";
-import InputBox from "../../component/admin/InputBox";
+import InputBox from "../../component/InputBox";
 import TxtSelectBox from "../../component/admin/TxtSelectBox";
 
 
@@ -300,7 +300,8 @@ const MemberInfoPop = () => {
                                         <div className="form_input">
                                             <h6>이메일 <em>가입날짜: {info.reg_date || ""}</em></h6>
                                             <div className="input_wrap">
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     value={info.m_email || ""}
                                                     disabled={true}
@@ -332,13 +333,14 @@ const MemberInfoPop = () => {
                                         <div className="form_input">
                                             <h6>이름</h6>
                                             <div className="input_wrap">
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     placeholder={`이름을 입력해주세요.`}
                                                     value={info.m_name || ""}
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`m_name`}
-                                                    className={error.m_name ? "wrong_input" : ""}
+                                                    inputClassName={error.m_name ? "wrong_input" : ""}
                                                 />
                                                 {error.m_name && <em className="txt_err">이름을 입력해주세요.</em>}
                                             </div>
@@ -346,13 +348,14 @@ const MemberInfoPop = () => {
                                         <div className="form_input">
                                             <h6>휴대폰번호</h6>
                                             <div className="input_wrap">
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     placeholder={`이름을 입력해주세요.`}
                                                     value={info.m_mobile || ""}
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`m_mobile`}
-                                                    className={error.m_mobile ? "wrong_input" : ""}
+                                                    inputClassName={error.m_mobile ? "wrong_input" : ""}
                                                     phone={true}
                                                 />
                                                 {error.m_mobile && <em className="txt_err">휴대폰번호를 입력해주세요.</em>}
@@ -501,7 +504,8 @@ const MemberInfoPop = () => {
                                         <div className="form_input">
                                             <h6>메모 <b>회원 메모는 관리자만 확인할 수 있습니다.</b></h6>
                                             <div className="input_wrap">
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     placeholder={`메모를 입력해주세요.`}
                                                     value={info.m_memo || ""}

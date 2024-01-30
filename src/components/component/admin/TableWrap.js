@@ -6,7 +6,7 @@ import moment from "moment";
 import 'moment/locale/ko'; 
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { checkedList, scrollY } from "../../../store/etcSlice";
+import { checkedList, scrollY, menuCheckList, unMenuCheckList } from "../../../store/etcSlice";
 import { confirmPop, adminPolicyPop, adminPopupPop, adminMemberInfoPop } from "../../../store/popupSlice";
 import DndTr from "./DndTr";
 import {
@@ -53,13 +53,31 @@ const TableWrap = (props) => {
     //체크박스 체크시
     const checkHandler = async (checked, value) => {
         const val = parseInt(value, 10); //input의 value 가 문자열로 처리됨으로 숫자로 변경해줌
+
         let newList = etc.checkedList;
+        if(props.type === 'submenu'){ //메뉴관리 - 카테고리관리 - 하위카테고리일때
+            if(props.unMenu){
+                newList = etc.unMenuCheckList;
+            }else{
+                newList = etc.menuCheckList;
+            }
+        }
+
         if(checked){
             newList = newList.concat(val);
         }else if(!checked && newList.includes(val)){
             newList = newList.filter((el)=>el !== val);
         }
-        dispatch(checkedList(newList));
+
+        if(props.type === 'submenu'){ //메뉴관리 - 카테고리관리 - 하위카테고리일때
+            if(props.unMenu){
+                dispatch(unMenuCheckList(newList));
+            }else{
+                dispatch(menuCheckList(newList));
+            }
+        }else{
+            dispatch(checkedList(newList));
+        }
     };
 
 
@@ -164,46 +182,136 @@ const TableWrap = (props) => {
         if (active.id !== over.id) {
             const list = tdList;
 
-            const moveTd = list.find((item) => item.idx === over.id);
-            const moveNum = moveTd.b_moveNum;
+            //디자인관리 - 메인배너관리 일때
+            if(props.type === "banner"){
+                const moveTd = list.find((item) => item.idx === over.id);
+                const moveNum = moveTd.b_moveNum;
 
-            const body = {
-                idx:active.id,
-                moveNum:moveNum,
-            };
+                const body = {
+                    idx:active.id,
+                    moveNum:moveNum,
+                };
 
-            axios.put(banner_move, body,
-                {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-            )
-            .then((res)=>{
-                if(res.status === 200){
-                    setTdList((items) => {
-                        const oldIndex = items.findIndex((item) => item.idx === active.id);
-                        const newIndex = items.findIndex((item) => item.idx === over.id);
-        
-                        return arrayMove(items, oldIndex, newIndex);
-                    });
-                }
-            })
-            .catch((error) => {
-                const err_msg = CF.errorMsgHandler(error);
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            });
+                axios.put(banner_move, body,
+                    {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+                )
+                .then((res)=>{
+                    if(res.status === 200){
+                        setTdList((items) => {
+                            const oldIndex = items.findIndex((item) => item.idx === active.id);
+                            const newIndex = items.findIndex((item) => item.idx === over.id);
+            
+                            return arrayMove(items, oldIndex, newIndex);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    const err_msg = CF.errorMsgHandler(error);
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt: err_msg,
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                });
+            }
+            //메뉴관리 - 카테고리관리 - 하위카테고리일때
+            if(props.type === "submenu"){
+                console.log(active.id, over.id);
+            }
         }
     }
     
 
+
     return(<>
         <div className={props.class}>
             {tdList && tdList.length > 0 ?
-                //디자인관리 - 메인배너관리 아닐때
-                props.type !== "banner" ?
+                //디자인관리 - 메인배너관리 일때
+                props.type === "banner" ?
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <table>
+                            <colgroup>
+                                {colgroup.map((cont,i)=>{
+                                    return(<col key={i} style={{width: cont}}/>);
+                                })}
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    {props.thList.map((cont,i)=>{
+                                        return(<th key={i}>{cont}</th>);
+                                    })}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <SortableContext
+                                    items={tdList.map(({idx}) => idx)}
+                                    strategy={rectSortingStrategy}
+                                >
+                                        {tdList.map((cont,i)=>(
+                                            <tr key={i}
+                                                className={cont.b_open[0] == "Y" ? "" : "disabled"}
+                                            >
+                                                <DndTr 
+                                                    data={cont} 
+                                                    id={cont.idx}
+                                                    onCheckHandler={checkHandler}
+                                                    colgroup={colgroup}
+                                                    popType={props.popType}
+                                                    type={props.type}
+                                                />  
+                                            </tr>                                                                                                                                                                            
+                                        ))}
+                                </SortableContext>
+                            </tbody>
+                        </table>
+                    </DndContext>
+                :props.type === "submenu" ? //메뉴관리 - 카테고리관리 - 하위카테고리일때
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <table>
+                            <colgroup>
+                                {colgroup.map((cont,i)=>{
+                                    return(<col key={i} style={{width: cont}}/>);
+                                })}
+                            </colgroup>
+                            <thead>
+                                <tr>
+                                    {props.thList.map((cont,i)=>{
+                                        return(<th key={i}>{cont}</th>);
+                                    })}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <SortableContext
+                                    items={tdList.map(({id}) => id)}
+                                    strategy={rectSortingStrategy}
+                                >
+                                        {tdList.map((cont,i)=>(
+                                            <tr key={i}>
+                                                <DndTr 
+                                                    data={cont} 
+                                                    id={cont.id}
+                                                    onCheckHandler={checkHandler}
+                                                    colgroup={colgroup}
+                                                    type={props.type}
+                                                    unMenu={props.unMenu}
+                                                />  
+                                            </tr>                                                                                                                                                                            
+                                        ))}
+                                </SortableContext>
+                            </tbody>
+                        </table>
+                    </DndContext>   
+                :
                     <table>
                         <colgroup>
                             {colgroup.map((cont,i)=>{
@@ -479,13 +587,13 @@ const TableWrap = (props) => {
                                                     <label htmlFor={`check_${cont.idx}`}>선택</label>
                                                 </div>
                                             </td>
-                                            <td>{cont.idx}</td>
-                                            <td>
+                                            <td>{cont.num}</td>
+                                            <td className="tx_l">
                                                 <button type="button" className="link" 
                                                     onClick={()=>{
                                                         dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:cont.idx}));
                                                     }}>
-                                                    <span>{cont.p_title}</span>
+                                                    <span className="ellipsis">{cont.p_title}</span>
                                                 </button>
                                             </td>
                                             <td>
@@ -521,6 +629,16 @@ const TableWrap = (props) => {
                                             <td>{cont.previousUrl}</td>
                                             <td>{cont.userAgent}</td>
                                             <td>{cont.reg_date}</td>
+                                        </tr>
+                                    );
+                                }
+                                //통계관리 - 최다접속경로, 최다브라우저 팝업 일때
+                                if(props.type === "visitor_history"){
+                                    return(
+                                        <tr key={i}>
+                                            <td>{cont.row_number}</td>
+                                            <td>{cont.previousUrl ? cont.previousUrl : cont.userAgent }</td>
+                                            <td>{cont.cnt}</td>
                                         </tr>
                                     );
                                 }
@@ -564,48 +682,7 @@ const TableWrap = (props) => {
                             })}
                         </tbody>
                     </table>
-                ://디자인관리 - 메인배너관리 일때
-                    <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={handleDragEnd}
-                    >
-                        <table>
-                            <colgroup>
-                                {colgroup.map((cont,i)=>{
-                                    return(<col key={i} style={{width: cont}}/>);
-                                })}
-                            </colgroup>
-                            <thead>
-                                <tr>
-                                    {props.thList.map((cont,i)=>{
-                                        return(<th key={i}>{cont}</th>);
-                                    })}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <SortableContext
-                                    items={tdList.map(({idx}) => idx)}
-                                    strategy={rectSortingStrategy}
-                                >
-                                        {tdList.map((cont,i)=>(
-                                            <tr key={i}
-                                                className={cont.b_open[0] == "Y" ? "" : "disabled"}
-                                            >
-                                                <DndTr 
-                                                    data={cont} 
-                                                    id={cont.idx}
-                                                    onCheckHandler={checkHandler}
-                                                    colgroup={colgroup}
-                                                    popType={props.popType}
-                                                />  
-                                            </tr>                                                                                                                                                                            
-                                        ))}
-                                </SortableContext>
-                            </tbody>
-                        </table>
-                    </DndContext>
-            : tdList && tdList.length === 0 && <div className="none_data">데이터가 없습니다.</div>
+            : tdList && tdList.length === 0 || !tdList && <div className="none_data">데이터가 없습니다.</div>
             }
         </div>
 

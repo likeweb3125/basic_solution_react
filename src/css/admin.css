@@ -31,6 +31,10 @@ body,input,select,textarea,button,table {
 .tip_box .box ul li p:first-child{width: 105px;}
 .tip_box .box ul li p:last-child{width: calc(100% - 105px);}
 .tip_box:hover .box{display: block;}
+.btn_open{font-size: 16px;font-weight: 500;color: #4F46E5;display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
+.btn_open span{padding-left: 4px;text-decoration: underline;}
+.btn_open.on img{transform: rotate(180deg);}
+.btn_open.on span{text-decoration: none;}
 
 
 /* ADMIN LOGIN */
@@ -207,7 +211,7 @@ body,input,select,textarea,button,table {
 .admin_section .list_category_txt li:first-of-type:before {display: none;}
 
 
-/* 메뉴관리 */
+/* 메뉴관리 --------------------- (dnd 디자인 css)*/
 .admin_section .page_admin_menu .tit {padding-bottom: 24px;}
 .page_admin_menu .menu_box {display: flex; column-gap: 40px;}
 .page_admin_menu .menu_list_wrap {width: 45.26%;}
@@ -275,8 +279,6 @@ body,input,select,textarea,button,table {
 .menu_list_box .disable_menu_wrap.on .disable_menu {display: block;}
 .menu_list_box .disable_menu_wrap.on .btn_disable_menu {color: var(--admin-color1);}
 .menu_list_box .disable_menu_wrap.on .btn_disable_menu:after {transform: translateY(-50%); background-image: url('../images/ic_catetory_arrow_c.svg');}
-
-
 .page_admin_menu .reg_category_wrap {flex: 1;}
 .page_admin_menu .reg_category_wrap h4 {font-size: 20px; font-weight: 600; color: #222; padding-bottom: 15px; border-bottom: 1px solid #222;}
 .page_admin_menu .reg_category_wrap .chk_rdo_wrap > div {min-width: 160px;}
@@ -298,6 +300,27 @@ body,input,select,textarea,button,table {
 .menu_list_box .list_menu>li .dnd-sortable-tree_folder_simple-item-collapse_button-collapsed{transform: rotate(-180deg);}
 .menu_list_box .list_menu .menu_1 .txt{padding-left: 34px;background: url(../images/ic_category_b.svg) no-repeat center left;}
 .menu_list_box .list_menu .menu_2 .txt{padding-left: 58px;background: url(../images/ic_category_b.svg) no-repeat center left 24px;}
+/* //메뉴관리 --------------------- (dnd 디자인 css)*/
+
+/* 메뉴관리 (변경된 디자인 css) */
+.page_admin_category .tit h3{padding: 0;}
+.page_admin_category .tit strong{padding-left: 12px;}
+.page_admin_category .menu_box{background: #F7F6FB;padding: 10px 20px 20px;border-radius: 8px;margin-top: 12px;}
+.page_admin_category .menu_box li{color: #999;font-size: 18px;margin: 10px 40px 0 0;cursor: pointer;}
+.page_admin_category .menu_box li strong{font-size: 500;}
+.page_admin_category .menu_box li span{padding-left: 8px;}
+.page_admin_category .menu_box li.on{color: #4F46E5;}
+.page_admin_category .menu_box li.on strong{font-weight: 600;text-decoration: underline;}
+.page_admin_category .location_ul{width: calc(100% - 290px);}
+.page_admin_category .location_ul li{margin:5px 56px 0 0;position: relative;}
+.page_admin_category .location_ul li::after{position: absolute;content: '';width: 56px;height: 100%;right: -56px;top: 0;background: url(../images/admin_location_arrow.svg) no-repeat center;}
+.page_admin_category .location_ul li:last-child{margin-right: 0;}
+.page_admin_category .location_ul li:last-child::after{display: none;}
+.page_admin_category .location_ul li:first-child{font-size: 0;text-indent: -9999px;background: url(../images/ic_home.svg) no-repeat center;width: 24px;height: 24px;}
+.page_admin_category .location_ul li button{font-size: 18px;color: #666;}
+.page_admin_category .location_ul li button span{padding-left: 8px;}
+.page_admin_category .location_ul li.on button strong{font-weight: 500;color: #222;text-decoration: underline;}
+.page_admin_category .location_ul li.on button span{color: #4F46E5;font-weight: 500;}
 
 
 

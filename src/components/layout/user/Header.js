@@ -1,65 +1,24 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import logo from "../../../images/user_images/logo.png";
-import logo_color from "../../../images/user_images/logo_color.png";
-import img_flag from "../../../images/user_images/img_flag.png";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { enum_api_uri } from "../../../config/enum";
+import logo from "../../../images/logo.png";
 
 
-//뎁스없는 메뉴
-const GnbItem = ({to, children}) => {
-    return(
-        <li>
-            <Link to={to}>
-                <span>{children}</span>
-            </Link>
-        </li> 
-    );
-};
-
-
-//뎁스있는 메뉴
-const GnbItemWithDepth = ({ effect, to, children, depth2 }) => {
-    const [isDepthOn, setIsDepthOn] = useState(false);
-
-    const handleMouseEnter = () => {
-        if(effect){
-            setIsDepthOn(true);
-        }
-    };
-
-    const handleMouseLeave = () => {
-        if(effect){
-            setIsDepthOn(false);
-        }
-    };
-
-    return (
-        <li className="is_depth" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-            <Link to={to}>
-                <span>{children}</span>
-            </Link>
-            <ul className={`depth2${effect && isDepthOn ? " fadeIn" : " fadeOut"}`}>
-                {depth2.map((child, index) => (
-                    <li key={index}>
-                        <Link to={child.to}>
-                            <span>{child.children}</span>
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        </li>
-    );
-};
-
-
-const Header = (props) => {
+const Header = () => {
     const location = useLocation();
     const common = useSelector((state)=>state.common);
+    const menu_list = enum_api_uri.menu_list;
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMoMenuOpen, setIsMoMenuOpen] = useState(false);
     const [siteInfo, setSiteInfo] = useState({});
+
+    const [menuList, setMenuList] = useState([]);
+    const [menuOn, setMenuOn] = useState(null);
+    const [menu2On, setMenu2On] = useState({});
+
 
     useEffect(()=>{
         setSiteInfo(common.siteInfo);
@@ -83,90 +42,256 @@ const Header = (props) => {
     },[location]);
 
 
+    // 전체카테고리 가져오기
+    const getMenuList = () => {
+        axios.get(menu_list,
+            // {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                const data = res.data.data;
+                const list = data.filter(item => item.id != 0);
+                setMenuList(list);
+            }
+        })
+        .catch((error) => {
+            // const err_msg = CF.errorMsgHandler(error);
+
+            // dispatch(confirmPop({
+            //     confirmPop:true,
+            //     confirmPopTit:'알림',
+            //     confirmPopTxt: err_msg,
+            //     confirmPopBtn:1,
+            // }));
+            // setConfirm(true);
+        });
+    };
+
+
+    useEffect(()=>{
+        getMenuList();
+    },[]);
+
+
+    const onMenu2ClickHandler = (idx) => {
+        let newMenuOn = {...menu2On};
+        newMenuOn[idx] = !newMenuOn[idx];
+        setMenu2On(newMenuOn);
+    };
+
+
     return(<>
-        <header id="header" className={`header${!props.main ? " color_header" : ""}`}>
+        <header id="header" className="header">
             <div className="header_inner">
                 <h1 className="logo">
-                    <div className="logo1">
-                        <Link to="/">
-                            <img src={logo} alt="로고"/>
-                        </Link>
-                    </div>
-                    <div className="logo2">
-                        <Link to="/">
-                            <img src={logo_color} alt="로고"/>
-                        </Link>
-                    </div>
+                    <Link to="/">
+                        <img src={logo} alt="로고"/>
+                    </Link>
                 </h1>
                 <div className="menu_wrap">
                     <nav>
                         <ul className="gnb">
-                            <GnbItem to="/clearlasik">클리어라식</GnbItem>
-                            <GnbItem to="/ziemer">지머</GnbItem>
-                            <GnbItemWithDepth effect={true} to="/news" depth2={[{to:'/news', children:'뉴스'},{to:'/paper', children:'논문'}]}>
-                                매거진
-                            </GnbItemWithDepth>
-                            <GnbItem to="/hospital">클리어병원 찾기</GnbItem>
+                            {menuList.map((cont,i)=>{
+                                return(
+                                    <li key={i}
+                                        onMouseEnter={()=>setMenuOn(i)}
+                                        onMouseLeave={()=>setMenuOn(null)}
+                                    >
+                                        <Link to="/">
+                                            <span>{cont.c_name}</span>
+                                        </Link>
+                                        {cont.submenu && 
+                                            <ul className={`depth2${menuOn === i ? ' on' : ''}`}>
+                                                {cont.submenu.map((cont2,idx)=>{
+                                                    return(
+                                                        <li key={idx} 
+                                                            className={`${cont2.submenu ? 'is_depth' : ''}${menu2On[idx] ? ' on' : ''}`} 
+                                                            onClick={()=>onMenu2ClickHandler(idx)}
+                                                        >
+                                                            <Link to="/">
+                                                                <span>{cont2.c_name}</span>
+                                                            </Link>
+                                                            {cont2.submenu &&
+                                                                <ul className="depth3">
+                                                                    {cont2.submenu.map((cont3, index)=>{
+                                                                        return(
+                                                                            <li key={index}>
+                                                                                <Link to="/">
+                                                                                    <span>{cont3.c_name}</span>
+                                                                                </Link>
+                                                                            </li>
+                                                                        );
+                                                                    })}
+                                                                </ul>
+                                                            }
+                                                        </li>
+                                                    );
+                                                })}
+                                            </ul>
+                                        }
+                                    </li>
+                                );
+                            })}
                         </ul>
                     </nav>
-                    <button type="button" className={`btn_all_menu ${isMenuOpen ? 'on' : ''}`} onClick={toggleMenu}>
-                        <span>전체 메뉴</span>
-                    </button>
-                    <div className={`all_menu_wrap ${isMenuOpen ? 'fadeIn' : 'fadeOut'}`}>
-                        <div className="all_menu">
-                            <div className="logo_box">
-                                <h2 className="logo">
-                                    <Link to="">
-                                        <img src={logo} alt="로고"/>
-                                    </Link>
-                                </h2>
-                            </div>
-                            <ul className="all_gnb">
-                                <GnbItem to="/clearlasik">클리어라식</GnbItem>
-                                <GnbItem to="/ziemer">지머</GnbItem>
-                                <GnbItemWithDepth effect={false} to="/news" depth2={[{to:'/news', children:'뉴스'},{to:'/paper', children:'논문'}]}>
-                                    매거진
-                                </GnbItemWithDepth>
-                                <GnbItem to="/hospital">클리어병원 찾기</GnbItem>
-                            </ul>
-                        </div>
-                    </div>
-                    <button type="button" className="btn_m" onClick={toggleMoMenu}>
+                    <ul className="header_util">
+                        <li>
+                            <Link to="/" className="btn_join">
+                                <span>회원가입</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/login" className="btn_login">
+                                <span>로그인</span>
+                            </Link>
+                        </li>
+                        {/* <!-- <li>
+                            <Link to="/" className="btn_logout">
+                                <span>로그아웃</span>
+                            </Link>
+                        </li> --> */}
+                    </ul>
+                    <button type="button" className="btn_m">
                         <span>모바일 메뉴</span>
                     </button>
-                    <div className={`m_gnb_wrap${isMoMenuOpen ? " on" : ""}`}>
-                        <div className="dimm"></div>
-                        <div className="m_gnb_box">
-                            <div className="logo_box">
+                    <div className="m_gnb_wrap">
+                        <ul className="m_gnb">
+                            <li className="is_depth">
                                 <Link to="/">
-                                    <img src={logo} alt="로고"/>
+                                    <span>About Us</span>
                                 </Link>
-                            </div>
-                            <ul className="m_gnb">
-                                <GnbItem to="/clearlasik">클리어라식</GnbItem>
-                                <GnbItem to="/ziemer">지머</GnbItem>
-                                <GnbItemWithDepth effect={false} to="/news" depth2={[{to:'/news', children:'뉴스'},{to:'/paper', children:'논문'}]}>
-                                    매거진
-                                </GnbItemWithDepth>
-                                <GnbItem to="/hospital">클리어병원 찾기</GnbItem>
-                            </ul>
-                            {siteInfo.c_tel &&
-                                <div className="tel_box">
-                                    <span>대표전화</span>
-                                    <strong>{siteInfo.c_tel}</strong>
-                                </div>
-                            }
-                        </div>
+                                <ul className="depth2">
+                                    <li className="is_depth">
+                                        {/* <!-- 클릭 시 is_depth에 on class 토글 --> */}
+                                        <Link to="/">
+                                            <span>회사소개</span>
+                                        </Link>
+                                        <ul className="depth3">
+                                            <li>
+                                                <Link to="/">
+                                                    <span>경영 이념 및 미션</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/">
+                                                    <span>윤리경영</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/">
+                                                    <span>사회공헌</span>
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li className="is_depth">
+                                        <Link to="/">
+                                            <span>대표인사</span>
+                                        </Link>
+                                        <ul className="depth3">
+                                            <li>
+                                                <Link to="/">
+                                                    <span>경영 이념 및 미션</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/">
+                                                    <span>윤리경영</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/">
+                                                    <span>사회공헌</span>
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <Link to="/">
+                                            <span>연혁</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/">
+                                            <span>오시는 길</span>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li className="is_depth">
+                                <Link to="/">
+                                    <span>Service</span>
+                                </Link>
+                                <ul className="depth2">
+                                    <li className="is_depth">
+                                        <Link to="/">
+                                            <span>회사소개</span>
+                                        </Link>
+                                        <ul className="depth3">
+                                            <li>
+                                                <Link to="/">
+                                                    <span>경영 이념 및 미션</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/">
+                                                    <span>윤리경영</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/">
+                                                    <span>사회공헌</span>
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li className="is_depth">
+                                        <Link to="/">
+                                            <span>대표인사</span>
+                                        </Link>
+                                        <ul className="depth3">
+                                            <li>
+                                                <Link to="/">
+                                                    <span>경영 이념 및 미션</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/">
+                                                    <span>윤리경영</span>
+                                                </Link>
+                                            </li>
+                                            <li>
+                                                <Link to="/">
+                                                    <span>사회공헌</span>
+                                                </Link>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <Link to="/">
+                                            <span>연혁</span>
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/">
+                                            <span>오시는 길</span>
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <Link to="/">
+                                    <span>Board</span>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/">
+                                    <span>My Page</span>
+                                </Link>
+                            </li>
+                        </ul>
                     </div>
                 </div>
-            </div>
-            <div className="flag">
-                <img src={img_flag} alt="이미지"/>
-            </div>
-            <div className="pin_link">
-                <Link to="/hospital">
-                    <span>클리어 병원 찾기</span>
-                </Link>
             </div>
         </header>
     </>);

@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { confirmPop, adminCategoryPopData, adminBoardGroupPop } from "../../../store/popupSlice";
-import InputBox from "./InputBox";
+import { confirmPop, adminSubCategoryPopData, adminBoardGroupPop } from "../../../store/popupSlice";
+import InputBox from "../InputBox";
 import InputBox2 from "./InputBox2";
 import TxtSelectBox from "./TxtSelectBox";
 import ConfirmPop from "../../popup/ConfirmPop";
@@ -47,8 +47,8 @@ const CategoryPopCont6 = (props) => {
 
 
     useEffect(()=>{
-        //카테고리 값 변경시 adminCategoryPopData store 에 저장
-        dispatch(adminCategoryPopData(info));
+        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
+        dispatch(adminSubCategoryPopData(info));
     },[info]);
 
 

@@ -44,6 +44,8 @@ exports.enum_api_uri = {
 
     //메뉴관리
     menu_list: `${api_uri}v1/admin/menu`,
+    menu_detail: `${api_uri}v1/admin/menu/:id`,
+    menu_modify: `${api_uri}v1/admin/menu`,
     menu_sub_detail: `${api_uri}v1/admin/menu/sub/:id`,
     menu_sub: `${api_uri}v1/admin/menu/sub`,
     
@@ -83,6 +85,8 @@ exports.enum_api_uri = {
     all_stats_data: `${api_uri}v1/admin/stat`,
     stat_data: `${api_uri}v1/admin/stat/pre`,
     stat_history: `${api_uri}v1/admin/stat/history`,
+    stat_url: `${api_uri}v1/admin/stat/url`,
+    stat_agent: `${api_uri}v1/admin/stat/agent`,
 
 
     //유지보수

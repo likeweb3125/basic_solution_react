@@ -9,7 +9,7 @@ import { confirmPop } from "../../store/popupSlice";
 import { detailPageBack } from "../../store/etcSlice";
 import CommentWrap2 from "../../components/component/admin/CommentWrap2";
 import ConfirmPop from "../../components/popup/ConfirmPop";
-import InputBox from "../../components/component/admin/InputBox";
+import InputBox from "../../components/component/InputBox";
 
 
 const BoardDetail = () => {
@@ -573,7 +573,8 @@ const BoardDetail = () => {
                                         <ul>
                                             <li>
                                                 <p>휴대폰번호</p>
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     value={boardData.b_sms_phone || ""}
                                                     onChangeHandler={onInputChangeHandler}
@@ -583,7 +584,8 @@ const BoardDetail = () => {
                                             </li>
                                             <li>
                                                 <p>이메일</p>
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     value={boardData.b_email || ""}
                                                     onChangeHandler={onInputChangeHandler}

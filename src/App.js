@@ -11,12 +11,10 @@ import ConfirmPop from './components/popup/ConfirmPop';
 import Layout from './components/layout/user/Layout';
 import Main from "./pages/user/Main";
 import OpenPopup from './pages/user/OpenPopup';
-import Clearlasik from './pages/user/Clearlasik';
-import Ziemer from './pages/user/Ziemer';
-import News from './pages/user/News';
-import Paper from './pages/user/Paper';
-import BoardDetail from './pages/user/BoardDetail';
-import Hospital from './pages/user/Hospital';
+import Login from './pages/user/Login';
+import SignUp from './pages/user/SignUp';
+
+
 import AdminLogin from './pages/admin/Login';
 import AdminLayout from './components/layout/admin/Layout';
 import AdminMain from './pages/admin/Main';
@@ -40,8 +38,6 @@ import AdminMaintDetail from "./pages/admin/MaintDetail";
 import AdminMaintWrite from "./pages/admin/MaintWrite";
 import Popup from './components/popup/Popup';
 import './css/default.css';
-import bg_magazine1 from "./images/user_images/bg_magazine1.png";
-import bg_magazine2 from "./images/user_images/bg_magazine2.png";
 
 import Test from './pages/admin/Test';
 
@@ -81,10 +77,10 @@ function App() {
 
     //관리자단 하위카테고리 설정저장시 새로고침
     useEffect(()=>{
-        if(popup.adminCategoryPopModify){
+        if(popup.adminSubCategoryPopModify){
             window.location.reload();
         }
-    },[popup.adminCategoryPopModify]);
+    },[popup.adminSubCategoryPopModify]);
 
 
     //사이트정보 가져오기
@@ -135,27 +131,18 @@ function App() {
             <Routes>
             {/* 사용자단---------------------------------------------- */}
                 {/* 메인 */}
-                <Route path="/" element={<Layout main={true}><Main /></Layout>} />
-
+                <Route path="/" element={<Layout><Main /></Layout>} />
+                
                 {/* 관리자단에서 설정한 팝업 (팝업창선택) */}
                 <Route path="/openpopup/:idx" element={<OpenPopup />} />
 
-                {/* 클리어라식 */}
-                <Route path="/clearlasik" element={<Layout><Clearlasik /></Layout>} />
+                {/* 로그인 */}
+                <Route path="/login" element={<Layout><Login /></Layout>} />
 
-                {/* 지머 */}
-                <Route path="/ziemer" element={<Layout><Ziemer /></Layout>} />
+                {/* 회원가입 */}
+                <Route path="/signup" element={<Layout><SignUp /></Layout>} />
 
-                {/* 매거진 - 뉴스 */}
-                <Route path="/news" element={<Layout board={true} boardTopData={{loca:"뉴스",txt:["지머의 다양한 소식을","먼저 만나 보세요."],img:bg_magazine2}}><News/></Layout>}/>
-                {/* 매거진 - 뉴스 상세 */}
-                <Route path="/news/:board_category/:board_idx" element={<Layout><BoardDetail /></Layout>} />
 
-                {/* 매거진 - 논문 */}
-                <Route path="/paper" element={<Layout board={true} boardTopData={{loca:"논문",txt:["기술혁신을 통해 놀라운 변화를 추구하는","클리어 특허 논문을 확인하세요."],img:bg_magazine1}}><Paper/></Layout>}/>
-
-                {/* 클리어병원찾기 */}
-                <Route path="/hospital" element={<Layout><Hospital /></Layout>} />
             {/* //사용자단---------------------------------------------- */}
 
 

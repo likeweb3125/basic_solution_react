@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
-import InputBox from "../../components/component/admin/InputBox";
+import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
 import SelectBox from "../../components/component/admin/SelectBox";
@@ -502,7 +502,8 @@ const BoardWrite = (props) => {
                                     <tr>
                                         <th>제목</th>
                                         <td colSpan={3}>
-                                            <InputBox 
+                                            <InputBox
+                                                className="input_box" 
                                                 type={`text`}
                                                 placeholder={`제목을 입력해주세요.`}
                                                 countShow={true}

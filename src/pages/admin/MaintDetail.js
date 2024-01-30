@@ -7,7 +7,7 @@ import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import CommentWrap from "../../components/component/admin/CommentWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
-import InputBox from "../../components/component/admin/InputBox";
+import InputBox from "../../components/component/InputBox";
 
 
 const MaintDetail = () => {

@@ -1,19 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { confirmPop, adminMemberInfoPopModify, adminMsgPop } from "../../store/popupSlice";
-import { pageNoChange, checkedList } from "../../store/etcSlice";
+import { confirmPop, adminVisitorHistoryPop } from "../../store/popupSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
-import TxtSelectBox from "../../components/component/admin/TxtSelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
-import SearchInput from "../../components/component/admin/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
-import Pagination from "../../components/component/admin/Pagination";
 
 
 const StatsChart = () => {
@@ -23,17 +19,14 @@ const StatsChart = () => {
     const user = useSelector((state)=>state.user);
     const all_stats_data = enum_api_uri.all_stats_data;
     const stat_data = enum_api_uri.stat_data;
-
     const [confirm, setConfirm] = useState(false);
-    const [searchTxt, setSearchTxt] = useState("");
-    const [boardData, setBoardData] = useState({});
-    const [searchType, setSearchType] = useState("이메일");
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [allStatsData, setAllStatsData] = useState({});
     const [statsData, setStatsData] = useState({});
     const [currentTime, setCurrentTime] = useState('');
     const [dateType, setDateType] = useState('최근 1주');
+    const [chartTabOn, setChartTabOn] = useState(1);
 
 
     // Confirm팝업 닫힐때
@@ -167,7 +160,7 @@ const StatsChart = () => {
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
-                confirmPopTxt:'날짜를 선택해주세요.',
+                confirmPopTxt:'직접입력시 날짜를 선택해주세요.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -195,14 +188,14 @@ const StatsChart = () => {
                         <span>최다 접속 경로</span>
                         {allStatsData.logsTopUrl && <>
                             <strong>{allStatsData.logsTopUrl.previousUrl}</strong>
-                            <button type="button" className="btn_type12">상세보기</button>
+                            <button type="button" className="btn_type12" onClick={()=>dispatch(adminVisitorHistoryPop({adminVisitorHistoryPop:true, adminVisitorHistoryPopType:1}))}>상세보기</button>
                         </>}
                     </div>
                     <div className="most_item">
                         <span>최다 브라우저</span>
                         {allStatsData.logsTopAgent && <>
                             <strong>{allStatsData.logsTopAgent.userAgent}</strong>
-                            <button type="button" className="btn_type12">상세보기</button>
+                            <button type="button" className="btn_type12" onClick={()=>dispatch(adminVisitorHistoryPop({adminVisitorHistoryPop:true, adminVisitorHistoryPopType:2}))}>상세보기</button>
                         </>}
                     </div>
                 </div>
@@ -277,17 +270,17 @@ const StatsChart = () => {
                         <div className="charts_tit">
                             <h4>사이트 현황 통계</h4>
                             <ul className="charts_tab">
-                                <li className="on">
-                                    <button type="button">방문</button>
+                                <li className={chartTabOn === 1 ? 'on' : ''}>
+                                    <button type="button" onClick={()=>setChartTabOn(1)}>방문</button>
                                 </li>
-                                <li>
-                                    <button type="button">가입회원</button>
+                                <li className={chartTabOn === 2 ? 'on' : ''}>
+                                    <button type="button" onClick={()=>setChartTabOn(2)}>가입회원</button>
                                 </li>
-                                <li>
-                                    <button type="button">게시글</button>
+                                <li className={chartTabOn === 3 ? 'on' : ''}>
+                                    <button type="button" onClick={()=>setChartTabOn(3)}>게시글</button>
                                 </li>
-                                <li>
-                                    <button type="button">댓글</button>
+                                <li className={chartTabOn === 4 ? 'on' : ''}>
+                                    <button type="button" onClick={()=>setChartTabOn(4)}>댓글</button>
                                 </li>
                             </ul>
                         </div>

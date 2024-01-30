@@ -6,7 +6,7 @@ import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { confirmPop, adminMsgPop } from "../../../store/popupSlice";
 import ConfirmPop from "../ConfirmPop";
-import InputBox from "../../component/admin/InputBox";
+import InputBox from "../../component/InputBox";
 import TxtSelectBox from "../../component/admin/TxtSelectBox";
 import SmsTxtBox from "../../component/admin/SmsTxtBox";
 import TextareaBox from "../../component/admin/TextareaBox";

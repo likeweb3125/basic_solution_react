@@ -6,7 +6,7 @@ import { useDropzone } from 'react-dropzone';
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
-import InputBox from "../../components/component/admin/InputBox";
+import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
 
@@ -239,7 +239,8 @@ const MaintWrite = () => {
                                     <tr>
                                         <th>제목</th>
                                         <td colSpan={4}>
-                                            <InputBox 
+                                            <InputBox
+                                                className="input_box" 
                                                 type={`text`}
                                                 placeholder={`제목을 입력해주세요.`}
                                                 countShow={true}
@@ -254,7 +255,8 @@ const MaintWrite = () => {
                                     <tr>
                                         <th>담당자</th>
                                         <td>
-                                            <InputBox 
+                                            <InputBox
+                                                className="input_box" 
                                                 type={`text`}
                                                 placeholder={`담당자를 입력해주세요.`}
                                                 value={boardData.company || ""}
@@ -265,7 +267,8 @@ const MaintWrite = () => {
                                         <td></td>
                                         <th>담당자연락처(직통)</th>
                                         <td>
-                                            <InputBox 
+                                            <InputBox
+                                                className="input_box" 
                                                 type={`text`}
                                                 placeholder={`연락처를 입력해주세요.`}
                                                 value={boardData.m_tel || ""}
@@ -277,7 +280,8 @@ const MaintWrite = () => {
                                     <tr>
                                         <th>담당자이메일</th>
                                         <td>
-                                            <InputBox 
+                                            <InputBox
+                                                className="input_box" 
                                                 type={`text`}
                                                 placeholder={`이메일을 입력해주세요.`}
                                                 value={boardData.email || ""}
@@ -288,7 +292,8 @@ const MaintWrite = () => {
                                         <td></td>
                                         <th>도메인</th>
                                         <td>
-                                            <InputBox 
+                                            <InputBox
+                                                className="input_box" 
                                                 type={`text`}
                                                 placeholder={`도메인을 입력해주세요.`}
                                                 value={boardData.m_email || ""}

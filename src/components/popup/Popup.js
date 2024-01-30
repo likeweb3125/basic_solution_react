@@ -1,17 +1,17 @@
 import { useSelector } from "react-redux";
 import { createPortal } from "react-dom";
 
-import HospitalPop from "./user/HospitalPop";
-import InquirePop from "./user/InquirePop";
-
+import TermsPop from "./user/TermsPop";
 
 import AdminPoilicyPop from "./admin/PolicyPop";
 import AdminCategoryPop from "./admin/CategoryPop";
+import AdminSubCategoryPop from "./admin/SubCategoryPop";
 import AdminBoardGroupPop from "./admin/BoardGroupPop";
 import AdminBannerPop from "./admin/BannerPop";
 import AdminPopupPop from "./admin/PopupPop";
 import AdminMemberInfoPop from "./admin/MemberInfoPop";
 import AdminMsgPop from "./admin/MsgPop";
+import AdminVisitorHistoryPop from "./admin/VisitorHistoryPop";
 
 
 
@@ -22,19 +22,20 @@ const Popup = () => {
     return createPortal(
         <>
             {/* 사용자 --------------------------------------*/}
-            {/* 클리어병원 상세 팝업 */}
-            {popup.hospitalPop && <HospitalPop />}
+            {/* 회원가입 - 이용약관 팝업 */}
+            {popup.termsPop && <TermsPop />}
 
-            {/* 클리어병원 제휴문의 팝업 */}
-            {popup.inquirePop && <InquirePop />}
 
 
             {/* 관리자 --------------------------------------*/}
             {/* 운영정책 상세 팝업 */}
             {popup.adminPolicyPop && <AdminPoilicyPop />}
 
-            {/* 하위카테고리 팝업 */}
+            {/* 1차카테고리 팝업 */}
             {popup.adminCategoryPop && <AdminCategoryPop />}
+
+            {/* 하위카테고리 팝업 */}
+            {popup.adminSubCategoryPop && <AdminSubCategoryPop />}
 
             {/* 게시판분류 팝업 */}
             {popup.adminBoardGroupPop && <AdminBoardGroupPop />}
@@ -49,6 +50,9 @@ const Popup = () => {
             {popup.adminMemberInfoPop && <AdminMemberInfoPop />}
             {/* 회원관리 - 단체메시지전송 팝업 */}
             {popup.adminMsgPop && <AdminMsgPop />}
+
+            {/* 통계관리 - 최다접속경로, 최다브라우저 팝업 */}
+            {popup.adminVisitorHistoryPop && <AdminVisitorHistoryPop />}
 
         </>,
         document.getElementById('modal-root')

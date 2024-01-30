@@ -7,7 +7,7 @@ import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { adminBannerPop, confirmPop, adminBannerPopModify, adminBannerPopWrite } from "../../../store/popupSlice";
 import ConfirmPop from "../../popup/ConfirmPop";
-import InputBox from "../../component/admin/InputBox";
+import InputBox from "../../component/InputBox";
 import InputBox2 from "../../component/admin/InputBox2";
 import InputDatepicker from "../../component/admin/InputDatepicker";
 import Editor from "../../component/Editor";
@@ -703,13 +703,14 @@ const BannerPop = () => {
                                         <div className="form_input">
                                             <h6>제목 <i>*</i></h6>
                                             <div className="input_wrap">
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     placeholder={`배너 제목을 입력해주세요.`}
                                                     value={info.b_title || ""}
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`b_title`}
-                                                    className={error.b_title ? "wrong_input" : ""}
+                                                    inputClassName={error.b_title ? "wrong_input" : ""}
                                                 />
                                                 {error.b_title && <em className="txt_err">배너 제목을 입력해주세요.</em>}
                                             </div>
@@ -1005,13 +1006,14 @@ const BannerPop = () => {
                                                                 <div className="form_input">
                                                                     <h6>동영상 URL</h6>
                                                                     <div className="input_wrap">
-                                                                        <InputBox 
+                                                                        <InputBox
+                                                                            className="input_box" 
                                                                             type={`text`}
                                                                             placeholder={`URL을 입력해주세요.`}
                                                                             value={info.b_mov_url || ""}
                                                                             onChangeHandler={onInputChangeHandler}
                                                                             id={`b_mov_url`}
-                                                                            className={error.b_mov_url ? "wrong_input" : ""}
+                                                                            inputClassName={error.b_mov_url ? "wrong_input" : ""}
                                                                         />
                                                                         {error.b_mov_url && <em className="txt_err">동영상 URL을 입력해주세요.</em>}
                                                                     </div>
@@ -1023,7 +1025,8 @@ const BannerPop = () => {
                                                             <div className="form_input">
                                                                 <h6>배너 링크</h6>
                                                                 <div className="input_wrap">
-                                                                    <InputBox 
+                                                                    <InputBox
+                                                                        className="input_box" 
                                                                         type={`text`}
                                                                         placeholder={`배너 링크 정보를 넣어주세요.`}
                                                                         value={info.b_url || ""}

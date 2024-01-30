@@ -1,76 +1,81 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import f_logo from "../../../images/user_images/f_logo.png";
+import f_logo from "../../../images/f_logo.png";
 
-const Footer = (props) => {
+const Footer = () => {
     const common = useSelector((state)=>state.common);
     const [info, setInfo] = useState({});
 
     useEffect(()=>{
         setInfo(common.siteInfo);
+        console.log(common.siteInfo);
     },[common.siteInfo]);
 
 
-    //탑버튼 클릭시
-    const onTopHandler = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-    };
-    
     return(<>
-        {!props.main &&
-            <div className="btn_sub_wrap">
-                <button type="button" className="btn_top" onClick={onTopHandler}>탑버튼</button>
-            </div>
-        }
-
         <footer id="footer" className="footer">
             <div className="footer_inner">
                 <div className="site_info">
                     <div className="f_logo">
-                        <img src={f_logo} alt="기산과학"/>
+                        <img src={f_logo} alt="로고"/>
                     </div>
                     <address>
                         <ul>
-                            <li>
-                                <span>㈜기산과학</span>
-                            </li>
-                            {info.c_address &&
+                            {info.c_site_name &&
                                 <li>
-                                    <span>본사 : {info.c_address}</span>
+                                    <span>{info.c_site_name}</span>
+                                </li>
+                            }
+                            {info.c_ceo &&
+                                <li>
+                                    <span>대표이사</span>
+                                    <span>{info.c_ceo}</span>
+                                </li>
+                            }
+                            {info.c_num &&
+                                <li>
+                                    <span>사업자등록번호</span>
+                                    <span>{info.c_num}</span>
                                 </li>
                             }
                         </ul>
                         <ul>
-                            {info.c_tel && 
+                            {info.c_address &&
                                 <li>
-                                    <span>TEL. {info.c_tel}</span>
+                                    <span>{info.c_address}</span>
                                 </li>
                             }
-                            {info.c_fax && 
+                            {info.c_tel &&
                                 <li>
-                                    <span>FAX. {info.c_fax}</span>
+                                    <span>Tel</span>
+                                    <span>{info.c_tel}</span>
                                 </li>
                             }
-                            {info.c_email && 
+                        </ul>
+                        <ul>
+                            {info.c_email &&
                                 <li>
-                                    <span>E-MAIL. {info.c_email}</span>
+                                    <span>Email</span>
+                                    <span>{info.c_email}</span>
                                 </li>
                             }
                         </ul>
                     </address>
                 </div>
                 <div className="f_util_wrap">
-                    <p className="copy">Copyright ⓒ 2018 Kisan all rights reserved.</p>
+                    <ul className="f_util">
+                        <li className="on">
+                            <a href="#">개인정보처리방침</a>
+                        </li>
+                        <li>
+                            <a href="#">이용약관</a>
+                        </li>
+                        <li>
+                            <a href="#">이메일 무단수집 거부</a>
+                        </li>
+                    </ul>
+                    <p className="copy">©2023 Lorem ipsum Co.,Ltd. All Rights Reserved.</p>
                 </div>
-                {info.c_tel &&
-                    <div className="f_tel">
-                        <span>대표전화</span>
-                        <strong>{info.c_tel}</strong>
-                    </div>
-                }
             </div>
         </footer>
     </>);

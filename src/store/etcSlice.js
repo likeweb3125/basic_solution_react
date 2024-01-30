@@ -10,6 +10,10 @@ const etc = createSlice({
         listPageData: {},
         scrollY: null,
         closePopIdx: null,
+        termsCheckList: [], //회원가입시 이용약관 체크박스리스트
+        menuCheckList: [],
+        unMenuCheckList: [],
+        currentMenuId: null,
     },
     reducers:{
         pageNo: (state, action) => {
@@ -33,6 +37,18 @@ const etc = createSlice({
         closePopIdx: (state, action) => {
             state.closePopIdx = action.payload;
         },
+        termsCheckList: (state, action) => {
+            state.termsCheckList = action.payload;
+        },
+        menuCheckList: (state, action) => {
+            state.menuCheckList = action.payload;
+        },
+        unMenuCheckList: (state, action) => {
+            state.unMenuCheckList = action.payload;
+        },
+        currentMenuId: (state, action) => {
+            state.currentMenuId = action.payload;
+        },
     }
 });
 
@@ -44,5 +60,9 @@ export const {
     listPageData,
     scrollY,
     closePopIdx,
+    termsCheckList,
+    menuCheckList,
+    unMenuCheckList,
+    currentMenuId
 } = etc.actions;
 export default etc;

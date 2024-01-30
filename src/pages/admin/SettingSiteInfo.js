@@ -6,7 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import { siteInfo, siteInfoEdit } from "../../store/commonSlice";
-import InputBox from "../../components/component/admin/InputBox";
+import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 
 
@@ -194,7 +194,8 @@ const SettingSiteInfo = () => {
                             <tr>
                                 <th>사이트이름 <i>*</i></th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`사이트이름을 입력해주세요.`}
                                         countShow={true}
@@ -203,14 +204,15 @@ const SettingSiteInfo = () => {
                                         value={info.c_site_name || ""}
                                         onChangeHandler={onInputChangeHandler}
                                         id={`c_site_name`}
-                                        className={error.c_site_name ? "wrong_input" : ""}
+                                        inputClassName={error.c_site_name ? "wrong_input" : ""}
                                     />
                                     {error.c_site_name && <em className="txt_err">사이트이름을 입력해주세요.</em>}
                                 </td>
                                 <td></td>
                                 {/* <th>웹 브라우저 타이틀</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`웹 브라우저 타이틀을 입력해주세요.`}
                                         countShow={true}
@@ -225,7 +227,8 @@ const SettingSiteInfo = () => {
                             <tr>
                                 <th>대표자</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`대표자를 입력해주세요.`}
                                         value={info.c_ceo || ""}
@@ -236,7 +239,8 @@ const SettingSiteInfo = () => {
                                 <td></td>
                                 <th>대표전화</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`대표전화를 입력해주세요.`}
                                         value={info.c_tel || ""}
@@ -248,7 +252,8 @@ const SettingSiteInfo = () => {
                             <tr>
                                 <th>사업자번호</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`사업자번호를 입력해주세요.`}
                                         value={info.c_num || ""}
@@ -259,7 +264,8 @@ const SettingSiteInfo = () => {
                                 <td></td>
                                 <th>통신판매번호</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`통신판매번호를 입력해주세요.`}
                                         value={info.c_num2 || ""}
@@ -271,7 +277,8 @@ const SettingSiteInfo = () => {
                             <tr>
                                 <th>이메일</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`이메일을 입력해주세요.`}
                                         value={info.c_email || ""}
@@ -282,7 +289,8 @@ const SettingSiteInfo = () => {
                                 <td></td>
                                 <th>주소</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`주소를 입력해주세요.`}
                                         value={info.c_address || ""}
@@ -294,7 +302,8 @@ const SettingSiteInfo = () => {
                             <tr>
                                 <th>FAX 번호</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`FAX 번호를 입력해주세요.`}
                                         value={info.c_fax || ""}
@@ -305,7 +314,8 @@ const SettingSiteInfo = () => {
                                 <td></td>
                                 <th>개인정보관리책임자</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`개인정보관리책임자를 입력해주세요.`}
                                         value={info.c_manager || ""}
@@ -339,20 +349,22 @@ const SettingSiteInfo = () => {
                             <tr>
                                 <th>브라우저 타이틀 <i>*</i></th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`브라우저 타이틀을 입력해주세요.`}
                                         value={info.c_b_title || ""}
                                         onChangeHandler={onInputChangeHandler}
                                         id={`c_b_title`}
-                                        className={error.c_b_title ? "wrong_input" : ""}
+                                        inputClassName={error.c_b_title ? "wrong_input" : ""}
                                     />
                                     {error.c_b_title && <em className="txt_err">브라우저 타이틀을 입력해주세요.</em>}
                                 </td>
                                 <td></td>
                                 <th>메타설명</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`메타설명을 입력해주세요.`}
                                         value={info.c_meta || ""}
@@ -364,7 +376,8 @@ const SettingSiteInfo = () => {
                             <tr>
                                 <th>메타 태그</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`메타 태그를 입력해주세요.`}
                                         value={info.c_meta_tag || ""}
@@ -375,7 +388,8 @@ const SettingSiteInfo = () => {
                                 <td></td>
                                 {/* <th>메타 분류</th>
                                 <td>
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`메타 분류를 입력해주세요.`}
                                         value={info.c_meta_type || ""}

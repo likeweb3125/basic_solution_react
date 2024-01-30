@@ -358,9 +358,9 @@ const SettingPolicy = () => {
                             lastPage={boardData.last_page} //총페이지 끝
                         />
                     }
-                    <div className="form_btn_wrap">
+                    {/* <div className="form_btn_wrap">
                         <button type="button" className="btn_type4" onClick={writeBtnClickHandler}>작성</button>                                        
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>

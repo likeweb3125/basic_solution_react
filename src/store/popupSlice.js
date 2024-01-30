@@ -10,12 +10,9 @@ const popup = createSlice({
         confirmPopBtn: "",
 
         // 사용자-------------------------------
-        //클리어병원상세 팝업
-        hospitalPop: false,
-        hospitalPopData: null,
-
-        //클리어병원 제휴문의 팝업
-        inquirePop: false,
+        //회원가입 이용약관 팝업
+        termsPop: false,
+        termsPopIdx: null,
 
 
         // 관리자-------------------------------
@@ -28,12 +25,16 @@ const popup = createSlice({
         adminPolicyPopModify: false,
         adminPolicyPopWrite: false,
 
-        //하위카테고리 설정팝업
+        //1차카테고리 설정팝업
         adminCategoryPop: false,
         adminCategoryPopIdx: null,
-        adminCategoryPopData: {},
-        adminCategoryPopAdd: false,
         adminCategoryPopModify: false,
+
+        //하위카테고리 설정팝업
+        adminSubCategoryPop: false,
+        adminSubCategoryPopIdx: null,
+        adminSubCategoryPopData: {},
+        adminSubCategoryPopModify: false,
 
         //게시판분류 팝업
         adminBoardGroupPop: false,
@@ -61,6 +62,10 @@ const popup = createSlice({
         //회원관리 - 단체메시지전송 팝업
         adminMsgPop: false,
 
+        //통계관리 최다접속경로, 최다브라우저 팝업
+        adminVisitorHistoryPop: false,
+        adminVisitorHistoryPopType: null,
+
     },
     reducers:{
         // 공통 -----------------------------------
@@ -72,12 +77,9 @@ const popup = createSlice({
         },
 
         // 사용자-------------------------------
-        hospitalPop: (state, action) => {
-            state.hospitalPop = action.payload.hospitalPop;
-            state.hospitalPopData = action.payload.hospitalPopData;
-        },
-        inquirePop: (state, action) => {
-            state.inquirePop = action.payload;
+        termsPop: (state, action) => {
+            state.termsPop = action.payload.termsPop;
+            state.termsPopIdx = action.payload.termsPopIdx;
         },
 
         // 관리자-------------------------------
@@ -94,18 +96,25 @@ const popup = createSlice({
         adminPolicyPopWrite: (state, action) => {
             state.adminPolicyPopWrite = action.payload;
         },
+
         adminCategoryPop: (state, action) => {
             state.adminCategoryPop = action.payload.adminCategoryPop;
             state.adminCategoryPopIdx = action.payload.adminCategoryPopIdx;
         },
-        adminCategoryPopData: (state, action) => {
-            state.adminCategoryPopData = action.payload;
-        },
-        adminCategoryPopAdd: (state, action) => {
-            state.adminCategoryPopAdd = action.payload;
-        },
         adminCategoryPopModify: (state, action) => {
             state.adminCategoryPopModify = action.payload;
+        },
+
+
+        adminSubCategoryPop: (state, action) => {
+            state.adminSubCategoryPop = action.payload.adminSubCategoryPop;
+            state.adminSubCategoryPopIdx = action.payload.adminSubCategoryPopIdx;
+        },
+        adminSubCategoryPopData: (state, action) => {
+            state.adminSubCategoryPopData = action.payload;
+        },
+        adminSubCategoryPopModify: (state, action) => {
+            state.adminSubCategoryPopModify = action.payload;
         },
         adminBoardGroupPop: (state, action) => {
             state.adminBoardGroupPop = action.payload.adminBoardGroupPop;
@@ -146,24 +155,30 @@ const popup = createSlice({
         adminMsgPop: (state, action) => {
             state.adminMsgPop = action.payload;
         },
+        adminVisitorHistoryPop: (state, action) => {
+            state.adminVisitorHistoryPop = action.payload.adminVisitorHistoryPop;
+            state.adminVisitorHistoryPopType = action.payload.adminVisitorHistoryPopType;
+        },
     }
 });
 
 export const {
     confirmPop, 
 
-    hospitalPop,
-    inquirePop,
+    termsPop,
 
 
     adminNotiPop,
     adminPolicyPop,
     adminPolicyPopModify,
     adminPolicyPopWrite,
+
     adminCategoryPop,
-    adminCategoryPopData,
-    adminCategoryPopAdd,
     adminCategoryPopModify,
+
+    adminSubCategoryPop,
+    adminSubCategoryPopData,
+    adminSubCategoryPopModify,
     adminBoardGroupPop,
     adminBoardGroupPopMenuOn,
     adminBannerPop,
@@ -175,5 +190,6 @@ export const {
     adminMemberInfoPop,
     adminMemberInfoPopModify,
     adminMsgPop,
+    adminVisitorHistoryPop
 } = popup.actions;
 export default popup;

@@ -18,7 +18,10 @@
 .txt_color4 {font-weight: 500; color: var(--admin-color4) !important;}
 .ellipsis {display: block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%;}
 .tm30{margin-top: 30px;}
+.lm8{margin-left: 8px;}
 .none_data{text-align: center;padding: 50px 0;font-size: 16px;color: #666;}
+.tx_l{text-align: left !important;}
+.w_100{width: 100%;}
 
 .tab_wrap .tab_inner {padding-top: 10px;}
 /* 탭메뉴 스타일 */
@@ -163,7 +166,7 @@ table td .txt_light {font-size: 14px; color: #999;}
 .btn_type23 {display: inline-block; vertical-align: top; min-width: 150px; text-align: center; font-size: 18px; font-weight: 500; color: #fff; line-height: 28px; padding: 10px; background: var(--admin-color1); border-radius: 5px; border: 1px solid var(--admin-color1);}
 .btn_type24 {display: inline-block; vertical-align: top; min-width: 200px; text-align: left; font-size: 20px; font-weight: 500; color: #666; line-height: 28px; padding: 10px 30px; background: #ddd; border-radius: 5px; border: 1px solid #ddd; position: relative;}
 .btn_type24:after {content: ''; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); width: 8px; height: 14px; background: url('../images/ic_arrow2.svg') no-repeat 50% 50%/100%;}
-.btn_type25 {display: block; text-align: center; line-height: 34px; padding: 10px 0; border-radius: 5px; border: 1px solid var(--admin-color1); background: var(--admin-color1); color: #fff; font-size: 20px; font-weight: 500;}
+.btn_type25 {display: block; text-align: center; line-height: 34px; padding: 10px 0; border-radius: 5px; border: 1px solid var(--admin-color1); background: var(--admin-color1); color: #fff; font-size: 20px !important; font-weight: 500;}
 .btn_type26 {display: block; text-align: center; line-height: 34px; padding: 10px 0; border-radius: 5px; border: 1px solid #ddd; background: #ddd; color: #666; font-size: 20px; font-weight: 500;}
 .btn_type27 {display: block; text-align: center; line-height: 34px; padding: 10px 0; border-radius: 5px; border: 1px solid transparent; background: rgba(79, 70, 229, 0.08); color: var(--admin-color1); font-size: 20px; font-weight: 500;}
 .btn_type28 {display: inline-block; vertical-align: top; min-width: 120px; text-align: center; font-size: 18px; font-weight: 500; color: #fff; line-height: 28px; padding: 10px; background: #222; border-radius: 5px; border: 1px solid #222;}

@@ -20,6 +20,8 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState({});
     const [passView, setPassView] = useState(false);
+    const [saveEmailCheck, setSaveEmailCheck] = useState(false);
+    const saveEmail = sessionStorage.getItem('saveEmail');
 
 
     // Confirm팝업 닫힐때
@@ -28,6 +30,15 @@ const Login = () => {
             setConfirm(false);
         }
     },[popup.confirmPop]);
+
+
+    //sessionStorage 에 저장된이메일이 있는지 체크
+    useEffect(()=>{
+        if(saveEmail){
+            setEmail(saveEmail);
+            setSaveEmailCheck(true);
+        }
+    },[saveEmail]);
 
 
     //로그인버튼 클릭하기
@@ -62,6 +73,13 @@ const Login = () => {
         axios.post(login,body)
         .then((res)=>{
             if(res.status === 200){
+                // 이메일저장 체크
+                if(saveEmailCheck){
+                    sessionStorage.setItem('saveEmail',email);
+                }else{
+                    sessionStorage.removeItem('saveEmail');
+                }
+
                 let data = res.data.data;
                 //로그인한회원정보 store 에 저장
                 dispatch(loginUser(data));
@@ -74,8 +92,8 @@ const Login = () => {
                 // dispatch(maintName(process.env.REACT_APP_MAINT_NAME));
                 dispatch(maintName('라이크웹테스트'));
 
-                //관리자단 메인으로 페이지이동
-                navigate('/console');
+                //메인으로 페이지이동
+                navigate('/');
             }
         })
         .catch((error) => {
@@ -92,11 +110,11 @@ const Login = () => {
 
 
     return(<>
-        <main id="main" className="main">
-            <div className="page_admin_login"> 
-                <div className="admin_login">
+        <div className="page_user_login">
+            <div className="section_inner">
+                <div className="user_login">
                     <div className="login_tit">
-                        <h1 className="logo">관리자</h1>
+                        <h1 className="logo">Lorem ipsum</h1>
                         <strong>로그인</strong>
                     </div>
                     <div className="form_inner">
@@ -156,14 +174,31 @@ const Login = () => {
                                 {error.password && <em className="txt_err">비밀번호를 입력해주세요.</em>}
                             </div>
                         </div>
+                        <div className="login_util">
+                            <div className="chk_box3">
+                                <input type="checkbox" id="saveEmail" className="blind"
+                                    onChange={(e)=>{
+                                        const checked = e.currentTarget.checked;
+                                        if(checked){
+                                            setSaveEmailCheck(true);
+                                        }else{
+                                            setSaveEmailCheck(false);
+                                        }
+                                    }}
+                                    checked={saveEmailCheck ? true : false}
+                                />
+                                <label htmlFor="saveEmail">이메일 저장</label>
+                            </div>
+                            <Link to="/" className="btn_type17">비밀번호 재설정</Link>
+                        </div>
                         <div className="btn_wrap">
                             <button type="button" className="btn_type25" onClick={loginBtnClickHandler}>로그인</button>
-                            <Link to="/" className="btn_type26">사용자 화면 바로가기</Link>
+                            <Link to="/signup" className="btn_type26">회원가입</Link>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

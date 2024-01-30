@@ -10,7 +10,7 @@ import SelectBox from "../../components/component/admin/SelectBox";
 import TxtSelectBox from "../../components/component/admin/TxtSelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
 import SearchInput from "../../components/component/admin/SearchInput";
-import InputBox from "../../components/component/admin/InputBox";
+import InputBox from "../../components/component/InputBox";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Pagination from "../../components/component/admin/Pagination";
@@ -128,7 +128,8 @@ const MemberCancel = () => {
                         <div className="search_wrap">
                             <div className="search_box">
                                 <div className="search_input">
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`이메일을 입력해주세요.`}
                                         value={email}

@@ -6,7 +6,7 @@ import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { adminPolicyPop, confirmPop, adminPolicyPopModify, adminPolicyPopWrite } from "../../../store/popupSlice";
 import ConfirmPop from "../../popup/ConfirmPop";
-import InputBox from "../../component/admin/InputBox";
+import InputBox from "../../component/InputBox";
 import Editor from "../../component/Editor";
 
 
@@ -287,7 +287,8 @@ const PolicyPop = () => {
                                         <div className="form_input">
                                             <h6>운영정책 제목 <i>*</i></h6>
                                             <div className="input_wrap">
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     placeholder={`운영정책 제목을 입력해주세요.`}
                                                     countShow={true}
@@ -296,7 +297,7 @@ const PolicyPop = () => {
                                                     value={info.p_title || ""}
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`p_title`}
-                                                    className={error.p_title ? "wrong_input" : ""}
+                                                    inputClassName={error.p_title ? "wrong_input" : ""}
                                                 />
                                                 {error.p_title && <em className="txt_err">운영정책 제목을 입력해주세요.</em>}
                                             </div>

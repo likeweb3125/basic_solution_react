@@ -4,7 +4,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { confirmPop, adminCategoryPop } from "../../store/popupSlice";
+import { confirmPop, adminSubCategoryPop } from "../../store/popupSlice";
 import { pageNoChange, checkedList, listPageData, detailPageBack } from "../../store/etcSlice";
 import { boardSettingData } from "../../store/commonSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
@@ -418,7 +418,7 @@ const Board = () => {
                     <strong>총 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}개</strong>
                     <button type="button" className="btn_type10" style={{marginLeft:"20px"}}
                         onClick={()=>{
-                            dispatch(adminCategoryPop({adminCategoryPop:true,adminCategoryPopIdx:board_category}));
+                            dispatch(adminSubCategoryPop({adminSubCategoryPop:true,adminSubCategoryPopIdx:board_category}));
                         }}
                     >설정</button>
                 </div>

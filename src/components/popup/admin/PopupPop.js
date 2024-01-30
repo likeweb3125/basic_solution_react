@@ -6,7 +6,7 @@ import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { adminPopupPop, confirmPop, adminPopupPopModify, adminPopupPopWrite } from "../../../store/popupSlice";
 import ConfirmPop from "../../popup/ConfirmPop";
-import InputBox from "../../component/admin/InputBox";
+import InputBox from "../../component/InputBox";
 import InputBox2 from "../../component/admin/InputBox2";
 import InputDatepicker from "../../component/admin/InputDatepicker";
 import Editor from "../../component/Editor";
@@ -489,13 +489,14 @@ const PopupPop = () => {
                                         <div className="form_input">
                                             <h6>제목 <i>*</i></h6>
                                             <div className="input_wrap">
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     placeholder={`팝업 제목을 입력해주세요.`}
                                                     value={info.p_title || ""}
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`p_title`}
-                                                    className={error.p_title ? "wrong_input" : ""}
+                                                    inputClassName={error.p_title ? "wrong_input" : ""}
                                                 />
                                                 {error.p_title && <em className="txt_err">팝업 제목을 입력해주세요.</em>}
                                             </div>
@@ -720,7 +721,8 @@ const PopupPop = () => {
                                         <div className="form_input">
                                             <h6>링크</h6>
                                             <div className="input_wrap">
-                                                <InputBox 
+                                                <InputBox
+                                                    className="input_box" 
                                                     type={`text`}
                                                     placeholder={`url 입력해주세요.`}
                                                     value={info.p_link_url || ""}

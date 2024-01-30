@@ -5,10 +5,10 @@ import axios from "axios";
 import moment from "moment";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { confirmPop } from "../../store/popupSlice";
+import { confirmPop, adminVisitorHistoryPop } from "../../store/popupSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
-import InputBox from "../../components/component/admin/InputBox";
+import InputBox from "../../components/component/InputBox";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 
@@ -25,7 +25,6 @@ const StatsVisitor = () => {
     const [searchType, setSearchType] = useState("");
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
-    const [dateType, setDateType] = useState('');
     
 
     // Confirm팝업 닫힐때
@@ -47,7 +46,7 @@ const StatsVisitor = () => {
             end_date = moment(eDate).format('YYYY.MM.DD');
         }
 
-        axios.get(`${stat_history}${searchTxt.length > 0 ? "?searchTxt="+searchTxt : "?searchTxt=''"}${sDate ? "&start="+start_date : ""}${eDate ? "&end="+end_date : ""}`,
+        axios.get(`${stat_history}${searchTxt.length > 0 ? "?searchTxt="+searchTxt : "?searchTxt="}${sDate ? "&start="+start_date : ""}${eDate ? "&end="+end_date : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -84,27 +83,27 @@ const StatsVisitor = () => {
         let sDate = '';
         let eDate = new Date();
 
-        if (dateType === '최근 1주') {
+        if (searchType === '최근 1주') {
             const oneWeekAgo = new Date();
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
             sDate = oneWeekAgo;
 
-        } else if (dateType === '1개월') {
+        } else if (searchType === '1개월') {
             const oneMonthAgo = new Date();
             oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
             sDate = oneMonthAgo;
 
-        } else if (dateType === '3개월') {
+        } else if (searchType === '3개월') {
             const threeMonthsAgo = new Date();
             threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
             sDate = threeMonthsAgo;
 
-        } else if (dateType === '6개월') {
+        } else if (searchType === '6개월') {
             const sixMonthsAgo = new Date();
             sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
             sDate = sixMonthsAgo;
 
-        } else if (dateType === '직접 입력') {
+        } else if (searchType === '직접 입력') {
             eDate = '';
         }else{
             eDate = '';
@@ -112,7 +111,33 @@ const StatsVisitor = () => {
 
         setStartDate(sDate);
         setEndDate(eDate);
-    },[dateType]);
+    },[searchType]);
+
+
+    //접속자 이력조회 검색하기
+    const onSearchHandler = () => {
+        if(searchType){
+            if(searchType === '직접 입력' && (!startDate || !endDate)){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'직접입력시 날짜를 선택해주세요.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+            getBoardData(startDate, endDate);
+        }else{
+            getBoardData();
+        }
+    };
+
+
+    //입력 초기화
+    const onResetHandler = () => {
+        setSearchType('');
+        setSearchTxt('');
+    };
 
 
     return(<>
@@ -152,7 +177,8 @@ const StatsVisitor = () => {
                                 txt={`종료일`}
                             />
                         </div>
-                        <InputBox 
+                        <InputBox
+                            className="input_box" 
                             type={`text`}
                             placeholder={`접속자를 입력해주세요.`}
                             value={searchTxt}
@@ -163,8 +189,8 @@ const StatsVisitor = () => {
                         />
                     </div>
                     <div className="btn_wrap">
-                        <button type="button" className="btn_type17">입력 초기화</button>
-                        <button type="button" className="btn_type15" onClick={()=>getBoardData()}>검색</button>
+                        <button type="button" className="btn_type17" onClick={onResetHandler}>입력 초기화</button>
+                        <button type="button" className="btn_type15" onClick={onSearchHandler}>검색</button>
                     </div>
                 </div>
                 <div className="most_box">
@@ -172,14 +198,14 @@ const StatsVisitor = () => {
                         <span>최다 접속 경로</span>
                         {boardData.logsTopUrl && <>
                             <strong>{boardData.logsTopUrl.previousUrl}</strong>
-                            <button type="button" className="btn_type12">상세보기</button>
+                            <button type="button" className="btn_type12" onClick={()=>dispatch(adminVisitorHistoryPop({adminVisitorHistoryPop:true, adminVisitorHistoryPopType:1}))}>상세보기</button>
                         </>}
                     </div>
                     <div className="most_item">
                         <span>최다 브라우저</span>
                         {boardData.logsTopAgent && <>
                             <strong>{boardData.logsTopAgent.userAgent}</strong>
-                            <button type="button" className="btn_type12">상세보기</button>
+                            <button type="button" className="btn_type12" onClick={()=>dispatch(adminVisitorHistoryPop({adminVisitorHistoryPop:true, adminVisitorHistoryPopType:2}))}>상세보기</button>
                         </>}
                     </div>
                 </div>

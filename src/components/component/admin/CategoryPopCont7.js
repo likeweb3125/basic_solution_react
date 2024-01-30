@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { confirmPop, adminCategoryPopData, adminBoardGroupPop } from "../../../store/popupSlice";
-import InputBox from "./InputBox";
+import { confirmPop, adminSubCategoryPopData, adminBoardGroupPop } from "../../../store/popupSlice";
+import InputBox from "../InputBox";
 import TxtSelectBox from "./TxtSelectBox";
 import ConfirmPop from "../../popup/ConfirmPop";
 import Editor from "../Editor";
@@ -51,8 +51,8 @@ const CategoryPopCont7 = (props) => {
 
 
     useEffect(()=>{
-        //카테고리 값 변경시 adminCategoryPopData store 에 저장
-        dispatch(adminCategoryPopData(info));
+        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
+        dispatch(adminSubCategoryPopData(info));
     },[info]);
 
 
@@ -92,10 +92,18 @@ const CategoryPopCont7 = (props) => {
     //회원등급리스트 값 있으면 각각 권한 셀렉트에 txt 값 넣기
     useEffect(()=>{
         if(levelList.length > 0 && Object.keys(info).length > 0){
-            const read = levelList.find(item=>item.l_level === props.info.b_read_lv);
-            const write = levelList.find(item=>item.l_level === props.info.b_write_lv);
-            setReadSelect(read.l_name);
-            setWriteSelect(write.l_name);
+            let read = '';
+            let write = '';
+            if(props.info.b_read_lv){
+                read = levelList.find(item=>item.l_level === props.info.b_read_lv);
+                read = read.l_name;
+            }
+            if(props.info.b_write_lv){
+                write = levelList.find(item=>item.l_level === props.info.b_write_lv);
+                write = write.l_name;
+            }
+            setReadSelect(read);
+            setWriteSelect(write);
         }
     },[levelList, info]);
 
@@ -293,7 +301,7 @@ const CategoryPopCont7 = (props) => {
                                             class="select_type2"
                                             list={levelList}
                                             selected={readSelect || ""}
-                                            selectedLevel={readLevel}
+                                            selectedLevel={readLevel || null}
                                             onChangeHandler={(e)=>{
                                                 const val = e.currentTarget.value;
                                                 const level = e.target.options[e.target.selectedIndex].getAttribute("data-level");
@@ -313,7 +321,7 @@ const CategoryPopCont7 = (props) => {
                                             class="select_type2"
                                             list={levelList}
                                             selected={writeSelect || ""}
-                                            selectedLevel={writeLevel}
+                                            selectedLevel={writeLevel || null}
                                             onChangeHandler={(e)=>{
                                                 const val = e.currentTarget.value;
                                                 const level = e.target.options[e.target.selectedIndex].getAttribute("data-level");
@@ -414,7 +422,8 @@ const CategoryPopCont7 = (props) => {
                             <div className="form_input">
                                 <h6>게시 알림 전송 휴대폰 번호</h6>
                                 <div className="input_wrap">
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`숫자만 입력해주세요.`}
                                         value={info.b_alarm_phone || ""}

@@ -7,7 +7,7 @@ import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import { checkedList } from "../../store/etcSlice";
 import ConfirmPop from "../../components/popup/ConfirmPop";
-import InputBox from "../../components/component/admin/InputBox";
+import InputBox from "../../components/component/InputBox";
 import BtnInputBox from "../../components/component/admin/BtnInputBox";
 
 
@@ -170,7 +170,7 @@ const SettingLevel = () => {
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
-                    confirmPopTxt:'등급명이 등록되어있지 않아 초기 등급설정이 불가합니다. </br>등급명을 먼저 등록해주세요.',
+                    confirmPopTxt:'등급명이 등록되어있지 않아 초기 등급설정이 불가합니다. <br/>등급명을 먼저 등록해주세요.',
                     confirmPopBtn:1,
                 }));
                 setConfirm(true);
@@ -234,7 +234,8 @@ const SettingLevel = () => {
                                             <td>{cont.signup_lv !== null && <em className="txt_color2">설정</em>}</td>
                                             <td>
                                                 {cont.l_level === 9 || cont.l_level === 0 ? 
-                                                    <InputBox 
+                                                    <InputBox
+                                                        className="input_box" 
                                                         type={`text`}
                                                         value={cont.l_name}
                                                         disabled={true}

@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { confirmPop, adminCategoryPopData } from "../../../store/popupSlice";
-import InputBox from "./InputBox";
+import { confirmPop, adminSubCategoryPopData } from "../../../store/popupSlice";
+import InputBox from "../InputBox";
 import SelectBox from "./SelectBox";
 import ConfirmPop from "../../popup/ConfirmPop";
 
@@ -35,8 +35,8 @@ const CategoryPopCont3 = (props) => {
 
 
     useEffect(()=>{
-        //카테고리 값 변경시 adminCategoryPopData store 에 저장
-        dispatch(adminCategoryPopData(info));
+        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
+        dispatch(adminSubCategoryPopData(info));
     },[info]);
 
 
@@ -106,7 +106,8 @@ const CategoryPopCont3 = (props) => {
                             <div className="form_input">
                                 <h6>파일 경로</h6>
                                 <div className="input_wrap">
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`파일 경로를 입력해주세요.`}
                                         value={info.file_path || ""}
@@ -118,7 +119,8 @@ const CategoryPopCont3 = (props) => {
                             <div className="form_input">
                                 <h6>관리자 파일 경로</h6>
                                 <div className="input_wrap">
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`파일 경로를 입력해주세요.`}
                                         value={info.admin_file_path || ""}
@@ -132,7 +134,8 @@ const CategoryPopCont3 = (props) => {
                             <div className="form_input">
                                 <h6>수신 문자</h6>
                                 <div className="input_wrap">
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`숫자만 입력해주세요.`}
                                         value={info.sms || ""}
@@ -145,7 +148,8 @@ const CategoryPopCont3 = (props) => {
                             <div className="form_input">
                                 <h6>수신 메일</h6>
                                 <div className="input_wrap">
-                                    <InputBox 
+                                    <InputBox
+                                        className="input_box" 
                                         type={`text`}
                                         placeholder={`ID@example.com`}
                                         value={info.email || ""}
