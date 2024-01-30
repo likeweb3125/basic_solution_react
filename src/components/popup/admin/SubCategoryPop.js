@@ -30,19 +30,12 @@ const SubCategoryPop = () => {
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [info, setInfo] = useState({});
     const [error, setError] = useState({});
-    const [menuUi, setMenuUi] = useState("");
     const [titImg, setTitImg] = useState(null);
     const [titImgData, setTitImgData] = useState(null);
-    const [menuOnImg, setMenuOnImg] = useState(null);
-    const [menuOnImgData, setMenuOnImgData] = useState(null);
-    const [menuOffImg, setMenuOffImg] = useState(null);
-    const [menuOffImgData, setMenuOffImgData] = useState(null);
     const [tabList, setTabList] = useState(["HTML","빈 메뉴","고객맞춤","일반 게시판","갤러리 게시판","FAQ","문의게시판"]);
     const [tab, setTab] = useState(1);
     const [firstRender, setFirstRender] = useState(false);
     const [titImgDelt, setTitImgDelt] = useState(false);
-    const [menuOnImgDelt, setMenuOnImgDelt] = useState(false);
-    const [menuOffImgDelt, setMenuOffImgDelt] = useState(false);
 
 
     useEffect(()=>{
@@ -88,21 +81,12 @@ const SubCategoryPop = () => {
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
-                    data.c_menu_ui = data.c_menu_ui[0];
                     data.c_content_type = data.c_content_type[0];
                 setInfo(data);
 
                 if(data.c_main_banner_file){
                     setTitImg(data.c_main_banner_file);
                 }
-                if(data.c_menu_on_img){
-                    setMenuOnImg(data.c_menu_on_img);
-                }
-                if(data.c_menu_off_img){
-                    setMenuOffImg(data.c_menu_off_img);
-                }
-
-                setMenuUi(data.c_menu_ui);
                 setTab(data.c_content_type);
             }
         })
@@ -185,65 +169,18 @@ const SubCategoryPop = () => {
         }
     });
 
-    // 메뉴 이미지 On 등록
-    const { getRootProps: getRootProps2, getInputProps: getInputProps2 } = useDropzone({
-        accept: {
-          'image/*': []
-        },
-        onDrop: acceptedFiles => {
-            setMenuOnImg(acceptedFiles[0].name);
-            setMenuOnImgData(acceptedFiles);
-            setMenuOnImgDelt(false);
-        }
-    });
-
-    // 메뉴 이미지 OFF 등록
-    const { getRootProps: getRootProps3, getInputProps: getInputProps3 } = useDropzone({
-        accept: {
-          'image/*': []
-        },
-        onDrop: acceptedFiles => {
-            setMenuOffImg(acceptedFiles[0].name);
-            setMenuOffImgData(acceptedFiles);
-            setMenuOffImgDelt(false);
-        }
-    });
 
 
     //저장버튼 클릭시 필수입력 체크
     const saveBtnClickHandler = () => {
         const data = popup.adminSubCategoryPopData;
 
-        //공통 필수값 체크 (카테고리명, 메뉴UI, 카테고리종류) --------------
+        //공통 필수값 체크 (카테고리명, 카테고리종류) --------------
         if(!data.c_name){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
                 confirmPopTxt: '카테고리 명을 입력해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }else if(!data.c_menu_ui){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: '메뉴 UI 선택해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }else if(data.c_menu_ui.includes("IMG") && menuOnImg == null){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: '메뉴 ON 이미지를 등록해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }else if(data.c_menu_ui.includes("IMG") && menuOffImg == null){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: '메뉴 OFF 이미지를 등록해주세요.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -291,7 +228,7 @@ const SubCategoryPop = () => {
             for (const key in body) {
                 if (body.hasOwnProperty(key)) {
                     const value = body[key];
-                    if (key !== 'c_main_banner_file' && key !== 'c_menu_on_img' && key !== 'c_menu_off_img') {
+                    if (key !== 'c_main_banner_file') {
                         formData.append(key, value);
                     }
                 }
@@ -305,45 +242,9 @@ const SubCategoryPop = () => {
                 formData.append("c_main_banner_file", "");
             }
 
-            if(menuOnImgData){
-                menuOnImgData.forEach((file) => {
-                    formData.append("c_menu_on_img", file);
-                });
-            }else{
-                formData.append("c_menu_on_img", "");
-            }
-
-            if(menuOffImgData){
-                menuOffImgData.forEach((file) => {
-                    formData.append("c_menu_off_img", file);
-                });
-            }else{
-                formData.append("c_menu_off_img", "");
-            }
-
-
             // 제목이미지 삭제했으면 삭제
             if(titImgDelt){
                 formData.append("c_main_banner_file_del", "Y");
-            }
-
-            // 메뉴 UI 텍스트일때 on,off 이미지 삭제
-            // if(body.c_menu_ui.includes("TXT")){
-            //     if(body.c_menu_on_img){
-            //         formData.append("c_menu_on_img_del", "Y");
-            //     }if(body.c_menu_ff_img){
-            //         formData.append("c_menu_off_img_del", "Y");
-            //     }
-            // }
-
-            // 메뉴 UI 이미지일때 on,off 이미지 삭제했으면 삭제
-            else if(body.c_menu_ui.includes("IMG")){
-                if(menuOnImgDelt){
-                    formData.append("c_menu_on_img_del", "Y");
-                }
-                if(menuOffImgDelt){
-                    formData.append("c_menu_off_img_del", "Y");
-                }
             }
 
             formData.append("use_yn", "Y");
@@ -383,7 +284,7 @@ const SubCategoryPop = () => {
             for (const key in body) {
                 if (body.hasOwnProperty(key)) {
                     const value = body[key];
-                    if (key !== 'c_main_banner_file' && key !== 'c_menu_on_img' && key !== 'c_menu_off_img') {
+                    if (key !== 'c_main_banner_file') {
                         formData.append(key, value);
                     }
                 }
@@ -397,45 +298,10 @@ const SubCategoryPop = () => {
                 formData.append("c_main_banner_file", "");
             }
 
-            if(menuOnImgData){
-                menuOnImgData.forEach((file) => {
-                    formData.append("c_menu_on_img", file);
-                });
-            }else{
-                formData.append("c_menu_on_img", "");
-            }
-
-            if(menuOffImgData){
-                menuOffImgData.forEach((file) => {
-                    formData.append("c_menu_off_img", file);
-                });
-            }else{
-                formData.append("c_menu_off_img", "");
-            }
-
 
             // 제목이미지 삭제했으면 삭제
             if(titImgDelt){
                 formData.append("c_main_banner_file_del", "Y");
-            }
-
-            // 메뉴 UI 텍스트일때 on,off 이미지 삭제
-            // if(body.c_menu_ui.includes("TXT")){
-            //     if(body.c_menu_on_img){
-            //         formData.append("c_menu_on_img_del", "Y");
-            //     }if(body.c_menu_ff_img){
-            //         formData.append("c_menu_off_img_del", "Y");
-            //     }
-            // }
-
-            // 메뉴 UI 이미지일때 on,off 이미지 삭제했으면 삭제
-            else if(body.c_menu_ui.includes("IMG")){
-                if(menuOnImgDelt){
-                    formData.append("c_menu_on_img_del", "Y");
-                }
-                if(menuOffImgDelt){
-                    formData.append("c_menu_off_img_del", "Y");
-                }
             }
 
             formData.append("use_yn", "Y");
@@ -548,37 +414,6 @@ const SubCategoryPop = () => {
                                             </div>
                                         </div>
                                         <div className="form_input">
-                                            <h6>메뉴 UI <i>*</i></h6>
-                                            <div className="input_wrap">
-                                                <div className="chk_rdo_wrap">
-                                                    <div className="rdo_box1">
-                                                        <input type="radio" id="check_ui_1" className="blind"
-                                                            onChange={(e)=>{
-                                                                const checked = e.currentTarget.checked;
-                                                                onCheckChangeHandler(checked,"c_menu_ui","TXT");
-                                                            }}
-                                                            checked={info && info.c_menu_ui && info.c_menu_ui.includes("TXT") ? true : false}
-                                                            name="menuUi"
-                                                        />
-                                                        <label htmlFor="check_ui_1">텍스트</label>
-                                                    </div>
-                                                    <div className="rdo_box1">
-                                                        <input type="radio" id="check_ui_2" className="blind"
-                                                            onChange={(e)=>{
-                                                                const checked = e.currentTarget.checked;
-                                                                onCheckChangeHandler(checked,"c_menu_ui","IMG");
-                                                            }}
-                                                            checked={info && info.c_menu_ui && info.c_menu_ui.includes("IMG") ? true : false}
-                                                            name="menuUi"
-                                                        />
-                                                        <label htmlFor="check_ui_2">이미지</label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="form_box form_box3">
-                                        <div className="form_input">
                                             <h6>카테고리 제목 이미지</h6>
                                             <div className="input_wrap">
                                                 <div className="file_box1">
@@ -608,69 +443,6 @@ const SubCategoryPop = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* 메뉴 UI 이미지선택시에만 노출 */}
-                                        {info && info.c_menu_ui && info.c_menu_ui.includes("IMG") && <>
-                                            <div className="form_input">
-                                                <h6>메뉴 이미지 ON</h6>
-                                                <div className="input_wrap">
-                                                    <div className="file_box1">
-                                                        <div {...getRootProps2({className: 'dropzone'})}>
-                                                            <div className="input_file">
-                                                                <input {...getInputProps2({className: 'blind'})} />
-                                                                <label>
-                                                                    {menuOnImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
-                                                                    <strong>파일선택</strong>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        {menuOnImg != null &&
-                                                            <ul className="file_txt">
-                                                                <li>
-                                                                    <span>{menuOnImg}</span>
-                                                                    <button type="button" className="btn_file_remove" 
-                                                                        onClick={()=>{
-                                                                            setMenuOnImg(null);
-                                                                            setMenuOnImgData(null);
-                                                                            setMenuOnImgDelt(true);
-                                                                        }}
-                                                                    >파일삭제</button>
-                                                                </li>
-                                                            </ul>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="form_input">
-                                                <h6>메뉴 이미지 OFF</h6>
-                                                <div className="input_wrap">
-                                                    <div className="file_box1">
-                                                        <div {...getRootProps3({className: 'dropzone'})}>
-                                                            <div className="input_file">
-                                                                <input {...getInputProps3({className: 'blind'})} />
-                                                                <label>
-                                                                    {menuOffImg == null && <b>파일을 마우스로 끌어 오세요.</b>}
-                                                                    <strong>파일선택</strong>
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        {menuOffImg != null &&
-                                                            <ul className="file_txt">
-                                                                <li>
-                                                                    <span>{menuOffImg}</span>
-                                                                    <button type="button" className="btn_file_remove" 
-                                                                        onClick={()=>{
-                                                                            setMenuOffImg(null);
-                                                                            setMenuOffImgData(null);
-                                                                            setMenuOffImgDelt(true);
-                                                                        }}
-                                                                    >파일삭제</button>
-                                                                </li>
-                                                            </ul>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </>}
                                     </div>
                                 </div>
                             </div>                            

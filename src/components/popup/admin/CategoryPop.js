@@ -23,7 +23,6 @@ const CategoryPop = () => {
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [info, setInfo] = useState({});
     const [error, setError] = useState({});
-
     const [bannerImg, setBannerImg] = useState(null);
     const [bannerImgData, setBannerImgData] = useState(null);
     const [firstRender, setFirstRender] = useState(false);
@@ -170,10 +169,6 @@ const CategoryPop = () => {
             formData.append("c_name", info.c_name);
             formData.append("c_main_banner", sizeCheck);
             formData.append("c_main_banner_file", c_main_banner_file);
-            // formData.append("c_menu_ui", 'TXT');
-            // formData.append("c_menu_on_img", '');
-            // formData.append("c_menu_off_img", '');
-            // formData.append("c_contents_type", '');
             formData.append("c_use_yn", 'Y');
 
             axios.put(menu_modify, formData, {
@@ -211,10 +206,6 @@ const CategoryPop = () => {
             formData.append("c_name", info.c_name);
             formData.append("c_main_banner", sizeCheck);
             formData.append("c_main_banner_file", c_main_banner_file);
-            // formData.append("c_menu_ui", 'TXT');
-            // formData.append("c_menu_on_img", '');
-            // formData.append("c_menu_off_img", '');
-            // formData.append("c_contents_type", '');
             formData.append("c_use_yn", 'Y');
 
             axios.post(menu_modify, formData, {
