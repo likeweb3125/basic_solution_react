@@ -4,7 +4,7 @@ import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import { enum_api_uri } from '../../../config/enum';
 import * as CF from "../../../config/function";
-import { adminBannerPop } from '../../../store/popupSlice';
+import { adminBannerPop, adminCategoryPop, adminSubCategoryPop } from '../../../store/popupSlice';
 import { currentMenuId } from '../../../store/etcSlice';
 
 
@@ -29,6 +29,7 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu}) => {
         zIndex: isDragging ? '100' : undefined,
         background: '#fff'
     };
+
 
 
     return(
@@ -93,8 +94,12 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu}) => {
                     <div style={{'width':colgroup[2]}}>
                         <button type='button' className='link'
                             onClick={()=>{
-                                if(unMenu){
-
+                                if(unMenu){//미설정목록일때
+                                    if(data.c_depth === 1){ //1차 카테고리일때
+                                        dispatch(adminCategoryPop({adminCategoryPop:true, adminCategoryPopIdx:data.id}));
+                                    }else{                  //하위 카테고리일때
+                                        dispatch(adminSubCategoryPop({adminSubCategoryPop:true, adminSubCategoryPopIdx:data.id}));
+                                    }
                                 }else{
                                     dispatch(currentMenuId(data.id));
                                 }

@@ -47,6 +47,8 @@ const SubCategoryPop = () => {
 
     useEffect(()=>{
         console.log(info)
+        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
+        dispatch(adminSubCategoryPopData(info));
     },[info]);
 
 
@@ -211,6 +213,7 @@ const SubCategoryPop = () => {
     //저장버튼 클릭시 필수입력 체크
     const saveBtnClickHandler = () => {
         const data = popup.adminSubCategoryPopData;
+
         //공통 필수값 체크 (카테고리명, 메뉴UI, 카테고리종류) --------------
         if(!data.c_name){
             dispatch(confirmPop({
@@ -374,7 +377,95 @@ const SubCategoryPop = () => {
         }
         //새로등록일때
         else{
+            console.log(body)
 
+            // 객체를 순회하며 모든 속성을 formData에 추가
+            for (const key in body) {
+                if (body.hasOwnProperty(key)) {
+                    const value = body[key];
+                    if (key !== 'c_main_banner_file' && key !== 'c_menu_on_img' && key !== 'c_menu_off_img') {
+                        formData.append(key, value);
+                    }
+                }
+            }
+
+            if(titImgData){
+                titImgData.forEach((file) => {
+                    formData.append("c_main_banner_file", file);
+                });
+            }else{
+                formData.append("c_main_banner_file", "");
+            }
+
+            if(menuOnImgData){
+                menuOnImgData.forEach((file) => {
+                    formData.append("c_menu_on_img", file);
+                });
+            }else{
+                formData.append("c_menu_on_img", "");
+            }
+
+            if(menuOffImgData){
+                menuOffImgData.forEach((file) => {
+                    formData.append("c_menu_off_img", file);
+                });
+            }else{
+                formData.append("c_menu_off_img", "");
+            }
+
+
+            // 제목이미지 삭제했으면 삭제
+            if(titImgDelt){
+                formData.append("c_main_banner_file_del", "Y");
+            }
+
+            // 메뉴 UI 텍스트일때 on,off 이미지 삭제
+            // if(body.c_menu_ui.includes("TXT")){
+            //     if(body.c_menu_on_img){
+            //         formData.append("c_menu_on_img_del", "Y");
+            //     }if(body.c_menu_ff_img){
+            //         formData.append("c_menu_off_img_del", "Y");
+            //     }
+            // }
+
+            // 메뉴 UI 이미지일때 on,off 이미지 삭제했으면 삭제
+            else if(body.c_menu_ui.includes("IMG")){
+                if(menuOnImgDelt){
+                    formData.append("c_menu_on_img_del", "Y");
+                }
+                if(menuOffImgDelt){
+                    formData.append("c_menu_off_img_del", "Y");
+                }
+            }
+
+            formData.append("use_yn", "Y");
+
+            // axios.post(menu_sub, formData, {
+            //     headers: {
+            //         Authorization: `Bearer ${user.loginUser.accessToken}`,
+            //         "Content-Type": "multipart/form-data",
+            //     },
+            // })
+            // .then((res)=>{
+            //     if(res.status === 200){
+            //         dispatch(adminSubCategoryPopModify(true));
+            //         closePopHandler();
+            //     }
+            // })
+            // .catch((error) => {
+            //     const err_msg = CF.errorMsgHandler(error);
+            //     if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+            //         navigate("/console/login");
+            //     }else{
+            //         dispatch(confirmPop({
+            //             confirmPop:true,
+            //             confirmPopTit:'알림',
+            //             confirmPopTxt: err_msg,
+            //             confirmPopBtn:1,
+            //         }));
+            //         setConfirm(true);
+            //     }
+            // });
         }
     };
 

@@ -35,6 +35,7 @@ const TableWrap = (props) => {
     const api_uri = enum_api_uri.api_uri;
     const level_list = enum_api_uri.level_list;
     const banner_move = enum_api_uri.banner_move;
+    const menu_move = enum_api_uri.menu_move;
     const [confirm, setConfirm] = useState(false);
     const [colgroup, setColgroup] = useState([]);
     const [thList, setThList] = useState([]);
@@ -218,7 +219,42 @@ const TableWrap = (props) => {
             }
             //메뉴관리 - 카테고리관리 - 하위카테고리일때
             if(props.type === "submenu"){
-                console.log(active.id, over.id);
+                console.log(active);
+                const moveTd = list.find((item) => item.id === over.id);
+                const moveNum = moveTd.c_num;
+
+                console.log(moveNum)
+
+                // const body = {
+                //     id:active.id,
+                //     c_depth:,
+                //     c_depth_parent:,
+                //     c_num:,
+                // };
+
+                // axios.put(menu_move, body,
+                //     {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+                // )
+                // .then((res)=>{
+                //     if(res.status === 200){
+                //         setTdList((items) => {
+                //             const oldIndex = items.findIndex((item) => item.idx === active.id);
+                //             const newIndex = items.findIndex((item) => item.idx === over.id);
+            
+                //             return arrayMove(items, oldIndex, newIndex);
+                //         });
+                //     }
+                // })
+                // .catch((error) => {
+                //     const err_msg = CF.errorMsgHandler(error);
+                //     dispatch(confirmPop({
+                //         confirmPop:true,
+                //         confirmPopTit:'알림',
+                //         confirmPopTxt: err_msg,
+                //         confirmPopBtn:1,
+                //     }));
+                //     setConfirm(true);
+                // });
             }
         }
     }
@@ -682,7 +718,7 @@ const TableWrap = (props) => {
                             })}
                         </tbody>
                     </table>
-            : tdList && tdList.length === 0 || !tdList && <div className="none_data">데이터가 없습니다.</div>
+            : tdList && tdList.length === 0 && <div className="none_data">데이터가 없습니다.</div>
             }
         </div>
 

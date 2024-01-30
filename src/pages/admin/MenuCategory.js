@@ -361,7 +361,7 @@ const MenuCategory = () => {
                             class="tbl_wrap1 tbl_wrap1_1"
                             colgroup={["6%","9%","40%","10%","15%","10%","10%"]}
                             thList={["","순서","메뉴명","하위","컨텐츠유형","매핑 해제","순서"]}
-                            tdList={currentMenu.submenu}
+                            tdList={currentMenu.submenu || []}
                             type={"submenu"}
                         />
                     </div>

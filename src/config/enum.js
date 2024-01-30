@@ -48,6 +48,7 @@ exports.enum_api_uri = {
     menu_modify: `${api_uri}v1/admin/menu`,
     menu_sub_detail: `${api_uri}v1/admin/menu/sub/:id`,
     menu_sub: `${api_uri}v1/admin/menu/sub`,
+    menu_move: `${api_uri}v1/admin/menu/move`,
     
     //게시판관리 - 댓글관리
     comment_list: `${api_uri}v1/comment/admin`,

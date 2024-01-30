@@ -396,9 +396,6 @@ const CategoryPop = () => {
                                 </div>
                             </div>                            
                         </div>
-                        <div className="con_box">
-
-                        </div>
                         <div className="pop_btn_wrap">
                             <button type="button" className="btn_left" onClick={deltBtnClickHandler}>카테고리 삭제</button>
                             <div className="btn_box">
