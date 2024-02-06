@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone';
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { adminSubCategoryPop, confirmPop , adminSubCategoryPopData, adminSubCategoryPopModify } from "../../../store/popupSlice";
+import { adminSubCategoryPop, confirmPop , adminSubCategoryPopData, adminSubCategoryPopModify, adminSubCategoryPopParentData } from "../../../store/popupSlice";
 import ConfirmPop from "../ConfirmPop";
 import InputBox from "../../component/InputBox";
 import CategoryPopCont1 from "../../component/admin/CategoryPopCont1";
@@ -34,12 +34,10 @@ const SubCategoryPop = () => {
     const [titImgData, setTitImgData] = useState(null);
     const [tabList, setTabList] = useState(["HTML","빈 메뉴","고객맞춤","일반 게시판","갤러리 게시판","FAQ","문의게시판"]);
     const [tab, setTab] = useState(1);
-    const [firstRender, setFirstRender] = useState(false);
     const [titImgDelt, setTitImgDelt] = useState(false);
 
 
     useEffect(()=>{
-        console.log(info)
         //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
         dispatch(adminSubCategoryPopData(info));
     },[info]);
@@ -109,26 +107,61 @@ const SubCategoryPop = () => {
 
     //맨처음 
     useEffect(()=>{
-        if(!firstRender){
-            setFirstRender(true);
-        }
-
         //하위카테고리 수정일때만 상세정보 가져오기
         if(popup.adminSubCategoryPopIdx){
             getData();
+        }else{
+            let data = {
+                c_depth: popup.adminSubCategoryPopParentData.c_depth+1,
+                c_depth_parent: popup.adminSubCategoryPopParentData.id,
+                c_num:'',
+                c_content_type:1,
+                c_main_banner:'',
+                content:'',
+                b_list_cnt:10,
+                b_column_title:'',
+                b_column_date:'',
+                b_column_view:'',
+                b_column_recom:'',
+                b_column_file:'',
+                b_thumbnail_with:0,
+                b_thumbnail_height:0,
+                b_thumbnail:'1',
+                b_read_lv:0,
+                b_write_lv:0,
+                b_group:'',
+                b_secret:'',
+                b_reply:'',
+                b_reply_lv:0,
+                b_comment:'',
+                b_comment_lv:0,
+                b_write_alarm:'',
+                b_write_send:'',
+                b_alarm:'',
+                b_alarm_phone:'',
+                b_top_html:'',
+                b_template:'',
+                b_template_text:'',
+                c_type:'',
+                file_path:'',
+                admin_file_path:'',
+                sms:'',
+                email:'',
+            };
+            setInfo({...data});
         }
     },[]);
 
     
-    //카테고리 종류 탭 변경시 info 값 변경
-    useEffect(()=>{
-        if(firstRender){
-            let newInfo = {...info};
-                newInfo.c_content_type = tab;
-                
-            setInfo(newInfo);
-        }
-    },[tab]);
+    //카테고리 종류 탭 클릭시
+    const tabClickHandler = (idx) => {
+        setTab(idx);
+
+        let newInfo = {...info};
+            newInfo.c_content_type = idx;
+            
+        setInfo(newInfo);
+    };
     
 
     //인풋값 변경시
@@ -140,20 +173,6 @@ const SubCategoryPop = () => {
             newInfo[id] = val;
             
         setInfo(newInfo);
-    };
-
-
-    //체크박스, 라디오 값 변경시
-    const onCheckChangeHandler = (checked, name, val) => {
-        let newData = {...info};
-
-        if(checked){
-            newData[name] = val;
-        }else{
-            newData[name] = "";
-        }
-        
-        setInfo(newData);
     };
 
     
@@ -170,13 +189,18 @@ const SubCategoryPop = () => {
     });
 
 
+    useEffect(()=>{
+        console.log(popup.adminSubCategoryPopData);
+    },[popup.adminSubCategoryPopData]);
+
+
 
     //저장버튼 클릭시 필수입력 체크
     const saveBtnClickHandler = () => {
         const data = popup.adminSubCategoryPopData;
 
         //공통 필수값 체크 (카테고리명, 카테고리종류) --------------
-        if(!data.c_name){
+        if(!data || !data.c_name){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -223,7 +247,6 @@ const SubCategoryPop = () => {
 
         //수정일때
         if(popup.adminSubCategoryPopIdx){
-
             // 객체를 순회하며 모든 속성을 formData에 추가
             for (const key in body) {
                 if (body.hasOwnProperty(key)) {
@@ -247,7 +270,9 @@ const SubCategoryPop = () => {
                 formData.append("c_main_banner_file_del", "Y");
             }
 
-            formData.append("use_yn", "Y");
+            formData.append("c_use_yn", "Y");
+
+            console.log(body);
 
             axios.put(menu_sub, formData, {
                 headers: {
@@ -278,8 +303,6 @@ const SubCategoryPop = () => {
         }
         //새로등록일때
         else{
-            console.log(body)
-
             // 객체를 순회하며 모든 속성을 formData에 추가
             for (const key in body) {
                 if (body.hasOwnProperty(key)) {
@@ -304,34 +327,35 @@ const SubCategoryPop = () => {
                 formData.append("c_main_banner_file_del", "Y");
             }
 
-            formData.append("use_yn", "Y");
+            formData.append("c_use_yn", "Y");
 
-            // axios.post(menu_sub, formData, {
-            //     headers: {
-            //         Authorization: `Bearer ${user.loginUser.accessToken}`,
-            //         "Content-Type": "multipart/form-data",
-            //     },
-            // })
-            // .then((res)=>{
-            //     if(res.status === 200){
-            //         dispatch(adminSubCategoryPopModify(true));
-            //         closePopHandler();
-            //     }
-            // })
-            // .catch((error) => {
-            //     const err_msg = CF.errorMsgHandler(error);
-            //     if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-            //         navigate("/console/login");
-            //     }else{
-            //         dispatch(confirmPop({
-            //             confirmPop:true,
-            //             confirmPopTit:'알림',
-            //             confirmPopTxt: err_msg,
-            //             confirmPopBtn:1,
-            //         }));
-            //         setConfirm(true);
-            //     }
-            // });
+
+            axios.post(menu_sub, formData, {
+                headers: {
+                    Authorization: `Bearer ${user.loginUser.accessToken}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            })
+            .then((res)=>{
+                if(res.status === 200){
+                    dispatch(adminSubCategoryPopModify(true));
+                    closePopHandler();
+                }
+            })
+            .catch((error) => {
+                const err_msg = CF.errorMsgHandler(error);
+                if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                    navigate("/console/login");
+                }else{
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt: err_msg,
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }
+            });
         }
     };
 
@@ -454,13 +478,13 @@ const SubCategoryPop = () => {
                                     {tabList.map((cont,i)=>{
                                         return(
                                             <li key={i} className={tab === i+1? "on" : ""}>
-                                                <button type="button" onClick={()=>setTab(i+1)}>{cont}</button>
+                                                <button type="button" onClick={()=>tabClickHandler(i+1)}>{cont}</button>
                                             </li>
                                         );
                                     })}
                                 </ul>
                                 <div className="tab_con_wrap">
-                                    {tab === 1 ? <CategoryPopCont1 />
+                                    {tab === 1 ? <CategoryPopCont1 info={info} />
                                         : tab === 2 ? <CategoryPopCont2 info={info} />
                                         : tab === 3 ? <CategoryPopCont3 info={info} />
                                         : tab === 4 ? <CategoryPopCont4 info={info} />

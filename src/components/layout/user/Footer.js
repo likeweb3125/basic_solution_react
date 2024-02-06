@@ -8,7 +8,6 @@ const Footer = () => {
 
     useEffect(()=>{
         setInfo(common.siteInfo);
-        console.log(common.siteInfo);
     },[common.siteInfo]);
 
 

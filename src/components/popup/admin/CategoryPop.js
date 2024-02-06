@@ -5,9 +5,11 @@ import { useDropzone } from 'react-dropzone';
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { adminCategoryPop, adminCategoryPopModify, confirmPop } from "../../../store/popupSlice";
+import { adminCategoryPop, adminCategoryPopModify, confirmPop, adminCategoryPopDelt } from "../../../store/popupSlice";
+import { checkedList, activeMenuId } from "../../../store/etcSlice";
 import ConfirmPop from "../ConfirmPop";
 import InputBox from "../../component/InputBox";
+import TableWrap from "../../component/admin/TableWrap";
 
 
 const CategoryPop = () => {
@@ -15,6 +17,7 @@ const CategoryPop = () => {
     const navigate = useNavigate();
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
+    const etc = useSelector((state)=>state.etc);
     const menu_detail = enum_api_uri.menu_detail;
     const menu_modify = enum_api_uri.menu_modify;
     const [confirm, setConfirm] = useState(false);
@@ -27,12 +30,10 @@ const CategoryPop = () => {
     const [bannerImgData, setBannerImgData] = useState(null);
     const [firstRender, setFirstRender] = useState(false);
     const [sizeCheck, setSizeCheck] = useState("1");
-
-
-    useEffect(()=>{
-        console.log(info)
-    },[info]);
-
+    const [checkList, setCheckList] = useState([]);
+    const [checkedNum, setCheckedNum] = useState(0);
+    const [currentMenuDelt, setCurrentMenuDelt] = useState(false);
+    
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
@@ -132,6 +133,32 @@ const CategoryPop = () => {
             setBannerImgData(acceptedFiles);
         }
     });
+
+
+    //맨처음 리스트 id값만 배열로 (전체 체크박스리스트 만들기)
+    useEffect(()=>{
+        if(etc.cateMenuList.length > 0){
+            const list = etc.cateMenuList.map((item) => item.id).filter(Boolean);
+            setCheckList([...list]);
+        }
+    },[etc.cateMenuList]);
+
+
+    //전체선택 체크박스 체크시
+    const allCheckHandler = (checked) => {
+        if(checked){
+            dispatch(checkedList([...checkList]));
+        }else{
+            dispatch(checkedList([]));
+        }
+    };
+
+
+    //체크박스 변경시 체크된 수 변경
+    useEffect(()=>{
+        const num = etc.checkedList.length;
+        setCheckedNum(num);
+    },[etc.checkedList]);
 
 
     //저장버튼 클릭시 필수입력 체크
@@ -239,21 +266,46 @@ const CategoryPop = () => {
 
     
     //삭제버튼 클릭시
-    const deltBtnClickHandler = () => {
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt:'해당 카테고리를 삭제하시겠습니까?',
-            confirmPopBtn:2,
-        }));
-        setDeltConfirm(true);
+    const deltBtnClickHandler = (id) => {
+        if(id){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'해당 카테고리를 삭제하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+            setDeltConfirm(true);
+        }else{
+            if(checkedNum > 0){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'해당 카테고리를 삭제하시겠습니까?',
+                    confirmPopBtn:2,
+                }));
+                setDeltConfirm(true);
+            }else if(checkedNum === 0){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'카테고리를 선택해주세요.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        }
     };
 
 
     // 카테고리삭제하기
     const deltHandler = () => {
+        let id = etc.checkedList;
+        if(currentMenuDelt){
+            id = info.id;
+        }
+
         const body = {
-            id: popup.adminCategoryPopIdx,
+            id: id,
         };
         axios.delete(menu_modify,
             {
@@ -263,8 +315,10 @@ const CategoryPop = () => {
         )
         .then((res)=>{
             if(res.status === 200){
+                dispatch(activeMenuId(null)); //현재선택된 activeMenuId 값 지우기
+                dispatch(adminCategoryPopDelt(true));
+
                 closePopHandler();
-                dispatch(adminCategoryPopModify(true));
             }
         })
         .catch((error) => {
@@ -282,6 +336,7 @@ const CategoryPop = () => {
             }
         });
     };
+
 
 
     return(<>
@@ -388,10 +443,47 @@ const CategoryPop = () => {
                             </div>                            
                         </div>
                         <div className="pop_btn_wrap">
-                            <button type="button" className="btn_left" onClick={deltBtnClickHandler}>카테고리 삭제</button>
-                            <div className="btn_box">
+                            <div className="btn_box bp5">
+                                <button type="button" className="btn_left" 
+                                    onClick={()=>{
+                                        setCurrentMenuDelt(true);
+                                        deltBtnClickHandler(info.id);
+                                    }}
+                                >카테고리 삭제</button>
                                 <button type="button" className="btn_type3" onClick={closeBtnClickHandler}>취소</button>
                                 <button type="button" className="btn_type4" onClick={saveBtnClickHandler}>저장</button>
+                            </div>
+                        </div>
+                        <div className="con_box">
+                            <div className="board_section tm15">
+                                <div className="board_table_util">
+                                    <div className="chk_area">
+                                        <div className="chk_box2">
+                                            <input type="checkbox" id="menuChkAll" className="blind"
+                                                onChange={(e)=>{
+                                                    allCheckHandler(e.currentTarget.checked)
+                                                }} 
+                                                checked={checkList.length > 0 && checkList.length === etc.checkedList.length && checkList.every(item => etc.checkedList.includes(item))}
+                                            />
+                                            <label htmlFor="menuChkAll">전체선택</label>
+                                        </div>
+                                    </div>
+                                    <div className="util_wrap">
+                                        <span>선택한 카테고리</span>
+                                        <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>개</span>
+                                    </div>
+                                    <div className="util_right">
+                                        <button type="button" className="btn_type9" onClick={deltBtnClickHandler}>삭제</button>
+                                    </div>
+                                </div>
+                                <TableWrap 
+                                    class="tbl_wrap1 tbl_wrap1_1"
+                                    colgroup={["6%","9%","65%","10%","10%"]}
+                                    thList={["","순서","메뉴명","하위","순서"]}
+                                    tdList={etc.cateMenuList}
+                                    type={"menu"}
+                                    menuDepth={1}
+                                />
                             </div>
                         </div>
                     </div>

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { NumericFormat, PatternFormat } from "react-number-format";
 
 
@@ -8,8 +9,8 @@ const InputBox = (props) => {
             {props.countShow && <span className="char_cnt">{`${props.count}/${props.countMax}`}</span>}
             {props.numberOnly ? 
                 <NumericFormat 
-                    thousandSeparator="," 
-                    decimalScale={0} 
+                    thousandSeparator={props.thousandSeparator} 
+                    decimalScale={props.decimalScale} 
                     placeholder={props.placeholder}
                     value={props.value}
                     onChange={props.onChangeHandler}
@@ -17,10 +18,11 @@ const InputBox = (props) => {
                     maxLength={props.countMax}
                     className={props.inputClassName}
                     disabled={props.disabled}
+                    name={props.name}
                 />
                 :   props.phone ? 
                     <PatternFormat 
-                        format="###-####-####"
+                        format='###-####-####'
                         placeholder={props.placeholder}
                         value={props.value}
                         onChange={props.onChangeHandler}
@@ -28,6 +30,7 @@ const InputBox = (props) => {
                         maxLength={props.countMax}
                         className={props.inputClassName}
                         disabled={props.disabled}
+                        name={props.name}
                     />
                 :   <input 
                         type={props.type} 
@@ -39,6 +42,7 @@ const InputBox = (props) => {
                         className={props.inputClassName}
                         disabled={props.disabled}
                         onKeyDown={props.onKeyDownHandler}
+                        name={props.name}
                     />
             }
             {props.password && <button type="button" className="view_pwd" onClick={props.passwordBtnClickHandler}>비밀번호 보기</button>}

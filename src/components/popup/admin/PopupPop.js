@@ -592,6 +592,8 @@ const PopupPop = () => {
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`p_width_size`}
                                                     numberOnly={true}
+                                                    thousandSeparator={','}
+                                                    decimalScale={0}
                                                     txt={`가로`}
                                                 />
                                                 <InputBox2 
@@ -600,6 +602,8 @@ const PopupPop = () => {
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`p_height_size`}
                                                     numberOnly={true}
+                                                    thousandSeparator={','}
+                                                    decimalScale={0}
                                                     txt={`세로`}
                                                 />
                                             </div>
@@ -615,6 +619,8 @@ const PopupPop = () => {
                                                         onChangeHandler={onInputChangeHandler}
                                                         id={`p_left_point`}
                                                         numberOnly={true}
+                                                        thousandSeparator={','}
+                                                        decimalScale={0}
                                                         txt={`가로`}
                                                     />
                                                     <InputBox2 
@@ -623,6 +629,8 @@ const PopupPop = () => {
                                                         onChangeHandler={onInputChangeHandler}
                                                         id={`p_top_point`}
                                                         numberOnly={true}
+                                                        thousandSeparator={','}
+                                                        decimalScale={0}
                                                         txt={`세로`}
                                                     />
                                                 </div>

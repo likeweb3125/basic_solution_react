@@ -10,6 +10,8 @@ import SelectBox from "../../components/component/admin/SelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
+import Chart from "react-apexcharts"
+
 
 
 const StatsChart = () => {
@@ -19,6 +21,7 @@ const StatsChart = () => {
     const user = useSelector((state)=>state.user);
     const all_stats_data = enum_api_uri.all_stats_data;
     const stat_data = enum_api_uri.stat_data;
+    const stat_chart = enum_api_uri.stat_chart;
     const [confirm, setConfirm] = useState(false);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -26,7 +29,12 @@ const StatsChart = () => {
     const [statsData, setStatsData] = useState({});
     const [currentTime, setCurrentTime] = useState('');
     const [dateType, setDateType] = useState('최근 1주');
-    const [chartTabOn, setChartTabOn] = useState(1);
+    const [chartTabs, setChartTabs] = useState(['방문','가입회원','게시글','댓글']);
+    const [chartTabOn, setChartTabOn] = useState(0);
+    const [allChartData, setAllChartData] = useState([]);
+    const [chartData, setChartData] = useState([]);
+    const [chartOptions, setChartOptions] = useState({});
+    const [type, setType] = useState('daily');
 
 
     // Confirm팝업 닫힐때
@@ -87,6 +95,9 @@ const StatsChart = () => {
             if(res.status === 200){
                 const data = res.data.data;
                 setStatsData({...data});
+
+                //사이트현황통계 차트 가져오기
+                getChartData(start_date, end_date);
             }
         })
         .catch((error) => {
@@ -168,6 +179,213 @@ const StatsChart = () => {
             getStatsData(startDate, endDate);
         }
     };
+
+
+    //사이트현황통계 차트 가져오기
+    const getChartData = (sDate, eDate) => {
+        axios.get(`${stat_chart}${sDate ? "?start="+sDate : ""}${eDate ? "&end="+eDate : ""}${"&type="+type}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                const data = res.data.data;
+                const labels = data.labels;
+                const datasets = data.datasets;
+
+                // 각각의 데이터 배열을 생성
+                const data1 = labels.map((date, index) => ({ date, value: datasets[0].data[index] }));
+                const data2 = labels.map((date, index) => ({ date, value: datasets[1].data[index] }));
+                const data3 = labels.map((date, index) => ({ date, value: datasets[2].data[index] }));
+                const data4 = labels.map((date, index) => ({ date, value: datasets[3].data[index] }));
+                const allData = [data1, data2, data3, data4];
+                setAllChartData(allData);
+
+                //첫번째 탭(방문) 데이터값으로 차트값 변경
+                setChartData(data1);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
+
+    
+    //사이트현황통계 차트 탭 변경시 차트값 변경
+    useEffect(()=>{
+        if(Object.keys(allChartData).length > 0){
+            setChartData(allChartData[chartTabOn]);
+        }
+    },[chartTabOn]);
+
+
+
+    useEffect(()=>{
+        console.log(chartData);
+        if(chartData && chartData.length > 0){
+            /** 최근 1주 - 일별(7항목)
+            * 1개월 - 1주씩(4항목)
+            * 3개월 - 1주씩(12항목)
+            * 6개월 - 1달씩(6항목)
+            */
+            const showCnt = 7;
+            // const showData = chartData.slice(0, showCnt);
+            const showData = chartData;
+
+            const dateLabels = [];
+            const dateValues = [];
+
+            showData.reverse().map(item => {
+                const date = new Date(item.date);
+                const dayOfWeekFormatter = new Intl.DateTimeFormat('ko-KR', {
+                    weekday: 'short',
+                });
+                const dateFormatter = new Intl.DateTimeFormat('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                });
+                
+                const formattedDayOfWeek = dayOfWeekFormatter.format(date);
+                const formattedDate = dateFormatter.format(date).replace(/\d{4}\. 0?(\d+)\. 0?(\d+)\./, '$1.$2');
+                // const month = (date.getMonth() + 1).toString();
+                // const day = date.getDate().toString();
+
+                // const formattedDate = `${month}.${day}`;
+                
+                dateLabels.push([formattedDate, formattedDayOfWeek]);
+                dateValues.push(item.value);
+            });
+            
+
+            const options = {
+                options: {
+                    series: [{
+                        name: "방문자수",
+                        data: dateValues
+                    }],
+                    chart: {
+                        zoom: {
+                            enabled: false
+                        },
+                        toolbar: {
+                            show: false,
+                        },
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        colors: ['#818cf8'],
+                        width: 4
+                    },
+                    markers: {
+                        colors: ['#818cf8'],
+                        hover: {
+                            size: 7,
+                        }
+                    },
+                    tooltip: {
+                        marker: {
+                            show: false,
+                        },
+                        custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                            const date = new Date(showData[dataPointIndex].date);
+                            const dateFormatter = new Intl.DateTimeFormat('ko-KR', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit'
+                            });
+                            let formattedDate = dateFormatter.format(new Date(date));
+                            formattedDate = formattedDate.replace(/\s+|\.$/g, '');
+                            const tooltipHtml = `<div class="charts_tooltip">
+                                <span class="tooltip_date">${formattedDate}</span>
+                                <span class="value_area">
+                                    <i>${w.globals.seriesNames}</i>
+                                    <b>${series[seriesIndex][dataPointIndex]}</b>
+                                </span>
+                            </div>`;
+                            return tooltipHtml;
+                        },
+                    },
+                    grid: {
+                        show: true,
+                        borderColor: 'rgba(221, 221, 221, 0.3)',
+                        position: 'back',
+                        xaxis: {
+                            lines: {
+                                show: true,
+                            }
+                        },
+                        yaxis: {
+                            lines: {
+                                show: true,
+                            }
+                        },
+                        padding: {
+                            top: 0,
+                            right: 40,
+                            bottom: -20,
+                            left: 40
+                        },
+                    },
+                    xaxis: {
+                        type: 'category', // X 축 타입을 카테고리로 설정
+                        categories: dateLabels, // X 축 라벨 설정
+                        labels: {
+                            style: {
+                                fontSize: '16px',
+                                fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, 맑은 고딕, malgun gothic, Apple SD Gothic Neo, sans-serif',
+                                colors: 'rgba(255, 255, 255, 0.8)',
+                                cssClass: 'charts_x_label'
+                            },
+                        },
+                        tooltip: {
+                            enabled: false,
+                        },
+                        axisBorder: {
+                            show: false,
+                        },
+                        axisTicks: {
+                            show: false,
+                        }
+                    },
+                    yaxis: {
+                        show: true,
+                        tickAmount: 4,
+                        floating: true,
+                        labels: {
+                            align: 'left',
+                            style: {
+                                fontSize: '16px',
+                                fontFamily: 'Pretendard Variable, Pretendard, Noto Sans KR, 맑은 고딕, malgun gothic, Apple SD Gothic Neo, sans-serif',
+                                colors: 'rgba(255, 255, 255, 0.8)',
+                                cssClass: 'charts_x_label'
+                            },
+                            offsetX: 41,
+                            offsetY: -5,
+                        },
+                    }
+                }
+            };
+            
+            setChartOptions(options);
+        }
+    },[chartData]);
+
+
+    
+    
    
 
 
@@ -260,33 +478,48 @@ const StatsChart = () => {
                                     maxDate={dateType != '직접 입력' && endDate}
                                 />
                             </div>
+                            <div className="chk_box1">
+                                <input type="checkbox" id="chkType" className="blind" 
+                                    onChange={(e)=>{
+                                        const checked = e.currentTarget.checked;
+                                        if(checked){
+                                            setType('monthly');
+                                        }else{
+                                            setType('daily');
+                                        }
+                                    }}
+                                    checked={type == 'monthly' ? true : false}
+                                />
+                                <label htmlFor="chkType">월별로 보기</label>
+                            </div>
                         </div>
                         <div className="btn_wrap">
                             <button type="button" className="btn_type15" onClick={onSearchHandler}>검색</button>
                         </div>
                     </div>
-
                     <div className="charts_box">
                         <div className="charts_tit">
                             <h4>사이트 현황 통계</h4>
                             <ul className="charts_tab">
-                                <li className={chartTabOn === 1 ? 'on' : ''}>
-                                    <button type="button" onClick={()=>setChartTabOn(1)}>방문</button>
-                                </li>
-                                <li className={chartTabOn === 2 ? 'on' : ''}>
-                                    <button type="button" onClick={()=>setChartTabOn(2)}>가입회원</button>
-                                </li>
-                                <li className={chartTabOn === 3 ? 'on' : ''}>
-                                    <button type="button" onClick={()=>setChartTabOn(3)}>게시글</button>
-                                </li>
-                                <li className={chartTabOn === 4 ? 'on' : ''}>
-                                    <button type="button" onClick={()=>setChartTabOn(4)}>댓글</button>
-                                </li>
+                                {chartTabs.map((tab,i)=>{
+                                    return(
+                                        <li key={i} className={chartTabOn === i ? 'on' : ''}>
+                                            <button type="button" onClick={()=>setChartTabOn(i)}>{tab}</button>
+                                        </li>
+                                    );
+                                })}
                             </ul>
                         </div>
                         <div className="charts" id="chart"></div>
+                        {Object.keys(chartOptions).length > 0 &&
+                            <Chart 
+                                options={chartOptions.options}
+                                series={chartOptions.options.series}
+                                type="line"
+                                height={350}
+                            />
+                        }
                     </div>
-
                 </div>
                 <div className="total_num_box">
                     <ul>

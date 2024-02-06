@@ -10,10 +10,11 @@ const etc = createSlice({
         listPageData: {},
         scrollY: null,
         closePopIdx: null,
-        termsCheckList: [], //회원가입시 이용약관 체크박스리스트
+        termsCheckList: [],  //회원가입시 이용약관 체크박스리스트
         menuCheckList: [],
         unMenuCheckList: [],
-        currentMenuId: null,
+        cateMenuList: [],        //관리자단-메뉴관리-카테고리관리 1차카테고리 메뉴리스트
+        activeMenuId: null,
     },
     reducers:{
         pageNo: (state, action) => {
@@ -46,8 +47,11 @@ const etc = createSlice({
         unMenuCheckList: (state, action) => {
             state.unMenuCheckList = action.payload;
         },
-        currentMenuId: (state, action) => {
-            state.currentMenuId = action.payload;
+        cateMenuList: (state, action) => {
+            state.cateMenuList = action.payload;
+        },
+        activeMenuId: (state, action) => {
+            state.activeMenuId = action.payload;
         },
     }
 });
@@ -63,6 +67,7 @@ export const {
     termsCheckList,
     menuCheckList,
     unMenuCheckList,
-    currentMenuId
+    cateMenuList,
+    activeMenuId,
 } = etc.actions;
 export default etc;

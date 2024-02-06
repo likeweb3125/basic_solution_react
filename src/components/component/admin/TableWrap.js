@@ -7,7 +7,7 @@ import 'moment/locale/ko';
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { checkedList, scrollY, menuCheckList, unMenuCheckList } from "../../../store/etcSlice";
-import { confirmPop, adminPolicyPop, adminPopupPop, adminMemberInfoPop } from "../../../store/popupSlice";
+import { confirmPop, adminPolicyPop, adminPopupPop, adminMemberInfoPop, adminCategoryPopModify } from "../../../store/popupSlice";
 import DndTr from "./DndTr";
 import {
     DndContext,
@@ -50,18 +50,25 @@ const TableWrap = (props) => {
         }
     },[popup.confirmPop]);
 
+
     
     //체크박스 체크시
-    const checkHandler = async (checked, value) => {
+    const checkHandler = (checked, value) => {
         const val = parseInt(value, 10); //input의 value 가 문자열로 처리됨으로 숫자로 변경해줌
 
-        let newList = etc.checkedList;
-        if(props.type === 'submenu'){ //메뉴관리 - 카테고리관리 - 하위카테고리일때
-            if(props.unMenu){
+        let newList;
+        
+        //메뉴관리 - 카테고리관리일때
+        if(props.type === 'menu'){
+            if(props.unMenu){ //미설정목록일때  
                 newList = etc.unMenuCheckList;
+            }else if(props.menuDepth === 1){ //1차카테고리일때  
+                newList = etc.checkedList;
             }else{
                 newList = etc.menuCheckList;
             }
+        }else{
+            newList = etc.checkedList;
         }
 
         if(checked){
@@ -70,9 +77,12 @@ const TableWrap = (props) => {
             newList = newList.filter((el)=>el !== val);
         }
 
-        if(props.type === 'submenu'){ //메뉴관리 - 카테고리관리 - 하위카테고리일때
-            if(props.unMenu){
+        //메뉴관리 - 카테고리관리일때
+        if(props.type === 'menu'){ 
+            if(props.unMenu){ //미설정목록일때     
                 dispatch(unMenuCheckList(newList));
+            }else if(props.menuDepth === 1){ //1차카테고리일때  
+                dispatch(checkedList(newList));
             }else{
                 dispatch(menuCheckList(newList));
             }
@@ -217,44 +227,48 @@ const TableWrap = (props) => {
                     setConfirm(true);
                 });
             }
-            //메뉴관리 - 카테고리관리 - 하위카테고리일때
-            if(props.type === "submenu"){
-                console.log(active);
+            //메뉴관리 - 카테고리관리일때
+            if(props.type === "menu"){
+                const c_depth = active.data.current.c_depth;
+                const c_depth_parent = active.data.current.c_depth_parent;
                 const moveTd = list.find((item) => item.id === over.id);
                 const moveNum = moveTd.c_num;
 
-                console.log(moveNum)
+                const body = {
+                    id: active.id,
+                    c_depth: c_depth,
+                    c_depth_parent: c_depth_parent,
+                    c_num: moveNum,
+                };
 
-                // const body = {
-                //     id:active.id,
-                //     c_depth:,
-                //     c_depth_parent:,
-                //     c_num:,
-                // };
-
-                // axios.put(menu_move, body,
-                //     {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-                // )
-                // .then((res)=>{
-                //     if(res.status === 200){
-                //         setTdList((items) => {
-                //             const oldIndex = items.findIndex((item) => item.idx === active.id);
-                //             const newIndex = items.findIndex((item) => item.idx === over.id);
+                axios.put(menu_move, body,
+                    {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+                )
+                .then((res)=>{
+                    if(res.status === 200){
+                        setTdList((items) => {
+                            const oldIndex = items.findIndex((item) => item.id === active.id);
+                            const newIndex = items.findIndex((item) => item.id === over.id);
             
-                //             return arrayMove(items, oldIndex, newIndex);
-                //         });
-                //     }
-                // })
-                // .catch((error) => {
-                //     const err_msg = CF.errorMsgHandler(error);
-                //     dispatch(confirmPop({
-                //         confirmPop:true,
-                //         confirmPopTit:'알림',
-                //         confirmPopTxt: err_msg,
-                //         confirmPopBtn:1,
-                //     }));
-                //     setConfirm(true);
-                // });
+                            return arrayMove(items, oldIndex, newIndex);
+                        });
+
+                        //1차카테고리관리일때
+                        if(props.menuDepth === 1){
+                            dispatch(adminCategoryPopModify(true));
+                        }
+                    }
+                })
+                .catch((error) => {
+                    const err_msg = CF.errorMsgHandler(error);
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt: err_msg,
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                });
             }
         }
     }
@@ -307,7 +321,7 @@ const TableWrap = (props) => {
                             </tbody>
                         </table>
                     </DndContext>
-                :props.type === "submenu" ? //메뉴관리 - 카테고리관리 - 하위카테고리일때
+                :props.type === "menu" ? //메뉴관리 - 카테고리관리일때
                     <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}
@@ -340,6 +354,9 @@ const TableWrap = (props) => {
                                                     colgroup={colgroup}
                                                     type={props.type}
                                                     unMenu={props.unMenu}
+                                                    menuDepth={props.menuDepth}
+                                                    onMappingHandler={props.onMappingHandler}
+                                                    onMenuClickHandler={props.onMenuClickHandler}
                                                 />  
                                             </tr>                                                                                                                                                                            
                                         ))}

@@ -86,7 +86,7 @@ const TermsPop = () => {
                             </div>
                         </div>
                         <div className="pop_btn_wrap">
-                            <div className="btn_box">
+                            <div className="btn_box w_100">
                                 <button type="button" className="btn_type3" onClick={closePopHandler}>취소</button>
                                 <button type="button" className="btn_type4" onClick={onAgreeHandler}>동의</button>
                             </div>

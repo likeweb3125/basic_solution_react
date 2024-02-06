@@ -28,6 +28,10 @@ exports.enum_api_uri = {
 
 
     // 사용자단 ------------------------------------------
+    //회원
+    signup: `${api_uri}v1/auth/signup`,
+
+
     //팝업
     auth_popup_list: `${api_uri}v1/auth/popup/`,
 
@@ -49,6 +53,7 @@ exports.enum_api_uri = {
     menu_sub_detail: `${api_uri}v1/admin/menu/sub/:id`,
     menu_sub: `${api_uri}v1/admin/menu/sub`,
     menu_move: `${api_uri}v1/admin/menu/move`,
+    menu_mapping: `${api_uri}v1/admin/menu/mapping`,
     
     //게시판관리 - 댓글관리
     comment_list: `${api_uri}v1/comment/admin`,
@@ -61,7 +66,6 @@ exports.enum_api_uri = {
     member_modify: `${api_uri}v1/admin/member/`,
     member_level: `${api_uri}v1/admin/member/lvUpdate`,
     sms_txt: `${api_uri}v1/admin/member/sms-txt`,
-
 
     //디자인관리 - 메인배너관리
     banner_list: `${api_uri}v1/admin/banner`,
@@ -85,10 +89,10 @@ exports.enum_api_uri = {
     //통계관리
     all_stats_data: `${api_uri}v1/admin/stat`,
     stat_data: `${api_uri}v1/admin/stat/pre`,
+    stat_chart: `${api_uri}v1/admin/stat/chart`,
     stat_history: `${api_uri}v1/admin/stat/history`,
     stat_url: `${api_uri}v1/admin/stat/url`,
     stat_agent: `${api_uri}v1/admin/stat/agent`,
-
 
     //유지보수
     maint_list: `${api_uri}v1/admin/maintenance/list/:category`,
@@ -97,7 +101,4 @@ exports.enum_api_uri = {
     maint_comment: `${api_uri}v1/admin/maintenance/comment`,
     maint_create: `${api_uri}v1/admin/maintenance/create`,
     maint_file_down: `${api_uri}v1/admin/maintenance/download/:list_no`,
-
-
-
 }

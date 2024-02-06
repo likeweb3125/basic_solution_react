@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { confirmPop, adminCategoryPop, adminSubCategoryPop, adminCategoryPopModify } from "../../store/popupSlice";
-import { menuCheckList, unMenuCheckList, currentMenuId } from "../../store/etcSlice";
+import { confirmPop, adminCategoryPop, adminSubCategoryPop, adminSubCategoryPopModify, adminCategoryPopModify, adminSubCategoryPopParentData, adminCategoryPopDelt } from "../../store/popupSlice";
+import { menuCheckList, unMenuCheckList, cateMenuList, activeMenuId } from "../../store/etcSlice";
 import arrow_open from "../../images/arrow_open.svg";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
@@ -15,13 +15,17 @@ const MenuCategory = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const menu_list = enum_api_uri.menu_list;
+    const menu_mapping = enum_api_uri.menu_mapping;
+    const menu_modify = enum_api_uri.menu_modify;
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);
     const [confirm, setConfirm] = useState(false);
+    const [deltConfirm, setDeltConfirm] = useState(false);
     const [menuList, setMenuList] = useState([]);
     const [unusedMenuList, setUnusedMenuList] = useState([]);
     const [currentMenu, setCurrentMenu] = useState({});
+    const [currentMenuId, setCurrentMenuId] = useState(null);
     const [menuOn, setMenuOn] = useState(null);
     const [unMenuOn, setUnMenuOn] = useState(false);
     const [checkList, setCheckList] = useState([]);
@@ -35,6 +39,7 @@ const MenuCategory = () => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
+            setDeltConfirm(false);
         }
     },[popup.confirmPop]);
 
@@ -84,21 +89,43 @@ const MenuCategory = () => {
     },[]);
 
 
-    //카테고리수정시 전체카테고리 가져오기
+    //카테고리수정,삭제시 전체카테고리 가져오기
     useEffect(()=>{
+        //1차카테고리 수정시
         if(popup.adminCategoryPopModify){
             dispatch(adminCategoryPopModify(false));
 
             getMenuList();
         }
-    },[popup.adminCategoryPopModify]);
+        //1차카테고리 삭제시
+        if(popup.adminCategoryPopDelt){
+            dispatch(adminCategoryPopDelt(false));
+
+            getMenuList();
+        }
+        //하위카테고리 수정시
+        if(popup.adminSubCategoryPopModify){
+            dispatch(adminSubCategoryPopModify(false));
+
+            getMenuList();
+        }
+    },[popup.adminCategoryPopModify, popup.adminCategoryPopDelt, popup.adminSubCategoryPopModify]);
 
 
+    //전체카테고리 리스트 변경시
     useEffect(()=>{
         if(menuList.length > 0){
-            const id = menuList[0].id;
-            onMenuClickHandler(id);
+            //etc.activeMenuId 값이 있으면 menuList 값이 변경된 후 전에 선택됐던메뉴값으로 currentMenu 변경
+            if(etc.activeMenuId){
+                const foundItem = findItemByIdAndTopParents(menuList, etc.activeMenuId);
+                setCurrentMenu({...foundItem});
+            }else{
+                let id = menuList[0].id;
+                onMenuClickHandler(id);
+            }
         }
+        
+        dispatch(cateMenuList(menuList));
     },[menuList]);
 
 
@@ -121,8 +148,6 @@ const MenuCategory = () => {
 
     //맨처음 메뉴리스트 id값만 배열로 (전체 체크박스리스트 만들기)
     useEffect(()=>{
-        console.log(currentMenu);
-
         let list = [];
         if(currentMenu.submenu){
             list = currentMenu.submenu.map((item) => item.id).filter(Boolean);
@@ -130,8 +155,9 @@ const MenuCategory = () => {
         setCheckList([...list]);
 
         
-        //선택된 1차 카테고리값 (currentMenu) 변경시 체크리스트값 빈배열로 변경 
+        //선택된 1차 카테고리값 (currentMenu) 변경시 하위카테고리,미설정카테고리 체크리스트값 빈배열로 변경 
         dispatch(menuCheckList([]));
+        dispatch(unMenuCheckList([]));
 
 
         //현재선택된 부모메뉴 리스트
@@ -140,8 +166,13 @@ const MenuCategory = () => {
         }else{
             setParents([]);
         }
-        
+
+        //현재선택된 메뉴 id store 에 저장
+        if(currentMenu.id){
+            dispatch(activeMenuId(currentMenu.id));
+        }
     },[currentMenu]);
+
 
     //맨처음 미사용메뉴리스트 id값만 배열로 (전체 체크박스리스트 만들기)
     useEffect(()=>{
@@ -236,16 +267,16 @@ const MenuCategory = () => {
     }
 
 
-    //현재선택된 카테고리값이 바뀔시
+    //현재선택된 메뉴id currentMenuId 바뀔시 currentMenu 값 변경
     useEffect(()=>{
-        const id = etc.currentMenuId;
+        const id = currentMenuId;
         if(id){
             const foundItem = findItemByIdAndTopParents(menuList, id);
             setCurrentMenu({...foundItem});
         }else{
             setCurrentMenu({});
         }
-    },[etc.currentMenuId]);
+    },[currentMenuId]);
 
 
     //하위카테고리 부모카테고리 리스트값 변경시 최고부모 1차카테고리값 찾기
@@ -257,6 +288,143 @@ const MenuCategory = () => {
             setMenuOn(currentMenu.id);
         }
     },[parents]);
+
+
+    //하위카테고리 리스트에서 메뉴명 클릭시
+    const menuNameClickHandler = (id) => {
+        setCurrentMenuId(id);
+    };
+
+
+    //카테고리 매핑버튼 클릭시
+    const mappingBtnClickHandler = (use, parentId) => {
+        if(use == 'N'){ //매핑해제하기
+            if(etc.menuCheckList.length > 0){
+                mappingHandler(use, parentId);
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'카테고리를 선택해주세요.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        }
+        if(use == 'Y'){ //매핑하기
+            if(etc.unMenuCheckList.length > 0){
+                mappingHandler(use, parentId);
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'카테고리를 선택해주세요.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        }
+    };
+
+
+    //카테고리 매핑하기
+    const mappingHandler = (use, parentId, id) => {
+        let idList = [];
+        let c_depth_parent = parentId;
+
+        if(id){
+            idList = id;
+            c_depth_parent = currentMenu.id;
+        }else{
+            if(use == 'N'){
+                idList = etc.menuCheckList;
+            }
+            if(use == 'Y'){
+                idList = etc.unMenuCheckList;
+            }
+        }
+
+        const body = {
+            id: idList,
+            c_depth_parent: c_depth_parent,
+            c_use_yn: use,
+        };
+
+        axios.put(menu_mapping, body,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getMenuList();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //삭제버튼 클릭시
+    const deltBtnClickHandler = () => {
+        if(unCheckedNum > 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'해당 카테고리를 삭제하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+            setDeltConfirm(true);
+        }else if(unCheckedNum === 0){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'카테고리를 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+    };
+
+
+    //카테고리 삭제하기
+    const deltHandler = () => {
+        const body = {
+            id: etc.unMenuCheckList,
+        };
+
+        axios.delete(menu_modify,
+            {
+                data: body,
+                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
 
 
     return(<>
@@ -272,7 +440,7 @@ const MenuCategory = () => {
                                 onClick={()=>{
                                     dispatch(adminCategoryPop({adminCategoryPop:true, adminCategoryPopIdx:menuOn}));
                                 }}
-                            >선택한 카테고리 관리</button>
+                            >카테고리 관리</button>
                         }
                         <button type="button" className="btn_type5 lm8"
                             onClick={()=>{
@@ -306,7 +474,7 @@ const MenuCategory = () => {
                                     <li key={i}>
                                         <button type="button"
                                             onClick={()=>{
-                                                dispatch(currentMenuId(cont.id));
+                                                setCurrentMenuId(cont.id);
                                             }}
                                         >
                                             <strong>{cont.c_name}</strong><span>({CF.MakeIntComma(cont.totalSubMenuCount)})</span>
@@ -326,11 +494,12 @@ const MenuCategory = () => {
                                     onClick={()=>{
                                         dispatch(adminSubCategoryPop({adminSubCategoryPop:true,adminSubCategoryPopIdx:currentMenu.id}));
                                     }}
-                                >선택한 카테고리 관리</button>
+                                >카테고리 관리</button>
                             }
                             {currentMenu.c_depth !== 3 && //현재선택된 카테고리가 3차 카테고리일때는 미노출 (하위카테고리 최대 3차까지만 생성가능)
                                 <button type="button" className="btn_type6 lm8"
                                     onClick={()=>{
+                                        dispatch(adminSubCategoryPopParentData(currentMenu)); //현재선택된 카테고리정보 store 에 저장
                                         dispatch(adminSubCategoryPop({adminSubCategoryPop:true, adminSubCategoryPopIdx:null}));
                                     }}
                                 >하위 카테고리 등록</button>
@@ -351,10 +520,11 @@ const MenuCategory = () => {
                             <div className="util_wrap">
                                 <span>선택한 카테고리</span>
                                 <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>개</span>
-                                <button type="button" className="btn_type10">해제</button>
-                            </div>
-                            <div className="util_right">
-                                <button type="button" className="btn_type9">삭제</button>
+                                <button type="button" className="btn_type10"
+                                    onClick={()=>{
+                                        mappingBtnClickHandler('N', currentMenu.id);
+                                    }}
+                                >해제</button>
                             </div>
                         </div>
                         <TableWrap 
@@ -362,7 +532,9 @@ const MenuCategory = () => {
                             colgroup={["6%","9%","40%","10%","15%","10%","10%"]}
                             thList={["","순서","메뉴명","하위","컨텐츠유형","매핑 해제","순서"]}
                             tdList={currentMenu.submenu || []}
-                            type={"submenu"}
+                            type={"menu"}
+                            onMappingHandler={mappingHandler}
+                            onMenuClickHandler={menuNameClickHandler}
                         />
                     </div>
                 </div>
@@ -392,10 +564,14 @@ const MenuCategory = () => {
                             <div className="util_wrap">
                                 <span>선택한 카테고리</span>
                                 <span>총 <b>{CF.MakeIntComma(unCheckedNum)}</b>개</span>
-                                <button type="button" className="btn_type8">매핑</button>
+                                <button type="button" className="btn_type8"
+                                    onClick={()=>{
+                                        mappingBtnClickHandler('Y', currentMenu.id);
+                                    }}
+                                >매핑</button>
                             </div>
                             <div className="util_right">
-                                <button type="button" className="btn_type9">삭제</button>
+                                <button type="button" className="btn_type9" onClick={deltBtnClickHandler}>삭제</button>
                             </div>
                         </div>
                         <TableWrap 
@@ -403,13 +579,17 @@ const MenuCategory = () => {
                             colgroup={["6%","9%","40%","10%","15%","10%","10%"]}
                             thList={["","순서","메뉴명","하위","컨텐츠유형","매핑 해제","순서"]}
                             tdList={unusedMenuList}
-                            type={"submenu"}
+                            type={"menu"}
                             unMenu={true}
+                            onMappingHandler={mappingHandler}
                         />
                     </div>
                 }
             </div>
         </div>
+
+        {/* 카테고리 삭제 confirm팝업 */}
+        {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

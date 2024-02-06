@@ -22,6 +22,7 @@
 .section_inner {max-width: 1400px; width: 100%; margin: 0 auto; position: relative;}
 .user_section .page_inner {padding-top: 100px;}
 .user_section .tit {font-size: 40px; font-weight: 700; color: #222;}
+button:disabled{cursor: default;}
 
 
 /* 헤더 */
@@ -178,22 +179,22 @@
     .body_user #header .m_gnb_wrap {display: block; position: absolute; right: 0; top: 60px; width: 100%; height: calc(100vh - 60px); background: #fff; z-index: 1000; overflow: auto; transform: translateX(100%); transition: all .3s;}
     .body_user #header .m_gnb_wrap.on {transform: translateX(0);}
     .body_user #header .m_gnb {padding: 15px 15px 45px;}
-    .body_user #header .m_gnb > li > a {position: relative; padding: 10px 0; display: block;}
-    .body_user #header .m_gnb > li > a span {display: block; font-size: 24px; font-weight: 700; color: #222; word-break: break-all; line-height: 32px;}
-    .body_user #header .m_gnb .is_depth > a span:after {content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%) rotateX(0); border: 6px solid #222; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom-color: transparent; margin-top: 3px; z-index: 1; transition: all .1s;}
-    .body_user #header .m_gnb .is_depth.on > a span {color: var(--admin-color1);}
-    .body_user #header .m_gnb .is_depth.on > a span:after {transform: translateY(-50%) rotateX(180deg); margin-top: -3px; border-top-color: var(--admin-color1);}
-    .body_user #header .m_gnb > .is_depth > a span:after {content: ''; position: absolute; right: 2px; top: 50%; transform: translateY(-50%) rotateZ(-45deg) rotateX(0); width: 10px; height: 10px; margin-top: -2px; border-radius: 2px; border: 2px solid #222; border-right-color: transparent; border-top-color: transparent; z-index: 1; transition: all .1s;}
-    .body_user #header .m_gnb > .is_depth.on > a span:after {transform: translateY(-50%) rotateZ(45deg) rotateX(180deg); margin-top: 2px; border-top-color: transparent;}
+    .body_user #header .m_gnb > li > a, .body_user #header .m_gnb > li > button{position: relative; padding: 10px 0; display: block;width: 100%;text-align: left;}
+    .body_user #header .m_gnb > li > a span, .body_user #header .m_gnb > li > button span {display: block; font-size: 24px; font-weight: 700; color: #222; word-break: break-all; line-height: 32px;}
+    .body_user #header .m_gnb .is_depth > a span:after,.body_user #header .m_gnb .is_depth > button span:after {content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%) rotateX(0); border: 6px solid #222; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom-color: transparent; margin-top: 3px; z-index: 1; transition: all .1s;}
+    .body_user #header .m_gnb .is_depth.on > a span, .body_user #header .m_gnb .is_depth.on > button span {color: var(--admin-color1);}
+    .body_user #header .m_gnb .is_depth.on > a span:after, .body_user #header .m_gnb .is_depth.on > button span:after {transform: translateY(-50%) rotateX(180deg); margin-top: -3px; border-top-color: var(--admin-color1);}
+    .body_user #header .m_gnb > .is_depth > a span:after, .body_user #header .m_gnb > .is_depth > button span:after {content: ''; position: absolute; right: 2px; top: 50%; transform: translateY(-50%) rotateZ(-45deg) rotateX(0); width: 10px; height: 10px; margin-top: -2px; border-radius: 2px; border: 2px solid #222; border-right-color: transparent; border-top-color: transparent; z-index: 1; transition: all .1s;}
+    .body_user #header .m_gnb > .is_depth.on > a span:after, .body_user #header .m_gnb > .is_depth.on > button span:after {transform: translateY(-50%) rotateZ(45deg) rotateX(180deg); margin-top: 2px; border-top-color: transparent;}
     .body_user #header .m_gnb .depth2 {display: none; border-top: 1px solid transparent; padding: 14px 0; position: relative; transition: border .3s;}
-    .body_user #header .m_gnb .is_depth.on .depth2 {border-top-color: #222;}
-    .body_user #header .m_gnb .depth2 > li > a {display: block; padding: 10px 0;}
-    .body_user #header .m_gnb .depth2 > li > a span {display: inline-block; vertical-align: top; text-align: left; font-size: 18px; font-weight: 500; color: #222; word-break: break-all; position: relative; padding-right: 24px;}
+    .body_user #header .m_gnb .is_depth.on .depth2 {border-top-color: #222;display: block;}
+    .body_user #header .m_gnb .depth2 > li > a, .body_user #header .m_gnb .depth2 > li > button {display: block; padding: 10px 0;}
+    .body_user #header .m_gnb .depth2 > li > a span, .body_user #header .m_gnb .depth2 > li > button span {display: inline-block; vertical-align: top; text-align: left; font-size: 18px; font-weight: 500; color: #222; word-break: break-all; position: relative; padding-right: 24px;}
     .body_user #header .m_gnb .depth3 {display: none; background: #f9f9ff; padding: 15px 10px;}
     .body_user #header .m_gnb .depth3 li {margin-top: 5px;}
     .body_user #header .m_gnb .depth3 li:first-of-type {margin-top: 0;}
-    .body_user #header .m_gnb .depth3 li a {display: block; padding: 5px 0;}
-    .body_user #header .m_gnb .depth3 li a span {display: block; font-size: 14px; color: #333;}
+    .body_user #header .m_gnb .depth3 li a, .body_user #header .m_gnb .depth3 li button {display: block; padding: 5px 0;}
+    .body_user #header .m_gnb .depth3 li a span, .body_user #header .m_gnb .depth3 li button span{display: block; font-size: 14px; color: #333;}
 
 
     /* 메인 */

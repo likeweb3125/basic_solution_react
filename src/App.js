@@ -13,6 +13,8 @@ import Main from "./pages/user/Main";
 import OpenPopup from './pages/user/OpenPopup';
 import Login from './pages/user/Login';
 import SignUp from './pages/user/SignUp';
+import SubWrap from './components/component/user/SubWrap';
+import Board from './pages/user/Board';
 
 
 import AdminLogin from './pages/admin/Login';
@@ -75,14 +77,6 @@ function App() {
     },[location]);
 
 
-    //관리자단 하위카테고리 설정저장시 새로고침
-    useEffect(()=>{
-        if(popup.adminSubCategoryPopModify){
-            window.location.reload();
-        }
-    },[popup.adminSubCategoryPopModify]);
-
-
     //사이트정보 가져오기
     const getSiteInfo = () => {
         axios.get(`${site_info.replace(":site_id",siteId)}`)
@@ -141,6 +135,12 @@ function App() {
 
                 {/* 회원가입 */}
                 <Route path="/signup" element={<Layout><SignUp /></Layout>} />
+
+
+                {/* 카테고리 - 일반게시판 */}
+                <Route path="/board" element={<Layout><SubWrap><Outlet /></SubWrap></Layout>}>
+                    <Route path=":menu_id" element={<Board />}/>                                             {/* 리스트 */}
+                </Route>
 
 
             {/* //사용자단---------------------------------------------- */}

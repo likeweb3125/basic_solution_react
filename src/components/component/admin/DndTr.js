@@ -4,11 +4,10 @@ import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 import { enum_api_uri } from '../../../config/enum';
 import * as CF from "../../../config/function";
-import { adminBannerPop, adminCategoryPop, adminSubCategoryPop } from '../../../store/popupSlice';
-import { currentMenuId } from '../../../store/etcSlice';
+import { adminBannerPop, adminSubCategoryPop } from '../../../store/popupSlice';
 
 
-const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu}) => {
+const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu, menuDepth, onMappingHandler, onMenuClickHandler}) => {
     const etc = useSelector((state)=>state.etc);
     const dispatch = useDispatch();
     const api_uri = enum_api_uri.api_uri;
@@ -21,8 +20,11 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu}) => {
         transition,
         isDragging,
         isSorting
-    } = useSortable({id: id});
-    
+    // } = useSortable({id: id});
+    } = useSortable({
+        id: id,
+        data:{...data}
+    });
     const style = {
         transform: CSS.Transform.toString(transform),
         transition: isSorting ? transition : undefined,
@@ -74,7 +76,8 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu}) => {
                     </div>
                     <div style={{'width':colgroup[6]}}><button type="button" className="btn_move" {...attributes} {...listeners}>카테고리 이동</button></div>
                 </div>
-                :type === 'submenu' && //메뉴관리 - 카테고리관리 - 하위카테고리일때
+
+                :type === 'menu' && menuDepth !== 1 ? //메뉴관리 - 카테고리관리 - 하위카테고리일때
                 <div className='flex'>
                     <div style={{'width':colgroup[0]}}>
                         <div className="chk_box2">
@@ -95,13 +98,9 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu}) => {
                         <button type='button' className='link'
                             onClick={()=>{
                                 if(unMenu){//미설정목록일때
-                                    if(data.c_depth === 1){ //1차 카테고리일때
-                                        dispatch(adminCategoryPop({adminCategoryPop:true, adminCategoryPopIdx:data.id}));
-                                    }else{                  //하위 카테고리일때
-                                        dispatch(adminSubCategoryPop({adminSubCategoryPop:true, adminSubCategoryPopIdx:data.id}));
-                                    }
+                                    dispatch(adminSubCategoryPop({adminSubCategoryPop:true, adminSubCategoryPopIdx:data.id}));
                                 }else{
-                                    dispatch(currentMenuId(data.id));
+                                    onMenuClickHandler(data.id);
                                 }
                             }}
                         >{data.c_name}</button>
@@ -113,11 +112,43 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu}) => {
                         : ''}
                     </div>
                     <div style={{'width':colgroup[5]}}>
-                        {unMenu ? <button type='button' className='btn_type8'>매핑</button> //미설정목록일때
-                            :<button type='button' className='btn_type10'>해제</button>
+                        {unMenu ? //미설정목록일때
+                            <button type='button' className='btn_type8'
+                                onClick={()=>{
+                                    onMappingHandler('Y', data.c_depth_parent, data.id);
+                                }}
+                            >매핑</button> 
+                            :
+                            <button type='button' className='btn_type10'
+                                onClick={()=>{
+                                    onMappingHandler('N', data.c_depth_parent, data.id);
+                                }}
+                            >해제</button>
                         }
                     </div>
                     <div style={{'width':colgroup[6]}}><button type="button" className="btn_move" {...attributes} {...listeners}>카테고리 이동</button></div>
+                </div>
+
+                :type === 'menu' && menuDepth === 1 && //메뉴관리 - 카테고리관리 - 1차카테고리일때 (1차카테고리관리팝업)
+                <div className='flex'>
+                    <div style={{'width':colgroup[0]}}>
+                        <div className="chk_box2">
+                            <input type="checkbox" id={`menu_check_${data.id}`} className="blind"
+                                value={data.id}
+                                onChange={(e) => {
+                                    const isChecked = e.currentTarget.checked;
+                                    const value = e.currentTarget.value;
+                                    onCheckHandler(isChecked, value);
+                                }}
+                                checked={etc.checkedList.includes(data.id)}
+                            />
+                            <label htmlFor={`menu_check_${data.id}`}>선택</label>
+                        </div>
+                    </div>
+                    <div style={{'width':colgroup[1]}}>{data.c_num}</div>
+                    <div style={{'width':colgroup[2]}}>{data.c_name}</div>
+                    <div style={{'width':colgroup[3]}}>{data.submenu ? CF.MakeIntComma(data.submenu.length) : '-'}</div>
+                    <div style={{'width':colgroup[4]}}><button type="button" className="btn_move" {...attributes} {...listeners}>카테고리 이동</button></div>
                 </div>
             }
         </td>

@@ -744,6 +744,8 @@ const BannerPop = () => {
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`b_width_size`}
                                                     numberOnly={true}
+                                                    thousandSeparator={','}
+                                                    decimalScale={0}
                                                     txt={`가로`}
                                                 />
                                                 <InputBox2 
@@ -752,6 +754,8 @@ const BannerPop = () => {
                                                     onChangeHandler={onInputChangeHandler}
                                                     id={`b_height_size`}
                                                     numberOnly={true}
+                                                    thousandSeparator={','}
+                                                    decimalScale={0}
                                                     txt={`세로`}
                                                 />
                                             </div>

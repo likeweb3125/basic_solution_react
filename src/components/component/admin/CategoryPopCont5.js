@@ -44,24 +44,20 @@ const CategoryPopCont5 = (props) => {
 
 
     useEffect(()=>{
-        console.table(props.info);
-        //하위카테고리 새로등록이 아닐때만 상세정보 가져오기
-        if(Object.keys(props.info).length > 0){
-            setInfo(props.info);
-            setLimit(props.info.b_list_cnt);
-            setReadLevel(props.info.b_read_lv);
-            setWriteLevel(props.info.b_write_lv);
-            setReplyLevel(props.info.b_reply_lv);
-            setCommentLevel(props.info.b_comment_lv);
-            setTemplateEditor(props.info.b_template_text);
-        }
+        setInfo(props.info);
+        setLimit(props.info.b_list_cnt);
+        setReadLevel(props.info.b_read_lv);
+        setWriteLevel(props.info.b_write_lv);
+        setReplyLevel(props.info.b_reply_lv);
+        setCommentLevel(props.info.b_comment_lv);
+        setTemplateEditor(props.info.b_template_text);
     },[props.info]);
 
 
-    useEffect(()=>{
-        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
-        dispatch(adminSubCategoryPopData(info));
-    },[info]);
+    // useEffect(()=>{
+    //     //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
+    //     dispatch(adminSubCategoryPopData(info));
+    // },[info]);
 
 
     //회원등급리스트 가져오기
@@ -100,31 +96,47 @@ const CategoryPopCont5 = (props) => {
     //회원등급리스트 값 있으면 각각 권한 셀렉트에 txt 값 넣기
     useEffect(()=>{
         if(levelList.length > 0 && Object.keys(info).length > 0){
-            let read = '';
-            let write = '';
-            let reply = '';
-            let comment = '';
-            if(props.info.b_read_lv){
-                read = levelList.find(item=>item.l_level === props.info.b_read_lv);
-                read = read.l_name;
-            }
-            if(props.info.b_write_lv){
-                write = levelList.find(item=>item.l_level === props.info.b_write_lv);
-                write = write.l_name;
-            }
-            if(props.info.b_reply_lv){
-                reply = levelList.find(item=>item.l_level === props.info.b_reply_lv);
-                reply = reply.l_name;
-            }
-            if(props.info.b_comment_lv){
-                comment = levelList.find(item=>item.l_level === props.info.b_comment_lv);
-                comment = comment.l_name;
-            }
+            // let read = '';
+            // let write = '';
+            // let reply = '';
+            // let comment = '';
+            // if(props.info.b_read_lv){
+            //     read = levelList.find(item=>item.l_level === props.info.b_read_lv);
+            //     read = read.l_name;
+            // }
+            // if(props.info.b_write_lv){
+            //     write = levelList.find(item=>item.l_level === props.info.b_write_lv);
+            //     write = write.l_name;
+            // }
+            // if(props.info.b_reply_lv){
+            //     reply = levelList.find(item=>item.l_level === props.info.b_reply_lv);
+            //     reply = reply.l_name;
+            // }
+            // if(props.info.b_comment_lv){
+            //     comment = levelList.find(item=>item.l_level === props.info.b_comment_lv);
+            //     comment = comment.l_name;
+            // }
+
+            let read = levelList.find(item=>item.l_level === props.info.b_read_lv);
+            read = read.l_name;
+
+            let write = levelList.find(item=>item.l_level === props.info.b_write_lv);
+            write = write.l_name;
+
+            let reply = levelList.find(item=>item.l_level === props.info.b_reply_lv);
+            reply = reply.l_name;
+
+            let comment = levelList.find(item=>item.l_level === props.info.b_comment_lv);
+            comment = comment.l_name;
+
             setReadSelect(read);
             setWriteSelect(write);
             setReplySelect(reply);
             setCommentSelect(comment);
         }
+
+        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
+        dispatch(adminSubCategoryPopData(info));
     },[levelList, info]);
 
 
@@ -297,6 +309,8 @@ const CategoryPopCont5 = (props) => {
                                         onChangeHandler={onInputChangeHandler}
                                         id={`b_thumbnail_with`}
                                         numberOnly={true}
+                                        thousandSeparator={','}
+                                        decimalScale={0}
                                         txt={`가로`}
                                     />
                                     <InputBox2 
@@ -305,6 +319,8 @@ const CategoryPopCont5 = (props) => {
                                         onChangeHandler={onInputChangeHandler}
                                         id={`b_thumbnail_height`}
                                         numberOnly={true}
+                                        thousandSeparator={','}
+                                        decimalScale={0}
                                         txt={`세로`}
                                     />
                                 </div>
@@ -348,7 +364,7 @@ const CategoryPopCont5 = (props) => {
                                             class="select_type2"
                                             list={levelList}
                                             selected={readSelect || ""}
-                                            selectedLevel={readLevel || null}
+                                            selectedLevel={readLevel}
                                             onChangeHandler={(e)=>{
                                                 const val = e.currentTarget.value;
                                                 const level = e.target.options[e.target.selectedIndex].getAttribute("data-level");
@@ -368,7 +384,7 @@ const CategoryPopCont5 = (props) => {
                                             class="select_type2"
                                             list={levelList}
                                             selected={writeSelect || ""}
-                                            selectedLevel={writeLevel || null}
+                                            selectedLevel={writeLevel}
                                             onChangeHandler={(e)=>{
                                                 const val = e.currentTarget.value;
                                                 const level = e.target.options[e.target.selectedIndex].getAttribute("data-level");
@@ -420,7 +436,7 @@ const CategoryPopCont5 = (props) => {
                                         class="select_type2"
                                         list={levelList}
                                         selected={replySelect || ""}
-                                        selectedLevel={replyLevel || null}
+                                        selectedLevel={replyLevel}
                                         onChangeHandler={(e)=>{
                                             const val = e.currentTarget.value;
                                             const level = e.target.options[e.target.selectedIndex].getAttribute("data-level");
@@ -452,7 +468,7 @@ const CategoryPopCont5 = (props) => {
                                         class="select_type2"
                                         list={levelList}
                                         selected={commentSelect || ""}
-                                        selectedLevel={commentLevel || null}
+                                        selectedLevel={commentLevel}
                                         onChangeHandler={(e)=>{
                                             const val = e.currentTarget.value;
                                             const level = e.target.options[e.target.selectedIndex].getAttribute("data-level");

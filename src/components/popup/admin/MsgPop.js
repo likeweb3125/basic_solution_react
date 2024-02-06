@@ -171,6 +171,8 @@ const MsgPop = () => {
                         confirmPopBtn:1,
                     }));
                     setConfirm(true);
+
+                    getSmsTxt();
                 }
             })
             .catch((error) => {
@@ -201,7 +203,7 @@ const MsgPop = () => {
 
     //문자프리셋 적용하기
     const onSmsTxtApplyHandler = (idx) => {
-        if(smsList[idx].send_txt && smsList[idx].send_txt == smsTxtList[idx]){
+        if(smsList[idx].send_txt && (smsList[idx].send_txt == smsTxtList[idx])){
             const txt = smsList[idx].send_txt;
             setTxtValue(txt);
         }else{

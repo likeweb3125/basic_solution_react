@@ -17,7 +17,7 @@ const CategoryPopCont1 = (props) => {
 
     useEffect(()=>{
         setInfo(props.info);
-        // setContent(props.info.b_template_text);
+        setContent(props.info.content);
     },[props.info]);
 
 
@@ -48,6 +48,19 @@ const CategoryPopCont1 = (props) => {
             setContent(rawHtml);
         }
     },[showRaw]);
+
+
+    useEffect(()=>{
+        let newData = {...props.info};
+        if(tab === 1 && !showRaw){ //CH에디터 탭에 입력값
+            newData.content = content;
+        }else if(tab === 1 && showRaw){ //CH에디터 탭에 HTML입력값
+            newData.content = rawHtml;
+        }else if(tab === 2){ //Textarea 탭에 입력값
+            newData.content = templateText;
+        }
+        setInfo(newData);
+    },[content, rawHtml, templateText]);
 
 
 

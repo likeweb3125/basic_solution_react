@@ -1,23 +1,37 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
+import { confirmPop } from "../../../store/popupSlice";
+import { headerMenuList } from "../../../store/commonSlice";
+import ConfirmPop from "../../popup/ConfirmPop";
 import logo from "../../../images/logo.png";
 
 
 const Header = () => {
+    const dispatch = useDispatch();
     const location = useLocation();
+    const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
     const menu_list = enum_api_uri.menu_list;
+    const [confirm, setConfirm] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMoMenuOpen, setIsMoMenuOpen] = useState(false);
     const [siteInfo, setSiteInfo] = useState({});
-
     const [menuList, setMenuList] = useState([]);
     const [menuOn, setMenuOn] = useState(null);
     const [menu2On, setMenu2On] = useState({});
+
+
+    // Confirm팝업 닫힐때
+    useEffect(()=>{
+        if(popup.confirmPop === false){
+            setConfirm(false);
+        }
+    },[popup.confirmPop]);
 
 
     useEffect(()=>{
@@ -55,15 +69,14 @@ const Header = () => {
             }
         })
         .catch((error) => {
-            // const err_msg = CF.errorMsgHandler(error);
-
-            // dispatch(confirmPop({
-            //     confirmPop:true,
-            //     confirmPopTit:'알림',
-            //     confirmPopTxt: err_msg,
-            //     confirmPopBtn:1,
-            // }));
-            // setConfirm(true);
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         });
     };
 
@@ -71,6 +84,11 @@ const Header = () => {
     useEffect(()=>{
         getMenuList();
     },[]);
+
+
+    useEffect(()=>{
+        dispatch(headerMenuList(menuList));
+    },[menuList]);
 
 
     const onMenu2ClickHandler = (idx) => {
@@ -97,7 +115,7 @@ const Header = () => {
                                         onMouseEnter={()=>setMenuOn(i)}
                                         onMouseLeave={()=>setMenuOn(null)}
                                     >
-                                        <Link to="/">
+                                        <Link to='/'>
                                             <span>{cont.c_name}</span>
                                         </Link>
                                         {cont.submenu && 
@@ -108,7 +126,7 @@ const Header = () => {
                                                             className={`${cont2.submenu ? 'is_depth' : ''}${menu2On[idx] ? ' on' : ''}`} 
                                                             onClick={()=>onMenu2ClickHandler(idx)}
                                                         >
-                                                            <Link to="/">
+                                                            <Link to={`/board/${cont2.id}`}>
                                                                 <span>{cont2.c_name}</span>
                                                             </Link>
                                                             {cont2.submenu &&
@@ -151,11 +169,58 @@ const Header = () => {
                             </Link>
                         </li> --> */}
                     </ul>
-                    <button type="button" className="btn_m">
+                    <button type="button" className="btn_m" onClick={toggleMoMenu}>
                         <span>모바일 메뉴</span>
                     </button>
-                    <div className="m_gnb_wrap">
+                    <div className={`m_gnb_wrap${isMoMenuOpen ? ' on' : ''}`}>
                         <ul className="m_gnb">
+                            {menuList.map((cont,i)=>{
+                                return(
+                                    <li key={i} 
+                                        onClick={()=>{setMenuOn(i)}}
+                                        className={`${cont.submenu ? 'is_depth' : ''}${menuOn === i ? ' on' : ''}`}
+                                    >
+                                        {cont.submenu ? <>
+                                            <button type="button">
+                                                <span>{cont.c_name}</span>
+                                            </button>
+                                            <ul className="depth2">
+                                                {cont.submenu.map((cont2,idx)=>{
+                                                    return(
+                                                        <li key={idx} className="is_depth">
+                                                            <Link to="/">
+                                                                <span>대표인사</span>
+                                                            </Link>
+                                                            <ul className="depth3">
+                                                                <li>
+                                                                    <Link to="/">
+                                                                        <span>경영 이념 및 미션</span>
+                                                                    </Link>
+                                                                </li>
+                                                                <li>
+                                                                    <Link to="/">
+                                                                        <span>윤리경영</span>
+                                                                    </Link>
+                                                                </li>
+                                                                <li>
+                                                                    <Link to="/">
+                                                                        <span>사회공헌</span>
+                                                                    </Link>
+                                                                </li>
+                                                            </ul>
+                                                        </li>
+                                                    );
+                                                })} 
+                                            </ul>
+                                            </>
+                                            :
+                                            <Link to="/">
+                                                <span>{cont.c_name}</span>
+                                            </Link>
+                                        }
+                                    </li>
+                                );
+                            })}
                             <li className="is_depth">
                                 <Link to="/">
                                     <span>About Us</span>
@@ -218,75 +283,9 @@ const Header = () => {
                                     </li>
                                 </ul>
                             </li>
-                            <li className="is_depth">
-                                <Link to="/">
-                                    <span>Service</span>
-                                </Link>
-                                <ul className="depth2">
-                                    <li className="is_depth">
-                                        <Link to="/">
-                                            <span>회사소개</span>
-                                        </Link>
-                                        <ul className="depth3">
-                                            <li>
-                                                <Link to="/">
-                                                    <span>경영 이념 및 미션</span>
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link to="/">
-                                                    <span>윤리경영</span>
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link to="/">
-                                                    <span>사회공헌</span>
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li className="is_depth">
-                                        <Link to="/">
-                                            <span>대표인사</span>
-                                        </Link>
-                                        <ul className="depth3">
-                                            <li>
-                                                <Link to="/">
-                                                    <span>경영 이념 및 미션</span>
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link to="/">
-                                                    <span>윤리경영</span>
-                                                </Link>
-                                            </li>
-                                            <li>
-                                                <Link to="/">
-                                                    <span>사회공헌</span>
-                                                </Link>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <Link to="/">
-                                            <span>연혁</span>
-                                        </Link>
-                                    </li>
-                                    <li>
-                                        <Link to="/">
-                                            <span>오시는 길</span>
-                                        </Link>
-                                    </li>
-                                </ul>
-                            </li>
                             <li>
                                 <Link to="/">
                                     <span>Board</span>
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/">
-                                    <span>My Page</span>
                                 </Link>
                             </li>
                         </ul>
@@ -294,6 +293,9 @@ const Header = () => {
                 </div>
             </div>
         </header>
+
+        {/* confirm팝업 */}
+        {confirm && <ConfirmPop />}
     </>);
 };
 

@@ -29,12 +29,14 @@ const popup = createSlice({
         adminCategoryPop: false,
         adminCategoryPopIdx: null,
         adminCategoryPopModify: false,
+        adminCategoryPopDelt: false,
 
         //하위카테고리 설정팝업
         adminSubCategoryPop: false,
         adminSubCategoryPopIdx: null,
         adminSubCategoryPopData: {},
         adminSubCategoryPopModify: false,
+        adminSubCategoryPopParentData: {},
 
         //게시판분류 팝업
         adminBoardGroupPop: false,
@@ -104,8 +106,9 @@ const popup = createSlice({
         adminCategoryPopModify: (state, action) => {
             state.adminCategoryPopModify = action.payload;
         },
-
-
+        adminCategoryPopDelt: (state, action) => {
+            state.adminCategoryPopDelt = action.payload;
+        },
         adminSubCategoryPop: (state, action) => {
             state.adminSubCategoryPop = action.payload.adminSubCategoryPop;
             state.adminSubCategoryPopIdx = action.payload.adminSubCategoryPopIdx;
@@ -116,6 +119,10 @@ const popup = createSlice({
         adminSubCategoryPopModify: (state, action) => {
             state.adminSubCategoryPopModify = action.payload;
         },
+        adminSubCategoryPopParentData: (state, action) => {
+            state.adminSubCategoryPopParentData = action.payload;
+        },
+
         adminBoardGroupPop: (state, action) => {
             state.adminBoardGroupPop = action.payload.adminBoardGroupPop;
             state.adminBoardGroupPopId = action.payload.adminBoardGroupPopId;
@@ -175,10 +182,12 @@ export const {
 
     adminCategoryPop,
     adminCategoryPopModify,
+    adminCategoryPopDelt,
 
     adminSubCategoryPop,
     adminSubCategoryPopData,
     adminSubCategoryPopModify,
+    adminSubCategoryPopParentData,
     adminBoardGroupPop,
     adminBoardGroupPopMenuOn,
     adminBannerPop,
