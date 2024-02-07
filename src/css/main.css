@@ -35,16 +35,16 @@ button:disabled{cursor: default;}
 .body_user #header .menu_wrap nav {height: 100%;}
 .body_user #header .gnb {display: flex; height: 100%; column-gap: 10px;}
 .body_user #header .gnb > li {min-width: 160px; position: relative;}
-.body_user #header .gnb > li > a {width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative;}
-.body_user #header .gnb > li > a:after {content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 4px; background: #222; opacity: 0; transition: all .2s;}
+.body_user #header .gnb > li > button {width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; position: relative;}
+.body_user #header .gnb > li > button:after {content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 4px; background: #222; opacity: 0; transition: all .2s;}
 .body_user #header .gnb > li:hover > a:after {opacity: 1;}
-.body_user #header .gnb > li > a span {display: block; text-align: center; font-size: 18px; font-weight: 700; color: #222; word-break: break-all;}
+.body_user #header .gnb > li > button span {display: block; text-align: center; font-size: 18px; font-weight: 700; color: #222; word-break: break-all;}
 .body_user #header .gnb .depth2 {display: none; width: 280px; position: absolute; left: 0; top: 100px; background: #fff; box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.12); padding: 14px 0;}
 .body_user #header .gnb .depth2.on{display: block;}
 .body_user #header .gnb .depth2 > li {margin-top: 4px;}
 .body_user #header .gnb .depth2 > li:first-of-type {margin-top: 0;}
-.body_user #header .gnb .depth2 > li > a {padding: 10px 40px; width: 100%; height: 100%; display: flex; justify-content: flex-start; position: relative;}
-.body_user #header .gnb .depth2 > li > a span {display: block; text-align: left; font-size: 18px; font-weight: 700; color: #222; word-break: break-all;}
+.body_user #header .gnb .depth2 > li > button {padding: 10px 40px; width: 100%; height: 100%; display: flex; justify-content: flex-start; position: relative;}
+.body_user #header .gnb .depth2 > li > button span {display: block; text-align: left; font-size: 18px; font-weight: 700; color: #222; word-break: break-all;}
 .body_user #header .gnb .depth2 > li:hover > a span {color: var(--admin-color1);}
 .body_user #header .gnb .depth2 > li.on > a span {color: var(--admin-color1);}
 .body_user #header .gnb .depth2 .is_depth > a {padding-right: 64px !important;}
@@ -59,9 +59,9 @@ button:disabled{cursor: default;}
 .body_user #header .gnb .depth3 li a span {display: block; text-align: left; font-size: 16px; font-weight: 400; color: #333; word-break: break-all;}
 .body_user #header .gnb .depth3 li:hover a span {text-decoration: underline; text-underline-position: from-font;}
 .body_user #header .header_util {display: flex; column-gap: 30px; padding-left: 65px;}
-.body_user #header .header_util li a {display: block;}
-.body_user #header .header_util li a:before {content: ''; display: block; margin: 0 auto; width: 32px; height: 32px;}
-.body_user #header .header_util li a span {display: block; padding-top: 5px; font-size: 16px; color: #666;}
+.body_user #header .header_util li>* {display: block;}
+.body_user #header .header_util li>*:before {content: ''; display: block; margin: 0 auto; width: 32px; height: 32px;}
+.body_user #header .header_util li>* span {display: block; padding-top: 5px; font-size: 16px; color: #666;}
 .body_user #header .header_util .btn_join:before {background: url('../images/ic_member.svg') no-repeat 50% 50%/100%;}
 .body_user #header .header_util .btn_login:before {background: url('../images/ic_login.svg') no-repeat 50% 50%/100%;}
 .body_user #header .header_util .btn_logout:before {background: url('../images/ic_logout.svg') no-repeat 50% 50%/100%;}
@@ -174,8 +174,8 @@ button:disabled{cursor: default;}
     .body_user #header .btn_m.on:before {transform: translateY(-50%) rotate(45deg);}
     .body_user #header .btn_m.on:after {transform: translateY(-50%) rotate(-45deg);}
     .body_user #header .header_util {column-gap: 20px;}
-    .body_user #header .header_util li a:before {width: 24px; height: 24px;}
-    .body_user #header .header_util li a span {display: none;}
+    .body_user #header .header_util li>*:before {width: 24px; height: 24px;}
+    .body_user #header .header_util li>* span {display: none;}
     .body_user #header .m_gnb_wrap {display: block; position: absolute; right: 0; top: 60px; width: 100%; height: calc(100vh - 60px); background: #fff; z-index: 1000; overflow: auto; transform: translateX(100%); transition: all .3s;}
     .body_user #header .m_gnb_wrap.on {transform: translateX(0);}
     .body_user #header .m_gnb {padding: 15px 15px 45px;}
@@ -188,8 +188,8 @@ button:disabled{cursor: default;}
     .body_user #header .m_gnb > .is_depth.on > a span:after, .body_user #header .m_gnb > .is_depth.on > button span:after {transform: translateY(-50%) rotateZ(45deg) rotateX(180deg); margin-top: 2px; border-top-color: transparent;}
     .body_user #header .m_gnb .depth2 {display: none; border-top: 1px solid transparent; padding: 14px 0; position: relative; transition: border .3s;}
     .body_user #header .m_gnb .is_depth.on .depth2 {border-top-color: #222;display: block;}
-    .body_user #header .m_gnb .depth2 > li > a, .body_user #header .m_gnb .depth2 > li > button {display: block; padding: 10px 0;}
-    .body_user #header .m_gnb .depth2 > li > a span, .body_user #header .m_gnb .depth2 > li > button span {display: inline-block; vertical-align: top; text-align: left; font-size: 18px; font-weight: 500; color: #222; word-break: break-all; position: relative; padding-right: 24px;}
+    .body_user #header .m_gnb .depth2 > li > button{display: block; padding: 10px 0;}
+    .body_user #header .m_gnb .depth2 > li > button span{display: inline-block; vertical-align: top; text-align: left; font-size: 18px; font-weight: 500; color: #222; word-break: break-all; position: relative; padding-right: 24px;}
     .body_user #header .m_gnb .depth3 {display: none; background: #f9f9ff; padding: 15px 10px;}
     .body_user #header .m_gnb .depth3 li {margin-top: 5px;}
     .body_user #header .m_gnb .depth3 li:first-of-type {margin-top: 0;}

@@ -25,6 +25,7 @@ const CategoryPopCont6 = (props) => {
     const [rawHtml, setRawHtml] = useState('');
     const [templateEditor, setTemplateEditor] = useState("");
     const [templateText, setTemplateText] = useState("");
+    const [firstTime, setFirstTime] = useState(true);
 
 
     // Confirm팝업 닫힐때
@@ -33,6 +34,13 @@ const CategoryPopCont6 = (props) => {
             setConfirm(false);
         }
     },[popup.confirmPop]);
+
+
+    useEffect(()=>{
+        if(firstTime){ //맨처음 랜더링
+            setFirstTime(false);
+        }
+    },[]);
 
 
     useEffect(()=>{
@@ -105,10 +113,12 @@ const CategoryPopCont6 = (props) => {
 
     //에디터 HTML 버튼 토글
     useEffect(()=>{
-        if (showRaw) {
-            setRawHtml(templateEditor);
-        }else {
-            setTemplateEditor(rawHtml);
+        if(!firstTime){
+            if (showRaw) {
+                setRawHtml(templateEditor);
+            }else {
+                setTemplateEditor(rawHtml);
+            }
         }
     },[showRaw]);
 

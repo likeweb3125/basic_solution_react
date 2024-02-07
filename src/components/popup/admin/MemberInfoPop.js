@@ -15,7 +15,7 @@ const MemberInfoPop = () => {
     const navigate = useNavigate();
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
-    const level_list = enum_api_uri.level_list;
+    const common = useSelector((state)=>state.common);
     const member_info = enum_api_uri.member_info;
     const member_modify = enum_api_uri.member_modify;
     const [confirm, setConfirm] = useState(false);
@@ -58,30 +58,11 @@ const MemberInfoPop = () => {
 
 
     //회원등급리스트 가져오기
-    const getLevelList = () => {
-        axios.get(level_list,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
-        .then((res)=>{
-            if(res.status === 200){
-                let data = res.data.data;
-                const list = data
-                .filter((item)=>item.l_name !== null)    //미등록등급 제외
-                .filter((item)=>item.l_name.length > 0)  //미등록등급 제외
-                setLevelList(list);
-            }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        });
-    };
+    useEffect(()=>{
+        const list = common.userLevelList;
+
+        setLevelList(list);
+    },[common.userLevelList]);
 
 
     //사용자정보 가져오기
@@ -114,9 +95,8 @@ const MemberInfoPop = () => {
     };
 
 
-    //맨처음 회원등급리스트, 사용자정보 가져오기
+    //맨처음 사용자정보 가져오기
     useEffect(()=>{
-        getLevelList();
         getInfoData();
     },[]);
 
@@ -135,7 +115,7 @@ const MemberInfoPop = () => {
             setInfo(info);
             setLevel(info.m_level);
 
-            if(info.m_menu_auth !== null){
+            if(info.m_menu_auth !== null && info.m_menu_auth[0] !== null){
                 const authArray = info.m_menu_auth.map((item) => item[0]);
                 setMenuAuthCheck(authArray);
             }
@@ -325,6 +305,7 @@ const MemberInfoPop = () => {
                                                     }}
                                                     selHidden={true}
                                                     objectSel={`level_list`}
+                                                    allLevel={true}
                                                 />
                                             </div>
                                         </div>

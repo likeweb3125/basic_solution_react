@@ -7,10 +7,10 @@ import * as CF from "../../config/function";
 import { confirmPop, adminPopupPop ,adminPopupPopWrite, adminPopupPopModify } from "../../store/popupSlice";
 import { pageNoChange, checkedList } from "../../store/etcSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
-import SearchInput from "../../components/component/admin/SearchInput";
+import SearchInput from "../../components/component/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
-import Pagination from "../../components/component/admin/Pagination";
+import Pagination from "../../components/component/Pagination";
 
 
 const DesignPopup = () => {

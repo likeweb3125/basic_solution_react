@@ -18,7 +18,9 @@ const SubVisual = ({list, imgData}) => {
         }
 
         const data = {
-            background: 'url('+api_uri+imgData.c_main_banner_file+') no-repeat center',
+            backgroundImage: 'url('+api_uri+imgData.c_main_banner_file+')',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
             backgroundSize: type
         };
 

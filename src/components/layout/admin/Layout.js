@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { adminNotiPop, confirmPop } from "../../../store/popupSlice";
-import { alarm } from "../../../store/commonSlice";
+import { alarm, userLevelList } from "../../../store/commonSlice";
 import { loginUser, siteId, maintName } from "../../../store/userSlice";
-import { checkedList } from "../../../store/etcSlice";
+import { checkedList, activeMenuId } from "../../../store/etcSlice";
 import { enum_api_uri } from "../../../config/enum";
 import * as CF from "../../../config/function";
 import Header from "./Header";
@@ -25,6 +25,7 @@ const Layout = (props) => {
     const location = useLocation();
     const { board_category } = useParams();
     const alarm_list = enum_api_uri.alarm_list;
+    const level_list = enum_api_uri.level_list;
     const navigate = useNavigate();
 
 
@@ -42,6 +43,9 @@ const Layout = (props) => {
 
         //페이지 변경시 store 에 저장된 checkedList 값 삭제
         dispatch(checkedList([]));
+
+        //페이지 변경시 store 에 저장된 activeMenuId 값 삭제
+        dispatch(activeMenuId(null));
 
         //메인
         if(path === "/console"){
@@ -152,8 +156,37 @@ const Layout = (props) => {
     };
 
 
+    //회원등급리스트 가져오기
+    const getLevelList = () => {
+        axios.get(level_list,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                const list = data
+                .filter((item)=>item.l_name !== null)    //미등록등급 제외
+                .filter((item)=>item.l_name.length > 0)  //미등록등급 제외
+                dispatch(userLevelList(list));
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //맨처음 알림, 회원등급리스트 가져오기
     useEffect(()=>{
         getAlarmList();
+        getLevelList();
     },[]);
 
 

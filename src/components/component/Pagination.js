@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { pageNo, pageNoChange } from "../../../store/etcSlice";
+import { pageNo, pageNoChange } from "../../store/etcSlice";
 
 const Pagination = (props) => {
     const dispatch = useDispatch();

@@ -1,34 +1,100 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import * as CF from "../../../config/function";
+import { enum_api_uri } from "../../../config/enum";
+import { confirmPop } from "../../../store/popupSlice";
+import { currentMenuData } from "../../../store/commonSlice";
 import SubVisual from "./SubVisual";
+import ConfirmPop from "../../popup/ConfirmPop";
 
 
-const SubWrap = () => {
+const SubWrap = (props) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const common = useSelector((state)=>state.common);
-    const { menu_id } = useParams();
+    const popup = useSelector((state)=>state.popup);
+    const { board_category } = useParams();
+    const menu_sub_detail = enum_api_uri.menu_sub_detail;
+    const [confirm, setConfirm] = useState(false);
     const [menuList, setMenuList] = useState([]);
     const [bannerData, setBannerData] = useState({});
+    const [parents, setParents] = useState([]);
 
 
+    // Confirm팝업 닫힐때
+    useEffect(()=>{
+        if(popup.confirmPop === false){
+            setConfirm(false);
+        }
+    },[popup.confirmPop]);
+
+
+    //헤더메뉴리스트
     useEffect(()=>{
         setMenuList(common.headerMenuList);
     },[common.headerMenuList]);
 
 
+    //현재메뉴정보 가져오기
+    const getMenuData = () => {
+        axios.get(`${menu_sub_detail.replace(":id",board_category)}`)
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                dispatch(currentMenuData(data));
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
+
+
+    useEffect(()=>{
+        //현재메뉴정보 가져오기
+        if(board_category){
+            getMenuData(); 
+        }
+    },[board_category]);
+
+
+    //헤더메뉴리스트, 페이지변경시
     useEffect(() => {
-        const result = findObjectByIdWithDepthCheck(menuList, menu_id);
+        //현재메뉴 메인배너값 찾기
+        const result = findObjectByIdWithDepthCheck(menuList, board_category);
         if(result){
             const data = {
-                c_main_banner: result.c_main_banner ?? result.c_main_banner,
-                c_main_banner_file: result.c_main_banner_file ?? result.c_main_banner_file,
+                c_main_banner: result.c_main_banner ? result.c_main_banner : '1',
+                c_main_banner_file: result.c_main_banner_file ? result.c_main_banner_file : '',
             };
             setBannerData(data);
         }
-        
-    }, [menu_id, menuList]);
+
+        //현재메뉴 부모이름 찾기
+        const foundItem = findItemByIdAndTopParents(menuList, board_category);
+        if(foundItem){
+            const list = foundItem.parents.map((item) => item.c_name);
+            const newList = list.concat(foundItem.c_name);
+            setParents(newList);
+        }
+    }, [board_category, menuList]);
+    
 
 
+    //최상의 부모값 찾기
     function findObjectByIdWithDepthCheck(list, targetId) {
         const findRecursive = (items) => {
             for (const item of items) {
@@ -57,12 +123,41 @@ const SubWrap = () => {
     }
 
 
+    //현재 메뉴에 부모값추가
+    function findItemByIdAndTopParents(menu, targetId) {
+        let resultItem = null;
+
+        function findRecursively(currentItem, parents = []) {
+            if (currentItem.id == targetId) {
+                resultItem = { ...currentItem, parents };
+                return;
+            }
+
+            if (currentItem.submenu) {
+                for (const subItem of currentItem.submenu) {
+                    findRecursively(subItem, [...parents, { ...currentItem, submenu: null }]);
+                }
+            }
+        }
+
+        for (const item of menu) {
+            findRecursively(item);
+        }
+
+        return resultItem;
+    }
+
+
 
     return(<>
         <SubVisual 
             imgData={bannerData}
-            list={['게시판','공지사항']}
+            list={parents}
         />
+        {props.children}
+
+        {/* confirm팝업 */}
+        {confirm && <ConfirmPop />}
     </>);
 };
 

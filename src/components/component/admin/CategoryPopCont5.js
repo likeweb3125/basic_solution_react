@@ -13,9 +13,8 @@ import Editor from "../Editor";
 
 const CategoryPopCont5 = (props) => {
     const dispatch = useDispatch();
-    const level_list = enum_api_uri.level_list;
     const popup = useSelector((state)=>state.popup);
-    const user = useSelector((state)=>state.user);
+    const common = useSelector((state)=>state.common);
     const [temStep, setTemStep] = useState(1);
     const [confirm, setConfirm] = useState(false);
     const [info, setInfo] = useState({});
@@ -33,6 +32,7 @@ const CategoryPopCont5 = (props) => {
     const [rawHtml, setRawHtml] = useState('');
     const [templateEditor, setTemplateEditor] = useState("");
     const [templateText, setTemplateText] = useState("");
+    const [firstTime, setFirstTime] = useState(true);
 
 
     // Confirm팝업 닫힐때
@@ -60,74 +60,65 @@ const CategoryPopCont5 = (props) => {
     // },[info]);
 
 
-    //회원등급리스트 가져오기
-    const getLevelList = () => {
-        axios.get(level_list,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
-        .then((res)=>{
-            if(res.status === 200){
-                let data = res.data.data;
-                const list = data
-                .filter((item)=>item.l_name !== null)    //미등록등급 제외
-                .filter((item)=>item.l_name.length > 0)  //미등록등급 제외
-                setLevelList(list);
-            }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        });
-    };
-
-    
-    //맨처음 회원등급리스트 가져오기
+    //맨처음 랜더링
     useEffect(()=>{
-        getLevelList();
+        if(firstTime){ //맨처음 랜더링
+            setFirstTime(false);
+        }
     },[]);
+
+
+    //회원등급리스트 가져오기
+    useEffect(()=>{
+        const list = common.userLevelList;
+        const newList = list
+        .filter((item)=>item.l_level !== 0)  //0등급(이용제한) 제외
+        const data = {
+            l_level: '',
+            signup_lv: '',
+            l_name: '전체'
+        };
+        const addList = newList.concat(data);
+
+        setLevelList(addList);
+    },[common.userLevelList]);
 
 
     //회원등급리스트 값 있으면 각각 권한 셀렉트에 txt 값 넣기
     useEffect(()=>{
         if(levelList.length > 0 && Object.keys(info).length > 0){
-            // let read = '';
-            // let write = '';
-            // let reply = '';
-            // let comment = '';
-            // if(props.info.b_read_lv){
-            //     read = levelList.find(item=>item.l_level === props.info.b_read_lv);
-            //     read = read.l_name;
-            // }
-            // if(props.info.b_write_lv){
-            //     write = levelList.find(item=>item.l_level === props.info.b_write_lv);
-            //     write = write.l_name;
-            // }
-            // if(props.info.b_reply_lv){
-            //     reply = levelList.find(item=>item.l_level === props.info.b_reply_lv);
-            //     reply = reply.l_name;
-            // }
-            // if(props.info.b_comment_lv){
-            //     comment = levelList.find(item=>item.l_level === props.info.b_comment_lv);
-            //     comment = comment.l_name;
-            // }
+            let read = '';
+            let write = '';
+            let reply = '';
+            let comment = '';
+            if(info.b_read_lv){
+                read = levelList.find(item=>item.l_level === info.b_read_lv);
+                read = read.l_name;
+            }
+            if(info.b_write_lv){
+                write = levelList.find(item=>item.l_level === info.b_write_lv);
+                write = write.l_name;
+            }
+            if(info.b_reply_lv){
+                reply = levelList.find(item=>item.l_level === info.b_reply_lv);
+                reply = reply.l_name;
+            }
+            if(info.b_comment_lv){
+                comment = levelList.find(item=>item.l_level === info.b_comment_lv);
+                comment = comment.l_name;
+            }
 
-            let read = levelList.find(item=>item.l_level === props.info.b_read_lv);
-            read = read.l_name;
+            // let read = levelList.find(item=>item.l_level === props.info.b_read_lv);
+            // read = read.l_name;
 
-            let write = levelList.find(item=>item.l_level === props.info.b_write_lv);
-            write = write.l_name;
+            // let write = levelList.find(item=>item.l_level === props.info.b_write_lv);
+            // write = write.l_name;
 
-            let reply = levelList.find(item=>item.l_level === props.info.b_reply_lv);
-            reply = reply.l_name;
+            // let reply = levelList.find(item=>item.l_level === props.info.b_reply_lv);
+            // reply = reply.l_name;
 
-            let comment = levelList.find(item=>item.l_level === props.info.b_comment_lv);
-            comment = comment.l_name;
+            // let comment = levelList.find(item=>item.l_level === props.info.b_comment_lv);
+            // comment = comment.l_name;
 
             setReadSelect(read);
             setWriteSelect(write);
@@ -196,10 +187,12 @@ const CategoryPopCont5 = (props) => {
 
     //에디터 HTML 버튼 토글
     useEffect(()=>{
-        if (showRaw) {
-            setRawHtml(templateEditor);
-        }else {
-            setTemplateEditor(rawHtml);
+        if(!firstTime){
+            if (showRaw) {
+                setRawHtml(templateEditor);
+            }else {
+                setTemplateEditor(rawHtml);
+            }
         }
     },[showRaw]);
 

@@ -37,12 +37,6 @@ const SubCategoryPop = () => {
     const [titImgDelt, setTitImgDelt] = useState(false);
 
 
-    useEffect(()=>{
-        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
-        dispatch(adminSubCategoryPopData(info));
-    },[info]);
-
-
     // Confirm팝업 닫힐때
     useEffect(()=>{
         if(popup.confirmPop === false){
@@ -127,14 +121,14 @@ const SubCategoryPop = () => {
                 b_thumbnail_with:0,
                 b_thumbnail_height:0,
                 b_thumbnail:'1',
-                b_read_lv:0,
-                b_write_lv:0,
+                b_read_lv:'',
+                b_write_lv:'',
                 b_group:'',
                 b_secret:'',
                 b_reply:'',
-                b_reply_lv:0,
+                b_reply_lv:'',
                 b_comment:'',
-                b_comment_lv:0,
+                b_comment_lv:'',
                 b_write_alarm:'',
                 b_write_send:'',
                 b_alarm:'',
@@ -151,6 +145,12 @@ const SubCategoryPop = () => {
             setInfo({...data});
         }
     },[]);
+
+
+    useEffect(()=>{
+        //카테고리 값 변경시 adminSubCategoryPopData store 에 저장
+        dispatch(adminSubCategoryPopData(info));
+    },[info]);
 
     
     //카테고리 종류 탭 클릭시
@@ -198,6 +198,7 @@ const SubCategoryPop = () => {
     //저장버튼 클릭시 필수입력 체크
     const saveBtnClickHandler = () => {
         const data = popup.adminSubCategoryPopData;
+        console.log(data)
 
         //공통 필수값 체크 (카테고리명, 카테고리종류) --------------
         if(!data || !data.c_name){

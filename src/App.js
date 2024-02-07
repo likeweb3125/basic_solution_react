@@ -14,7 +14,10 @@ import OpenPopup from './pages/user/OpenPopup';
 import Login from './pages/user/Login';
 import SignUp from './pages/user/SignUp';
 import SubWrap from './components/component/user/SubWrap';
+import Html from './pages/user/Html';
 import Board from './pages/user/Board';
+import BoardDetail from './pages/user/BoardDetail';
+import MyPage from './pages/user/MyPage';
 
 
 import AdminLogin from './pages/admin/Login';
@@ -136,10 +139,18 @@ function App() {
                 {/* 회원가입 */}
                 <Route path="/signup" element={<Layout><SignUp /></Layout>} />
 
+                {/* 마이페이지 */}
+                <Route path="/mypage" element={<Layout><MyPage /></Layout>} />
 
-                {/* 카테고리 - 일반게시판 */}
+
+                {/* 카테고리 - HTML */}
+                <Route path="/html/:current_idx" element={<Layout><Html /></Layout>} />
+
+
+                {/* 카테고리 - 일반게시판,갤러리게시판,FAQ,문의게시판 */}
                 <Route path="/board" element={<Layout><SubWrap><Outlet /></SubWrap></Layout>}>
-                    <Route path=":menu_id" element={<Board />}/>                                             {/* 리스트 */}
+                    <Route path=":board_category" element={<Board />}/>                                        {/* 리스트 */}
+                    <Route path="detail/:board_category/:board_idx" element={<BoardDetail />}/>                                        {/* 상세 */}
                 </Route>
 
 

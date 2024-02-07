@@ -6,6 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import { checkedList } from "../../store/etcSlice";
+import { userLevelList } from "../../store/commonSlice";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import InputBox from "../../components/component/InputBox";
 import BtnInputBox from "../../components/component/admin/BtnInputBox";
@@ -117,14 +118,21 @@ const SettingLevel = () => {
             signup_lv: signup_lv,
             l_level: l_level
         };
-
         axios.put(level_list, body,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
             if(res.status === 200){
-                //회원등급리스트 가져오기
-                getLevelList();
+                //변경된회원등급리스트 store에 저장하기
+                saveLevelList();
+
+                let newList = [...list];
+                newList[idx].l_name = nameInput[idx];
+                setList(newList);
+
+                let newNameOn = [...nameOn];
+                newNameOn[idx] = false;
+                setNameOn(newNameOn);
 
                 //체크박스 해제
                 dispatch(checkedList([]));
@@ -143,6 +151,33 @@ const SettingLevel = () => {
                 }));
                 setConfirm(true);
             }
+        });
+    };
+
+
+    //변경된회원등급리스트 store에 저장하기
+    const saveLevelList = () => {
+        axios.get(level_list,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                const list = data
+                .filter((item)=>item.l_name !== null)    //미등록등급 제외
+                .filter((item)=>item.l_name.length > 0)  //미등록등급 제외
+                dispatch(userLevelList(list));
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         });
     };
 

@@ -9,6 +9,8 @@ const common = createSlice({
         siteInfo:{},
         siteInfoEdit:false,
         headerMenuList:[],
+        currentMenuData:{},
+        userLevelList:[],
     },
     reducers:{
         boardMenu: (state, action) => {
@@ -29,6 +31,12 @@ const common = createSlice({
         headerMenuList: (state, action) => {
             state.headerMenuList = action.payload;
         },
+        currentMenuData: (state, action) => {
+            state.currentMenuData = action.payload;
+        },
+        userLevelList: (state, action) => {
+            state.userLevelList = action.payload;
+        },
     }
 });
 
@@ -38,6 +46,8 @@ export const {
     alarm,
     siteInfo,
     siteInfoEdit,
-    headerMenuList
+    headerMenuList,
+    currentMenuData,
+    userLevelList
 } = common.actions;
 export default common;

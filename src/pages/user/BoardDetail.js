@@ -68,21 +68,9 @@ const BoardDetail = () => {
     },[popup.confirmPop]);
 
 
-    //게시판 제목
-    useEffect(()=>{
-        if(board_category){
-            const idx = common.boardMenu.findIndex((item)=>item.category == board_category);
-            const txt = common.boardMenu[idx].c_name;
-            setTitle(txt);
-        }
-    },[board_category]);
-
-
     //게시글정보 가져오기
     const getBoardData = () => {
-        axios.get(`${board_detail.replace(":category",board_category).replace(":idx",board_idx)}`,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
+        axios.get(`${board_detail.replace(":category",board_category).replace(":idx",board_idx)}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -93,26 +81,20 @@ const BoardDetail = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-                navigate("/console/login");
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         });
     };
 
 
     //게시글댓글리스트 가져오기
     const getCommentList = () => {
-        axios.get(`${board_comment_list.replace(":category",board_category).replace(":board_idx",board_idx)}`,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
+        axios.get(`${board_comment_list.replace(":category",board_category).replace(":board_idx",board_idx)}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -121,17 +103,13 @@ const BoardDetail = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-                navigate("/console/login");
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         });
     };
 
@@ -139,10 +117,13 @@ const BoardDetail = () => {
     useEffect(()=>{
         getBoardData();
         getCommentList();
-
-        //게시판설정정보 가져오기
-        setBoardSettingData(common.boardSettingData);
     },[board_category,board_idx]);
+
+
+    useEffect(()=>{
+        //게시판설정정보 가져오기
+        setBoardSettingData(common.currentMenuData);
+    },[common.currentMenuData]);
 
 
     //인풋값 변경시
@@ -191,100 +172,6 @@ const BoardDetail = () => {
                 setConfirm(true);
             }
         });
-    };
-
-
-    //삭제버튼 클릭시
-    const deltBtnClickHandler = () => {
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt:'해당 게시글을 삭제하시겠습니까?',
-            confirmPopBtn:2,
-        }));
-        setDeltConfirm(true);
-    };
-
-
-    //게시글 삭제하기
-    const deltHandler = () => {
-        const body = {
-            idx: board_idx,
-            category: board_category
-        };
-        axios.delete(`${board_modify}`,
-            {
-                data: body,
-                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
-            }
-        )
-        .then((res)=>{
-            if(res.status === 200){
-                navigate(-1);
-            }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-                navigate("/console/login");
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
-        });
-    };
-
-
-    //문의게시판일때 답변작성하기
-    const replyHandler = () => {
-        if(!answerTxt){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'답변을 작성해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }else{
-            const body = {
-                category: board_category,
-                idx: board_idx,
-                b_reply: answerTxt
-            };
-            axios.post(board_reply, body,
-                {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-            )
-            .then((res)=>{
-                if(res.status === 200){
-                    dispatch(confirmPop({
-                        confirmPop:true,
-                        confirmPopTit:'알림',
-                        confirmPopTxt:'답변이 등록되었습니다.',
-                        confirmPopBtn:1,
-                    }));
-                    setConfirm(true);
-                }
-            })
-            .catch((error) => {
-                const err_msg = CF.errorMsgHandler(error);
-                if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-                    navigate("/console/login");
-                }else{
-                    dispatch(confirmPop({
-                        confirmPop:true,
-                        confirmPopTit:'알림',
-                        confirmPopTxt: err_msg,
-                        confirmPopBtn:1,
-                    }));
-                    setConfirm(true);
-                }
-            });
-        }
     };
 
 
@@ -504,14 +391,10 @@ const BoardDetail = () => {
     };
 
 
+
     return(<>
-        <div className="page_admin_board">
-            <div className="content_box">
-                <div className="tit">
-                    <h3>
-                        <b>{title}</b>
-                    </h3>
-                </div>
+        <div className="page_user_board">
+            <div className="section_inner">
                 <div className="board_section">
                     <div className="board_view">
                         <div className="board_tit_box">
@@ -530,16 +413,19 @@ const BoardDetail = () => {
                                 </ul>
                             </div>
                             <div className="btn_util">
-                                <Link to={`/console/board/post/modify/${board_category}/${board_idx}`} className="btn_type11">수정</Link>
-                                <button type="button" className="btn_type12" onClick={deltBtnClickHandler}>삭제</button>
+                                <button type="button" className="btn_type11">수정</button>
+                                <button type="button" className="btn_type12">삭제</button>
                             </div>
                         </div>
                         <div className="board_con">
                             {/* 갤러리게시판일때만 썸네일이미지 보이기 */}
-                            {boardSettingData.c_content_type == 5 &&
+                            {boardSettingData.c_content_type && boardSettingData.c_content_type[0] == 5 &&
                                 <div className="img_box"><img src={api_uri+boardData.b_img} alt="썸네일이미지"/></div>
                             }
                             <div className="con" dangerouslySetInnerHTML={{ __html: boardData.b_contents }}></div>
+                            {/* <div className="write_btn_wrap">
+                                <a href="#" className="btn_type13">답글</a>
+                            </div> */}
                             {boardData.b_file && boardData.b_file.length > 0 &&
                                 <div className="file_section">
                                     <span>첨부파일</span>
@@ -556,45 +442,6 @@ const BoardDetail = () => {
                                         })}
                                     </div>
                                 </div>
-                            }
-                            {/* 문의게시판일때만 답변작성 보이기 */}
-                            {boardSettingData.c_content_type == 7 &&
-                                <ul className="answer_box">
-                                    <li>
-                                        <p>답변 작성</p>
-                                        <textarea 
-                                            value={answerTxt || ""}
-                                            onChange={(e) => setAnswerTxt(e.target.value)}
-                                            style={{minHeight:"150px"}}
-                                        />
-                                    </li>
-                                    <li>
-                                        <p>답변 알림 수신 정보</p>
-                                        <ul>
-                                            <li>
-                                                <p>휴대폰번호</p>
-                                                <InputBox
-                                                    className="input_box" 
-                                                    type={`text`}
-                                                    value={boardData.b_sms_phone || ""}
-                                                    onChangeHandler={onInputChangeHandler}
-                                                    id={`b_sms_phone`}
-                                                    phone={true}
-                                                />
-                                            </li>
-                                            <li>
-                                                <p>이메일</p>
-                                                <InputBox
-                                                    className="input_box" 
-                                                    type={`text`}
-                                                    value={boardData.b_email || ""}
-                                                    onChangeHandler={onInputChangeHandler}
-                                                    id={`b_email`}
-                                                />
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
                             }
                             {boardSettingData.b_comment == 'Y' &&
                                 <CommentWrap2 
@@ -618,30 +465,34 @@ const BoardDetail = () => {
                                     onDeltHandler={commentDeltBtnClickHandler}
                                 />
                             }
-                        </div> 
-                    </div>
-                    {boardSettingData.c_content_type == 7 ?
-                        <div className="form_btn_wrap">
-                            <button type="button" className="btn_type3" onClick={()=>{navigate(-1)}}>목록</button>
-                            <button type="button" className="btn_type4" onClick={replyHandler}>답변등록</button>
                         </div>
-                        :
-                        <div className="btn_list_wrap tm30">
-                            <button type="button" className="btn_type3" onClick={()=>{navigate(-1)}}>목록</button>
+                    </div>
+                    <div className="btn_center_wrap">
+                        <button type="button" className="btn_list" onClick={()=>{navigate(-1)}}>목록으로</button>
+                    </div>
+                    {boardData && (boardData.prev_board || boardData.next_board) &&
+                        <div className="board_pagination">
+                            {boardData.prev_board && 
+                                <div className="pagination_box board_prev">
+                                    <b>PREV</b>
+                                    <span>
+                                        <Link to={`/board/detail/${board_category}/${boardData.prev_board.idx}`}>{boardData.prev_board.b_title}</Link>
+                                    </span>
+                                </div>
+                            }
+                            {boardData.next_board &&
+                                <div className="pagination_box board_next">
+                                    <b>NEXT</b>
+                                    <span>
+                                        <Link to={`/board/detail/${board_category}/${boardData.next_board.idx}`}>{boardData.next_board.b_title}</Link>
+                                    </span>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
             </div>
         </div>
-
-        {/* 게시글삭제 confirm팝업 */}
-        {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
-
-        {/* 댓글삭제 confirm팝업 */}
-        {commentDeltConfirm && <ConfirmPop onClickHandler={commentDeltHandler} />}
-
-        {/* confirm팝업 */}
-        {confirm && <ConfirmPop />}
     </>);
 };
 

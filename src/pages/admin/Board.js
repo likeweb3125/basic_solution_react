@@ -8,10 +8,10 @@ import { confirmPop } from "../../store/popupSlice";
 import { pageNoChange, checkedList, listPageData, detailPageBack } from "../../store/etcSlice";
 import { boardSettingData } from "../../store/commonSlice";
 import SelectBox from "../../components/component/admin/SelectBox";
-import SearchInput from "../../components/component/admin/SearchInput";
+import SearchInput from "../../components/component/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
-import Pagination from "../../components/component/admin/Pagination";
+import Pagination from "../../components/component/Pagination";
 
 
 const Board = () => {

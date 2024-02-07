@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import * as CF from "../../../config/function";
@@ -14,8 +14,10 @@ import logo from "../../../images/logo.png";
 const Header = () => {
     const dispatch = useDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const menu_list = enum_api_uri.menu_list;
     const [confirm, setConfirm] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -24,6 +26,7 @@ const Header = () => {
     const [menuList, setMenuList] = useState([]);
     const [menuOn, setMenuOn] = useState(null);
     const [menu2On, setMenu2On] = useState({});
+    const [login, setLogin] = useState(false);
 
 
     // Confirm팝업 닫힐때
@@ -56,11 +59,9 @@ const Header = () => {
     },[location]);
 
 
-    // 전체카테고리 가져오기
+    // 전체메뉴 가져오기
     const getMenuList = () => {
-        axios.get(menu_list,
-            // {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
+        axios.get(menu_list)
         .then((res)=>{
             if(res.status === 200){
                 const data = res.data.data;
@@ -81,21 +82,55 @@ const Header = () => {
     };
 
 
+    //맨처음 전체메뉴 가져오기
     useEffect(()=>{
         getMenuList();
     },[]);
 
 
+    //전체메뉴값 변경시 store에 저장
     useEffect(()=>{
         dispatch(headerMenuList(menuList));
     },[menuList]);
 
 
-    const onMenu2ClickHandler = (idx) => {
+    //로그인인지 체크
+    useEffect(()=>{
+        if(Object.keys(user.loginUser).length > 0){
+            setLogin(true);
+        }else{
+            setLogin(false);
+        }
+    },[user.loginUser]);
+
+
+    //메뉴 클릭시
+    const menuClickHandler = (depth, data) => {
+        console.log(data);
+
+        let url;
+
+        //1차메뉴일때
+        if(depth === 1){
+            if(data.submenu && data.submenu[0].c_content_type[0] !== 2){
+                const type = data.submenu[0].c_content_type[0];
+                if(type === 1){
+                    url = '/html/'+data.submenu[0].id;
+                }
+                navigate(url);
+            }
+        }
+        
+    };
+
+
+    //depth2 메뉴클릭시
+    const menu2ClickHandler = (idx) => {
         let newMenuOn = {...menu2On};
         newMenuOn[idx] = !newMenuOn[idx];
         setMenu2On(newMenuOn);
     };
+
 
 
     return(<>
@@ -115,28 +150,33 @@ const Header = () => {
                                         onMouseEnter={()=>setMenuOn(i)}
                                         onMouseLeave={()=>setMenuOn(null)}
                                     >
-                                        <Link to='/'>
+                                        <button type="button"
+                                            onClick={()=>{menuClickHandler(1, cont)}}
+                                        >
                                             <span>{cont.c_name}</span>
-                                        </Link>
+                                        </button>
                                         {cont.submenu && 
                                             <ul className={`depth2${menuOn === i ? ' on' : ''}`}>
                                                 {cont.submenu.map((cont2,idx)=>{
                                                     return(
                                                         <li key={idx} 
                                                             className={`${cont2.submenu ? 'is_depth' : ''}${menu2On[idx] ? ' on' : ''}`} 
-                                                            onClick={()=>onMenu2ClickHandler(idx)}
+                                                            onClick={()=>menu2ClickHandler(idx)}
                                                         >
-                                                            <Link to={`/board/${cont2.id}`}>
+                                                            {/* <Link to={`/board/${cont2.id}`}> */}
+                                                            <button type="button"
+                                                                // onClick={()=>{menuClickHandler()}}
+                                                            >
                                                                 <span>{cont2.c_name}</span>
-                                                            </Link>
+                                                            </button>
                                                             {cont2.submenu &&
                                                                 <ul className="depth3">
                                                                     {cont2.submenu.map((cont3, index)=>{
                                                                         return(
                                                                             <li key={index}>
-                                                                                <Link to="/">
+                                                                                <button type="button">
                                                                                     <span>{cont3.c_name}</span>
-                                                                                </Link>
+                                                                                </button>
                                                                             </li>
                                                                         );
                                                                     })}
@@ -153,21 +193,32 @@ const Header = () => {
                         </ul>
                     </nav>
                     <ul className="header_util">
-                        <li>
-                            <Link to="/" className="btn_join">
-                                <span>회원가입</span>
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/login" className="btn_login">
-                                <span>로그인</span>
-                            </Link>
-                        </li>
-                        {/* <!-- <li>
-                            <Link to="/" className="btn_logout">
-                                <span>로그아웃</span>
-                            </Link>
-                        </li> --> */}
+                        {login ? 
+                            <>
+                                <li>
+                                    <Link to="/mypage" className="btn_join">
+                                        <span>마이페이지</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <button type="button" className="btn_logout">
+                                        <span>로그아웃</span>
+                                    </button>
+                                </li>
+                            </>
+                            :<>
+                                <li>
+                                    <Link to="/signup" className="btn_join">
+                                        <span>회원가입</span>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/login" className="btn_login">
+                                        <span>로그인</span>
+                                    </Link>
+                                </li>
+                            </>
+                        }
                     </ul>
                     <button type="button" className="btn_m" onClick={toggleMoMenu}>
                         <span>모바일 메뉴</span>

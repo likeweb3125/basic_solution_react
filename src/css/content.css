@@ -9,9 +9,9 @@
 
 
 /* 서브비주얼 */
-.sub_visual {position: relative; padding: 60px 0;border-radius: 40px 0 0 40px;overflow: hidden;}
-.sub_visual:before {content: ''; position: absolute; left: 50%; top: 0; transform: translateX(-50%); max-width: 1680px; width: 100%; height: 100%; background: #f8f8f8;  z-index: -1;}
-.sub_visual:after {content: ''; position: absolute; right: 0; top: 0; width: 50%; height: 100%; background: #f8f8f8; z-index: -1;}
+.sub_visual {position: relative; padding: 60px 0;border-radius: 40px 0 0 40px;overflow: hidden;max-width: 1800px;margin: 0 0 0 auto;background: #f8f8f8;}
+/* .sub_visual:before {content: ''; position: absolute; left: 50%; top: 0; transform: translateX(-50%); max-width: 1680px; width: 100%; height: 100%; background: #f8f8f8;  z-index: -1;border-radius: 40px 0 0 40px;}
+.sub_visual:after {content: ''; position: absolute; right: 0; top: 0; width: 50%; height: 100%; background: #f8f8f8; z-index: -1;} */
 .sub_visual h2 b {display: block; font-size: 52px; font-weight: 600; color: #222; padding-bottom: 60px;}
 .sub_visual h2 strong {display: block; font-size: 32px; font-weight: 600; color: #222;}
 .sub_visual .section_inner {display: flex; justify-content: space-between; flex-direction: row-reverse; align-items: flex-end;}
@@ -117,6 +117,13 @@
 .gallery_board .list_gallery .txt {padding-top: 20px;}
 .gallery_board .list_gallery .txt strong {display: block; font-size: 24px; font-weight: 500; color: #222;}
 .gallery_board .list_gallery .txt span {display: block; padding-top: 5px; font-size: 18px; color: #666;}
+.gallery_board .list_gallery .item_util{padding-top: 5px;}
+.gallery_board .list_gallery .item_util li{padding: 0 16px; position: relative;}
+.gallery_board .list_gallery .item_util li:first-of-type {padding-left: 0;}
+.gallery_board .list_gallery .item_util li:last-of-type {padding-right: 0;}
+.gallery_board .list_gallery .item_util li:after {content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 16px; background: #ddd;}
+.gallery_board .list_gallery .item_util li:last-of-type:after {display: none;}
+.gallery_board .list_gallery .item_util .ic img {vertical-align: middle;}
 
 
 /* 비밀번호 입력 팝업 */
@@ -265,8 +272,8 @@
 
 
     /* 서브비주얼 */
-    .sub_visual {padding: 40px 0;}
-    .sub_visual:before {border-radius: 0;}
+    .sub_visual {padding: 40px 0;border-radius: 0;}
+    /* .sub_visual:before {border-radius: 0;} */
     .sub_visual h2 strong {font-size: 28px;}
     .sub_visual h2 b {display: none;}
     .sub_visual .section_inner {display: block;}
@@ -324,6 +331,13 @@
     .list_board .answer_box .q_box + .a_box:before {right: auto; width: calc(100% - 24px);}
     .list_board .answer_box .answer_info b {font-size: 14px; margin-right: 12px;}
     .list_board .answer_box .answer_info span {font-size: 14px; padding-right: 8px; margin-right: 8px;}
+
+
+    /* 갤러리 게시판 */
+    .gallery_board .list_gallery .item_util li{font-size: 14px;padding: 0 8px;}
+    .gallery_board .list_gallery .item_util .ic {width: 20px;height: 20px;}
+    .gallery_board .list_gallery .item_util .ic img {vertical-align: top;}
+    .gallery_board .list_gallery .item_util li:last-of-type{width: 100%;text-align: right;padding-left: 0;}
 
     
     /* 게시판 뷰 */

@@ -32,8 +32,8 @@ const TableWrap = (props) => {
     const etc = useSelector((state)=>state.etc);
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
+    const common = useSelector((state)=>state.common);
     const api_uri = enum_api_uri.api_uri;
-    const level_list = enum_api_uri.level_list;
     const banner_move = enum_api_uri.banner_move;
     const menu_move = enum_api_uri.menu_move;
     const [confirm, setConfirm] = useState(false);
@@ -137,36 +137,10 @@ const TableWrap = (props) => {
 
 
     //회원등급리스트 가져오기
-    const getLevelList = () => {
-        axios.get(level_list,
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
-        .then((res)=>{
-            if(res.status === 200){
-                let data = res.data.data;
-                const list = data
-                .filter((item)=>item.l_name !== null)    //미등록등급 제외
-                .filter((item)=>item.l_name.length > 0)  //미등록등급 제외
-                setLevelList(list);
-            }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        });
-    };
-
-
-    //맨처음 회원등급리스트 가져오기
     useEffect(()=>{
-        getLevelList();
-    },[]);
+        const list = common.userLevelList;
+        setLevelList(list);
+    },[common.userLevelList]);
 
 
     //메인배너 드래그앤드롭---------------------

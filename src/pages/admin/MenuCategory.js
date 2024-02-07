@@ -35,6 +35,11 @@ const MenuCategory = () => {
     const [parents, setParents] = useState([]);
 
 
+    useEffect(()=>{
+        console.log(currentMenu);
+    },[currentMenu])
+
+
     // Confirm팝업 닫힐때
     useEffect(()=>{
         if(popup.confirmPop === false){
@@ -407,7 +412,7 @@ const MenuCategory = () => {
         )
         .then((res)=>{
             if(res.status === 200){
-
+                getMenuList();
             }
         })
         .catch((error) => {
