@@ -305,7 +305,6 @@ const MemberInfoPop = () => {
                                                     }}
                                                     selHidden={true}
                                                     objectSel={`level_list`}
-                                                    allLevel={true}
                                                 />
                                             </div>
                                         </div>

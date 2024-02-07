@@ -71,16 +71,8 @@ const CategoryPopCont5 = (props) => {
     //회원등급리스트 가져오기
     useEffect(()=>{
         const list = common.userLevelList;
-        const newList = list
-        .filter((item)=>item.l_level !== 0)  //0등급(이용제한) 제외
-        const data = {
-            l_level: '',
-            signup_lv: '',
-            l_name: '전체'
-        };
-        const addList = newList.concat(data);
 
-        setLevelList(addList);
+        setLevelList(list);
     },[common.userLevelList]);
 
 
@@ -91,19 +83,19 @@ const CategoryPopCont5 = (props) => {
             let write = '';
             let reply = '';
             let comment = '';
-            if(info.b_read_lv){
+            if(info.b_read_lv !== null){
                 read = levelList.find(item=>item.l_level === info.b_read_lv);
                 read = read.l_name;
             }
-            if(info.b_write_lv){
+            if(info.b_write_lv !== null){
                 write = levelList.find(item=>item.l_level === info.b_write_lv);
                 write = write.l_name;
             }
-            if(info.b_reply_lv){
+            if(info.b_reply_lv !== null){
                 reply = levelList.find(item=>item.l_level === info.b_reply_lv);
                 reply = reply.l_name;
             }
-            if(info.b_comment_lv){
+            if(info.b_comment_lv !== null){
                 comment = levelList.find(item=>item.l_level === info.b_comment_lv);
                 comment = comment.l_name;
             }

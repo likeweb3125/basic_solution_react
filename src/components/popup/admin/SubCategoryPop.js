@@ -74,6 +74,18 @@ const SubCategoryPop = () => {
             if(res.status === 200){
                 let data = res.data.data;
                     data.c_content_type = data.c_content_type[0];
+                if(!data.b_read_lv){
+                    data.b_read_lv = 0;
+                }
+                if(!data.b_write_lv){
+                    data.b_write_lv = 0;
+                }
+                if(!data.b_reply_lv){
+                    data.b_reply_lv = 0;
+                }
+                if(!data.b_comment_lv){
+                    data.b_comment_lv = 0;
+                }
                 setInfo(data);
 
                 if(data.c_main_banner_file){
@@ -121,14 +133,14 @@ const SubCategoryPop = () => {
                 b_thumbnail_with:0,
                 b_thumbnail_height:0,
                 b_thumbnail:'1',
-                b_read_lv:'',
-                b_write_lv:'',
+                b_read_lv:0,
+                b_write_lv:0,
                 b_group:'',
                 b_secret:'',
                 b_reply:'',
-                b_reply_lv:'',
+                b_reply_lv:0,
                 b_comment:'',
-                b_comment_lv:'',
+                b_comment_lv:0,
                 b_write_alarm:'',
                 b_write_send:'',
                 b_alarm:'',
