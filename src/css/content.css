@@ -65,6 +65,7 @@
 .user_section .board_section .search_wrap .search_box .search_input {width: 320px;}
 .user_section .board_section .board_btn_wrap {position: absolute; right: 0; bottom: 0; z-index: 50;}
 .user_section .board_section .board_btn_wrap a {transform: translateY(10px);}
+.user_section .board_section .board_btn_wrap.none_list{position: relative;text-align: right;}
 .list_board_wrap {position: relative;}
 .list_board_wrap .board_util {position: absolute; left: 0; top: -24px; padding: 0; transform: translateY(-100%); display: flex; align-items: center; column-gap: 36px;}
 .list_board_wrap .board_util .txt_total {font-size: 18px; font-weight: 700; color: #666; line-height: 30px; padding: 10px 0;}
@@ -107,7 +108,9 @@
 .list_board .answer_box .answer_info span:after {content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 1px; height: 16px; background: #ddd;}
 .list_board .answer_box .answer_info span:last-of-type {padding-right: 0; margin-right: 0;}
 .list_board .answer_box .answer_info span:last-of-type:after {display: none;} 
-
+.page_user_board .tbl_wrap4 .tr_view th{border-bottom: none;}
+.page_user_board .tbl_wrap4 .tr_view th b{top: 25px;right: 25px;}
+.page_user_board .tbl_wrap4 .tr_view+tr th{padding-top: 10px;}
 
 /* 갤러리 게시판 */
 .gallery_board .list_gallery {display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 60px 40px; padding-bottom: 20px;}

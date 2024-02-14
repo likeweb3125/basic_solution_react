@@ -67,7 +67,6 @@ const Login = () => {
             m_password:password,
             // m_email:"likeweb@likeweb.co.kr",
             // m_password:"test!@#$",
-            //m_level:"9" //관리자 회원레벨 9
         };
 
         axios.post(login,body)

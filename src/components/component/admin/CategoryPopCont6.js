@@ -162,23 +162,26 @@ const CategoryPopCont6 = (props) => {
                             </div>
                             <div className="form_input">
                                 <h6>게시판 분류 사용여부</h6>
-                                <div className="input_wrap">
-                                    <div className="chk_rdo_wrap chk_rdo_wrap2">
-                                        <div className="chk_box1">
-                                            <input type="checkbox" id="check_split" className="blind"
-                                                onChange={(e)=>{
-                                                    const checked = e.currentTarget.checked;
-                                                    onCheckChangeHandler(checked,"b_group","Y");
-                                                }}
-                                                checked={info.b_group && info.b_group == "Y" ? true : false}
-                                            />
-                                            <label htmlFor="check_split">체크 시 게시판 분류를 사용합니다.</label>
+                                {popup.adminSubCategoryPopIdx ? //수정일때만 분류설정가능
+                                    <div className="input_wrap">
+                                        <div className="chk_rdo_wrap chk_rdo_wrap2">
+                                            <div className="chk_box1">
+                                                <input type="checkbox" id="check_split" className="blind"
+                                                    onChange={(e)=>{
+                                                        const checked = e.currentTarget.checked;
+                                                        onCheckChangeHandler(checked,"b_group","Y");
+                                                    }}
+                                                    checked={info.b_group && info.b_group == "Y" ? true : false}
+                                                />
+                                                <label htmlFor="check_split">체크 시 게시판 분류를 사용합니다.</label>
+                                            </div>
+                                            <button type="button" className="btn_right" onClick={()=>{
+                                                dispatch(adminBoardGroupPop({adminBoardGroupPop:true,adminBoardGroupPopId:info.id}));
+                                            }}>분류 설정</button>
                                         </div>
-                                        <button type="button" className="btn_right" onClick={()=>{
-                                            dispatch(adminBoardGroupPop({adminBoardGroupPop:true,adminBoardGroupPopId:info.id}));
-                                        }}>분류 설정</button>
                                     </div>
-                                </div>
+                                    :<p className="f_16">하위 카테고리를 등록 후 수정 시에 설정 가능합니다.</p>
+                                }
                             </div>
                         </div>
                         <div className="form_box form_box2 form_border_box">

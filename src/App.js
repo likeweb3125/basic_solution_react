@@ -17,6 +17,7 @@ import SubWrap from './components/component/user/SubWrap';
 import Html from './pages/user/Html';
 import Board from './pages/user/Board';
 import BoardDetail from './pages/user/BoardDetail';
+import BoardWrite from './pages/user/BoardWrite';
 import Faq from './pages/user/Faq';
 import Inquiry from './pages/user/Inquiry';
 import InquiryWrite from './pages/user/InquiryWrite';
@@ -151,17 +152,18 @@ function App() {
                     {/* 카테고리종류 HTML */}
                     <Route path="html/:menu_idx" element={<Html />}/>
 
-                    {/* 카테고리종류 일반게시판 */}
-                    <Route path="board/:menu_idx" element={<Board />}/>                                      
-                    <Route path="board/detail/:menu_idx/:board_idx" element={<BoardDetail />}/>   
+                    {/* 카테고리종류 일반게시판,갤러리게시판 */}
+                    <Route path="board/:menu_idx" element={<Board />}/>                               {/* 리스트 */}                
+                    <Route path="board/detail/:menu_idx/:board_idx" element={<BoardDetail />}/>       {/* 상세 */}
+                    <Route path="board/write/:menu_idx" element={<BoardWrite write={true} />}/>       {/* 작성 */}
 
                     {/* 카테고리종류 FAQ */}
                     <Route path="faq/:menu_idx" element={<Faq />}/>      
 
-                    {/* 카테고리종류 문의게시판 */}
-                    <Route path="inquiry/:menu_idx" element={<Inquiry />}/>         
-                    <Route path="inquiry/write/:menu_idx" element={<InquiryWrite write={true} />}/>         
-                    <Route path="inquiry/modify/:menu_idx/:board_idx" element={<InquiryWrite />}/>         
+                    {/* 카테고리종류 문의게시판 */} 
+                    <Route path="inquiry/:menu_idx" element={<Inquiry />}/>                           {/* 리스트 */}
+                    <Route path="inquiry/write/:menu_idx" element={<InquiryWrite write={true} />}/>   {/* 작성 */}        
+                    <Route path="inquiry/modify/:menu_idx/:board_idx" element={<InquiryWrite />}/>    {/* 수정 */} 
                 </Route>
 
 

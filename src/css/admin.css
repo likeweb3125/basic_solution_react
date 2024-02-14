@@ -24,7 +24,7 @@ body,input,select,textarea,button,table {
 .flex_bottom{display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex;-webkit-box-align: end; -ms-flex-align: end;-webkit-align-items: flex-end; align-items: flex-end;}
 .tip_box{position: relative;cursor: default;display: inline-block;}
 .tip_box .tip_txt{padding-right: 30px;background: url(../images/ic_tip.svg) no-repeat center right;display: inline-block;cursor: pointer;}
-.tip_box .box{position: absolute;top: 20px;left: 0; width: 400px;background: #fff;padding:20px 15px;box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.08); z-index: 1;font-size: 15px;color: #666;border-radius: 10px;display: none;}
+.tip_box .box{position: absolute;top: 20px;left: 0; width: 400px;background: #fff;padding:20px 15px;box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.08); z-index: 5;font-size: 15px;color: #666;border-radius: 10px;display: none;}
 .tip_box .box ul{padding-top: 15px;}
 .tip_box .box ul li{padding-bottom: 5px;color: #999;font-size: 14px;}
 .tip_box .box ul li:last-child{padding-bottom: 0;}

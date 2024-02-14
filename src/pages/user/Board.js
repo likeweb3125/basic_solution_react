@@ -6,7 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import { pageNoChange } from "../../store/etcSlice";
-import { listPageData, detailPageBack } from "../../store/commonSlice";
+import { boardSettingData, listPageData, detailPageBack } from "../../store/commonSlice";
 import SearchInput from "../../components/component/SearchInput";
 import ListBoard from "../../components/component/user/ListBoard";
 import ListGallery from "../../components/component/user/ListGallery";
@@ -21,6 +21,7 @@ const Board = () => {
     const popup = useSelector((state)=>state.popup);
     const etc = useSelector((state)=>state.etc);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const { menu_idx } = useParams();
     const [confirm, setConfirm] = useState(false);
     const [searchTxt, setSearchTxt] = useState("");
@@ -28,6 +29,7 @@ const Board = () => {
     const [boardData, setBoardData] = useState({});
     const [limit, setLimit] = useState(null);
     const [scrollMove, setScrollMove] = useState(false);
+    const [writeBtn, setWriteBtn] = useState(false);
 
 
     //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
@@ -82,6 +84,11 @@ const Board = () => {
                 let data = res.data.data;
                 setBoardData(data);
 
+                //게시판설정정보 store 에 저장
+                const newData = {...data};
+                delete newData.board_list;
+                dispatch(boardSettingData(newData));
+
                 //리스트페이지 조회 데이터저장
                 let pageData = {
                     page: page,
@@ -132,6 +139,44 @@ const Board = () => {
     },[menu_idx]);
 
 
+    //글작성 권한 체크하기
+    useEffect(()=>{
+        const level = boardData.b_write_lv;
+        const login = user.loginStatus;
+
+        //전체이용가능일때 작성가능
+        if(level === 0){
+            setWriteBtn(true);
+        }else{
+            //회원일때
+            if(login){
+                const mLevel = user.loginUser.m_level;
+
+                //관리자레벨 권한일때
+                if(level === 9){
+                    if(mLevel == 9){
+                        setWriteBtn(true);
+                    }else{
+                        setWriteBtn(false);
+                    }
+                }
+                //다른레벨 권한일때
+                else{
+                    if(mLevel >= level){
+                        setWriteBtn(true);
+                    }else{
+                        setWriteBtn(false);
+                    }
+                }
+            }
+            //비회원일때 작성불가능
+            else{
+                setWriteBtn(false);
+            }
+        }
+    },[boardData]);
+
+
 
     return(<>
         <div className="page_user_board">
@@ -174,9 +219,11 @@ const Board = () => {
                             />
                         </div>
                     }
-                    <div className="board_btn_wrap">
-                        <Link to="" className="btn_type21">글 작성하기</Link>
-                    </div>
+                    {writeBtn &&
+                        <div className={`board_btn_wrap${boardData.board_list && boardData.board_list.length > 0 ? "" : " none_list"}`}>
+                            <Link to={`/sub/board/write/${menu_idx}`} className="btn_type21">글 작성하기</Link>
+                        </div>
+                    }
                     {boardData.board_list && boardData.board_list.length > 0 &&
                         <Pagination 
                             currentPage={boardData.current_page} //현재페이지 번호

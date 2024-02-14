@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
@@ -29,6 +29,7 @@ const Inquiry = () => {
     const [limit, setLimit] = useState(null);
     const [detailData, setDetailData] = useState({});
     const [scrollMove, setScrollMove] = useState(false);
+    const [writeBtn, setWriteBtn] = useState(false);
 
 
     //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
@@ -131,6 +132,12 @@ const Inquiry = () => {
     },[etc.pageNo,etc.pageNoChange]);
 
 
+    //페이지변경시 게시판리스트정보 가져오기
+    useEffect(()=>{
+        getBoardData();
+    },[menu_idx]);
+
+
     //제목클릭시 내용토글
     const onDetailToggleHandler = (secret, idx, show) => {
         if(show){
@@ -170,6 +177,44 @@ const Inquiry = () => {
     };
 
 
+    //글작성 권한 체크하기
+    useEffect(()=>{
+        const level = boardData.b_write_lv;
+        const login = user.loginStatus;
+
+        //전체이용가능일때 작성가능
+        if(level === 0){
+            setWriteBtn(true);
+        }else{
+            //회원일때
+            if(login){
+                const mLevel = user.loginUser.m_level;
+
+                //관리자레벨 권한일때
+                if(level === 9){
+                    if(mLevel == 9){
+                        setWriteBtn(true);
+                    }else{
+                        setWriteBtn(false);
+                    }
+                }
+                //다른레벨 권한일때
+                else{
+                    if(mLevel >= level){
+                        setWriteBtn(true);
+                    }else{
+                        setWriteBtn(false);
+                    }
+                }
+            }
+            //비회원일때 작성불가능
+            else{
+                setWriteBtn(false);
+            }
+        }
+    },[boardData]);
+
+
 
     return(<>
         <div className="page_user_board page_user_qna">
@@ -192,9 +237,11 @@ const Inquiry = () => {
                         <div className="board_util">
                             <em className="txt_total">전체 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}건</em>
                             <ul className="board_tab">
-                                <li>
-                                    <Link to={`/sub/inquiry/write/${menu_idx}`} className="btn_type21">문의 작성하기</Link>
-                                </li>
+                                {writeBtn &&
+                                    <li>
+                                        <Link to={`/sub/inquiry/write/${menu_idx}`} className="btn_type21">문의 작성하기</Link>
+                                    </li>
+                                }
                                 {user.loginStatus && //로그인시 노출
                                     <li>
                                         <Link to='' className="btn_type24">내 Q&amp;A 보기</Link>
@@ -212,9 +259,6 @@ const Inquiry = () => {
                             onDetailToggleHandler={onDetailToggleHandler}
                             detailData={detailData}
                         />
-                    </div>
-                    <div className="board_btn_wrap">
-                        <Link to={`/sub/inquiry/write/${menu_idx}`} className="btn_type21">글 작성하기</Link>
                     </div>
                     {boardData.board_list && boardData.board_list.length > 0 &&
                         <Pagination 
