@@ -6,7 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import history from "../../config/history";
 import { confirmPop } from "../../store/popupSlice";
-import { detailPageBack } from "../../store/etcSlice";
+import { detailPageBack } from "../../store/commonSlice";
 import CommentWrap2 from "../../components/component/admin/CommentWrap2";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import InputBox from "../../components/component/InputBox";
@@ -27,9 +27,7 @@ const BoardDetail = () => {
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
-    const [deltConfirm, setDeltConfirm] = useState(false);
     const [commentDeltConfirm, setCommentDeltConfirm] = useState(false);
-    const [title, setTitle] = useState("");
     const [boardData, setBoardData] = useState({});
     const [boardSettingData, setBoardSettingData] = useState({});
     const [answerTxt, setAnswerTxt] = useState(null);
@@ -62,7 +60,6 @@ const BoardDetail = () => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
-            setDeltConfirm(false);
             setCommentDeltConfirm(false);
         }
     },[popup.confirmPop]);
@@ -493,6 +490,12 @@ const BoardDetail = () => {
                 </div>
             </div>
         </div>
+
+        {/* 댓글삭제 confirm팝업 */}
+        {commentDeltConfirm && <ConfirmPop onClickHandler={commentDeltHandler} />}
+
+        {/* confirm팝업 */}
+        {confirm && <ConfirmPop />}
     </>);
 };
 

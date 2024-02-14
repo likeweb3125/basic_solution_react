@@ -5,8 +5,8 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, passwordCheckPop } from "../../store/popupSlice";
-import { pageNoChange, listPageData, detailPageBack } from "../../store/etcSlice";
-import { boardSettingData } from "../../store/commonSlice";
+import { pageNoChange } from "../../store/etcSlice";
+import { boardSettingData, listPageData, detailPageBack } from "../../store/commonSlice";
 import SearchInput from "../../components/component/SearchInput";
 import ListInquiry from "../../components/component/user/ListInquiry";
 import Pagination from "../../components/component/Pagination";
@@ -20,6 +20,7 @@ const Inquiry = () => {
     const popup = useSelector((state)=>state.popup);
     const etc = useSelector((state)=>state.etc);
     const common = useSelector((state)=>state.common);
+    const user = useSelector((state)=>state.user);
     const { menu_idx } = useParams();
     const [confirm, setConfirm] = useState(false);
     const [searchTxt, setSearchTxt] = useState("");
@@ -33,7 +34,7 @@ const Inquiry = () => {
     //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
     useEffect(()=>{
         if(scrollMove){
-            const y = etc.scrollY;
+            const y = common.scrollY;
             window.scrollTo(0,y); 
         }
     },[scrollMove]);
@@ -62,12 +63,12 @@ const Inquiry = () => {
     //게시판리스트정보 가져오기
     const getBoardData = (page) => {
         let pageNum;
-        let searchText;
+        let searchText = '';
 
         //상세페이지에서 뒤로가기시 저장된 리스트페이지 정보로 조회
-        if(etc.detailPageBack){
-            pageNum = etc.listPageData.page;
-            searchText = etc.listPageData.searchTxt;
+        if(common.detailPageBack){
+            pageNum = common.listPageData.page;
+            searchText = common.listPageData.searchTxt;
             setSearchTxt(searchText);
         }else{
             pageNum = page;
@@ -93,7 +94,7 @@ const Inquiry = () => {
                 dispatch(listPageData(pageData));
 
                 //상세페이지에서 뒤로가기시
-                if(etc.detailPageBack){
+                if(common.detailPageBack){
                     setScrollMove(true);
                     dispatch(detailPageBack(false));
                 }
@@ -194,9 +195,11 @@ const Inquiry = () => {
                                 <li>
                                     <Link to={`/sub/inquiry/write/${menu_idx}`} className="btn_type21">문의 작성하기</Link>
                                 </li>
-                                <li>
-                                    <a href="#" className="btn_type24">내 Q&amp;A 보기</a>
-                                </li>
+                                {user.loginStatus && //로그인시 노출
+                                    <li>
+                                        <Link to='' className="btn_type24">내 Q&amp;A 보기</Link>
+                                    </li>
+                                }
                             </ul>
                         </div>
                         <ListInquiry

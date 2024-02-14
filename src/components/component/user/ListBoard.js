@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { scrollY } from "../../../store/etcSlice";
+import { scrollY } from "../../../store/commonSlice";
 import * as CF from "../../../config/function";
 import ic_clip from "../../../images/ic_clip.svg";
 

@@ -1,39 +1,57 @@
-import { useDispatch } from "react-redux";
-import { Link, useParams } from "react-router-dom";
-import { scrollY } from "../../../store/etcSlice";
-import * as CF from "../../../config/function";
+import { useEffect, useState } from "react";
 
 
-const ListFaq = ({columnTitle, columnDate, columnView, columnFile, columnGroup, list, onDetailToggleHandler, detailData}) => {
-    const dispatch = useDispatch();
-    const { menu_idx } = useParams();
+const ListFaq = ({columnGroup, list, onDetailToggleHandler, detailData}) => {
+    const [detailOn, setDetailOn] = useState(false);
 
+
+    useEffect(()=>{
+        if(Object.keys(detailData).length > 0){
+            setDetailOn(true);
+        }else{
+            setDetailOn(false);
+        }
+    },[detailData]);
 
 
     return(<>
         <ul className="list_board">
             {list && list.length > 0 ? 
                 list.map((cont,i)=>{
+                    //현재상세내용 보이는지 체크
+                    let box = false;
+                    if(Object.keys(detailData).length > 0 && detailData.idx === cont.idx){
+                        box = true;
+                    }
+
+                    let liOn = false;
+                    if(detailOn && detailData.idx === cont.idx){
+                        liOn = true;
+                    }
 
                     return(
-                        <li key={i} className="on">
-                            <div className="item_box">
+                        <li key={i} className={liOn ? 'on' : ''}>
+                            <div className="item_box"
+                                onClick={()=>{
+                                    onDetailToggleHandler(cont.idx, box);
+                                }}
+                            >
                                 <div className="item_txt">
                                     <div className="item_num">
-                                        <em className="txt_category txt_color1">회원</em>
+                                        {columnGroup && <em className="txt_category txt_color1">{cont.g_name}</em>}
                                     </div>
                                     <div className="item_link">
-                                        <span>
-                                            <a href="#">회원 가입시 회원 인증 메일이 도착하지 않았어요.</a>
-                                        </span>
+                                        <span>{cont.b_title}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div className="answer_box">
-                                <div className="a_box">
-                                    <p>회원가입이 정상적으로 완료된 경우 정상 회원등록 완료</p>
+                            {liOn &&
+                                <div className="answer_box">
+                                    <div className="a_box">
+                                        <p>{detailData.b_contents}</p>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </li>
                     );
                 })

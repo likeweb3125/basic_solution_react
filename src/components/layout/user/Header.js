@@ -7,6 +7,7 @@ import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { confirmPop } from "../../../store/popupSlice";
 import { headerMenuList } from "../../../store/commonSlice";
+import { loginStatus, loginUser, siteId, maintName } from "../../../store/userSlice";
 import ConfirmPop from "../../popup/ConfirmPop";
 import logo from "../../../images/logo.png";
 
@@ -96,12 +97,12 @@ const Header = () => {
 
     //로그인인지 체크
     useEffect(()=>{
-        if(Object.keys(user.loginUser).length > 0){
+        if(user.loginStatus){
             setLogin(true);
         }else{
             setLogin(false);
         }
-    },[user.loginUser]);
+    },[user.loginStatus]);
 
 
     //메뉴 클릭시
@@ -186,6 +187,19 @@ const Header = () => {
     };
 
 
+    //로그아웃하기
+    const logoutHandler = () => {
+
+        //로그인했을때 저장된 정보들 지우기
+        dispatch(loginStatus(false));
+        dispatch(loginUser({}));
+        dispatch(siteId(""));
+        dispatch(maintName(""));
+
+        //메인 페이지이동
+        navigate('/');
+    };
+
 
     return(<>
         <header id="header" className="header">
@@ -255,7 +269,7 @@ const Header = () => {
                                     </Link>
                                 </li>
                                 <li>
-                                    <button type="button" className="btn_logout">
+                                    <button type="button" className="btn_logout" onClick={logoutHandler}>
                                         <span>로그아웃</span>
                                     </button>
                                 </li>

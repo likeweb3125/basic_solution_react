@@ -11,6 +11,9 @@ const common = createSlice({
         headerMenuList:[],
         currentMenuData:{},
         userLevelList:[],
+        detailPageBack: false,
+        listPageData: {},
+        scrollY: null,
     },
     reducers:{
         boardMenu: (state, action) => {
@@ -37,6 +40,15 @@ const common = createSlice({
         userLevelList: (state, action) => {
             state.userLevelList = action.payload;
         },
+        detailPageBack: (state, action) => {
+            state.detailPageBack = action.payload;
+        },
+        listPageData: (state, action) => {
+            state.listPageData = action.payload;
+        },
+        scrollY: (state, action) => {
+            state.scrollY = action.payload;
+        },
     }
 });
 
@@ -48,6 +60,9 @@ export const {
     siteInfoEdit,
     headerMenuList,
     currentMenuData,
-    userLevelList
+    userLevelList,
+    detailPageBack,
+    listPageData,
+    scrollY,
 } = common.actions;
 export default common;

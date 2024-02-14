@@ -5,8 +5,8 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
-import { pageNoChange, checkedList, listPageData, detailPageBack } from "../../store/etcSlice";
-import { boardSettingData } from "../../store/commonSlice";
+import { pageNoChange, checkedList } from "../../store/etcSlice";
+import { boardSettingData, listPageData, detailPageBack } from "../../store/commonSlice";
 import SelectBox from "../../components/component/SelectBox";
 import SearchInput from "../../components/component/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
@@ -45,7 +45,7 @@ const Board = () => {
     //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
     useEffect(()=>{
         if(scrollMove){
-            const y = etc.scrollY;
+            const y = common.scrollY;
             window.scrollTo(0,y); 
         }
     },[scrollMove]);
@@ -77,14 +77,14 @@ const Board = () => {
         let limitNum;
         let pageNum;
         let search;
-        let searchText;
+        let searchText = '';
 
         //상세페이지에서 뒤로가기시 저장된 리스트페이지 정보로 조회
-        if(etc.detailPageBack){
-            limitNum = etc.listPageData.limit;
-            pageNum = etc.listPageData.page;
-            search = etc.listPageData.search;
-            searchText = etc.listPageData.searchTxt;
+        if(common.detailPageBack){
+            limitNum = common.listPageData.limit;
+            pageNum = common.listPageData.page;
+            search = common.listPageData.search;
+            searchText = common.listPageData.searchTxt;
 
             let type;
             if(search == "title"){
@@ -136,7 +136,7 @@ const Board = () => {
                 dispatch(listPageData(pageData));
 
                 //상세페이지에서 뒤로가기시
-                if(etc.detailPageBack){
+                if(common.detailPageBack){
                     setScrollMove(true);
                     dispatch(detailPageBack(false));
                 }

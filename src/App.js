@@ -77,7 +77,7 @@ function App() {
     
     //페이지이동시 스크롤탑으로 이동 (상세->목록으로 뒤로가기시 제외)
     useEffect(()=>{
-        if(!etc.detailPageBack){
+        if(!common.detailPageBack){
             window.scrollTo(0,0);
         }
     },[location]);

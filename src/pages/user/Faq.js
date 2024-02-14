@@ -5,7 +5,8 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
-import { pageNoChange, listPageData, detailPageBack } from "../../store/etcSlice";
+import { pageNoChange } from "../../store/etcSlice";
+import { listPageData, detailPageBack } from "../../store/commonSlice";
 import SearchInput from "../../components/component/SearchInput";
 import ListFaq from "../../components/component/user/ListFaq";
 import Pagination from "../../components/component/Pagination";
@@ -14,8 +15,9 @@ import ConfirmPop from "../../components/popup/ConfirmPop";
 
 const Faq = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const board_group_list = enum_api_uri.board_group_list;
     const board_list = enum_api_uri.board_list;
+    const board_detail = enum_api_uri.board_detail;
     const popup = useSelector((state)=>state.popup);
     const etc = useSelector((state)=>state.etc);
     const common = useSelector((state)=>state.common);
@@ -25,16 +27,10 @@ const Faq = () => {
     const [menuData, setMenuData] = useState({});
     const [boardData, setBoardData] = useState({});
     const [limit, setLimit] = useState(null);
-    const [scrollMove, setScrollMove] = useState(false);
-
-
-    //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
-    useEffect(()=>{
-        if(scrollMove){
-            const y = etc.scrollY;
-            window.scrollTo(0,y); 
-        }
-    },[scrollMove]);
+    const [detailData, setDetailData] = useState({});
+    const [tabList, setTabList] = useState(['전체','배송']);
+    const [tabOn, setTabOn] = useState(0);
+    
 
 
     // Confirm팝업 닫힐때
@@ -57,40 +53,45 @@ const Faq = () => {
     },[menuData]);
 
 
+    //게시판분류리스트 가져오기
+    const getGroupList = () => {
+        axios.get(`${board_group_list.replace(":parent_id",menu_idx)}`)
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+                let newList = data.filter((item)=>item.g_num !== "0"); //숨긴분류 제외
+                newList = newList.map((item)=>item.g_name); //분류이름만 배열로생성
+                setTabList(newList);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+    //맨처음 게시판분류리스트 가져오기
+    useEffect(()=>{
+        getGroupList();
+    },[menu_idx]);
+
+
 
     //게시판리스트정보 가져오기
     const getBoardData = (page) => {
-        let pageNum;
-        let searchText;
 
-        //상세페이지에서 뒤로가기시 저장된 리스트페이지 정보로 조회
-        if(etc.detailPageBack){
-            pageNum = etc.listPageData.page;
-            searchText = etc.listPageData.searchTxt;
-            setSearchTxt(searchText);
-        }else{
-            pageNum = page;
-            searchText = searchTxt;
-        }
-
-        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search=title&searchtxt="+searchText : ""}`)
+        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search=title&searchtxt="+searchTxt : ""}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
                 setBoardData(data);
-
-                //리스트페이지 조회 데이터저장
-                let pageData = {
-                    page: page,
-                    searchTxt: searchTxt
-                };
-                dispatch(listPageData(pageData));
-
-                //상세페이지에서 뒤로가기시
-                if(etc.detailPageBack){
-                    setScrollMove(true);
-                    dispatch(detailPageBack(false));
-                }
             }
         })
         .catch((error) => {
@@ -123,11 +124,58 @@ const Faq = () => {
     },[etc.pageNo,etc.pageNoChange]);
 
 
+    //제목클릭시 내용토글
+    const onDetailToggleHandler = (idx, show) => {
+        if(show){
+            setDetailData({});
+        }else{
+            getDetailData(idx);
+        }
+    };
+
+
+    //글상세정보 가져오기
+    const getDetailData = (idx) => {
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",idx)}`)
+        .then((res)=>{
+            if(res.status === 200){
+                const data = res.data.data;
+                setDetailData(data);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
 
     return(<>
-        <div className="page_user_board">
+        <div className="page_user_board page_user_faq">
             <div className="section_inner">
                 <div className="board_section">
+                    {tabList.length > 0 &&
+                        <ul className="tab_type4">
+                            <li className={tabOn === 0 ? 'on' : ''}>
+                                <button type="button" onClick={()=>setTabOn(0)}>전체</button>
+                            </li>
+                            {tabList.map((cont,i)=>{
+                                const idx = i+1;
+                                return(
+                                    <li key={i} className={tabOn === idx ? 'on' : ''}>
+                                        <button type="button" onClick={()=>setTabOn(idx)}>{cont}</button>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    }
                     <div className="search_wrap">
                         <div className="search_box">
                             <SearchInput 
@@ -146,11 +194,10 @@ const Faq = () => {
                             <em className="txt_total">전체 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}건</em>
                         </div>
                         <ListFaq
-                            columnTitle={boardData.b_column_title == 'Y' ? true : false}
-                            columnDate={boardData.b_column_date == 'Y' ? true : false}
-                            columnView={boardData.b_column_view == 'Y' ? true : false}
-                            columnFile={boardData.b_column_file == 'Y' ? true : false}
+                            columnGroup={boardData.b_group == 'Y' ? true : false}     //분류
                             list={boardData.board_list}
+                            onDetailToggleHandler={onDetailToggleHandler}
+                            detailData={detailData}
                         />
                     </div>
                     {boardData.board_list && boardData.board_list.length > 0 &&

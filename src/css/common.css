@@ -51,8 +51,8 @@
 .tab_type3 li.on > *:after {opacity: 1;}
 .tab_type3 li.on > * span {color: #222;}
 .tab_type4 {display: flex; column-gap: 50px;}
-.tab_type4 li a {display: block; font-size: 24px; font-weight: 500; color: #222; line-height: 30px;}
-.tab_type4 li.on a {font-weight: 700; color: #4f46e5;}
+.tab_type4 li * {display: block; font-size: 24px !important; font-weight: 500; color: #222; line-height: 30px;}
+.tab_type4 li.on * {font-weight: 700; color: #4f46e5;}
 
 
 /* 테이블 스타일 */

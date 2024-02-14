@@ -1,22 +1,38 @@
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { scrollY } from "../../../store/etcSlice";
+import { scrollY } from "../../../store/commonSlice";
 import * as CF from "../../../config/function";
 
 
 const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGroup, list, onDetailToggleHandler, detailData}) => {
     const dispatch = useDispatch();
     const { menu_idx } = useParams();
+    const [detailOn, setDetailOn] = useState(false);
 
+
+    useEffect(()=>{
+        if(Object.keys(detailData).length > 0){
+            setDetailOn(true);
+        }else{
+            setDetailOn(false);
+        }
+    },[detailData]);
 
 
     return(<>
         <ul className="list_board">
             {list && list.length > 0 ? 
                 list.map((cont,i)=>{
+                    //현재상세내용 보이는지 체크
                     let box = false;
                     if(Object.keys(detailData).length > 0 && detailData.idx === cont.idx){
                         box = true;
+                    }
+
+                    let liOn = false;
+                    if(detailOn && detailData.idx === cont.idx){
+                        liOn = true;
                     }
 
                     return(
@@ -45,7 +61,7 @@ const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGro
                                     {columnDate && <li className="item_date">{cont.b_reg_date}</li>}
                                 </ul>
                             </div>
-                            {Object.keys(detailData).length > 0 && detailData.idx === cont.idx &&
+                            {liOn &&
                                 <div className="answer_box">
                                     <div className="q_box">
                                         <div dangerouslySetInnerHTML={{__html:detailData.b_contents}}></div>

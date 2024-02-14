@@ -5,7 +5,8 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
-import { pageNoChange, listPageData, detailPageBack } from "../../store/etcSlice";
+import { pageNoChange } from "../../store/etcSlice";
+import { listPageData, detailPageBack } from "../../store/commonSlice";
 import SearchInput from "../../components/component/SearchInput";
 import ListBoard from "../../components/component/user/ListBoard";
 import ListGallery from "../../components/component/user/ListGallery";
@@ -32,7 +33,7 @@ const Board = () => {
     //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
     useEffect(()=>{
         if(scrollMove){
-            const y = etc.scrollY;
+            const y = common.scrollY;
             window.scrollTo(0,y); 
         }
     },[scrollMove]);
@@ -63,12 +64,12 @@ const Board = () => {
     //게시판리스트정보 가져오기
     const getBoardData = (page) => {
         let pageNum;
-        let searchText;
+        let searchText = '';
 
         //상세페이지에서 뒤로가기시 저장된 리스트페이지 정보로 조회
-        if(etc.detailPageBack){
-            pageNum = etc.listPageData.page;
-            searchText = etc.listPageData.searchTxt;
+        if(common.detailPageBack){
+            pageNum = common.listPageData.page;
+            searchText = common.listPageData.searchTxt;
             setSearchTxt(searchText);
         }else{
             pageNum = page;
@@ -89,7 +90,7 @@ const Board = () => {
                 dispatch(listPageData(pageData));
 
                 //상세페이지에서 뒤로가기시
-                if(etc.detailPageBack){
+                if(common.detailPageBack){
                     setScrollMove(true);
                     dispatch(detailPageBack(false));
                 }

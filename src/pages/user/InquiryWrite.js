@@ -13,7 +13,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import history from "../../config/history";
 import { confirmPop } from "../../store/popupSlice";
-import { detailPageBack } from "../../store/etcSlice";
+import { detailPageBack } from "../../store/commonSlice";
 import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import TextareaBox from "../../components/component/TextareaBox";

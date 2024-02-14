@@ -6,9 +6,6 @@ const etc = createSlice({
         pageNo: 1,
         pageNoChange: false,
         checkedList: [],
-        detailPageBack: false,
-        listPageData: {},
-        scrollY: null,
         closePopIdx: null,
         termsCheckList: [],  //회원가입시 이용약관 체크박스리스트
         menuCheckList: [],
@@ -25,15 +22,6 @@ const etc = createSlice({
         },
         checkedList: (state, action) => {
             state.checkedList = action.payload;
-        },
-        detailPageBack: (state, action) => {
-            state.detailPageBack = action.payload;
-        },
-        listPageData: (state, action) => {
-            state.listPageData = action.payload;
-        },
-        scrollY: (state, action) => {
-            state.scrollY = action.payload;
         },
         closePopIdx: (state, action) => {
             state.closePopIdx = action.payload;
@@ -60,9 +48,6 @@ export const {
     pageNo,
     pageNoChange,
     checkedList, 
-    detailPageBack,
-    listPageData,
-    scrollY,
     closePopIdx,
     termsCheckList,
     menuCheckList,

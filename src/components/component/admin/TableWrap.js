@@ -6,8 +6,9 @@ import moment from "moment";
 import 'moment/locale/ko'; 
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { checkedList, scrollY, menuCheckList, unMenuCheckList } from "../../../store/etcSlice";
+import { checkedList, menuCheckList, unMenuCheckList } from "../../../store/etcSlice";
 import { confirmPop, adminPolicyPop, adminPopupPop, adminMemberInfoPop, adminCategoryPopModify } from "../../../store/popupSlice";
+import { scrollY } from "../../../store/commonSlice";
 import DndTr from "./DndTr";
 import {
     DndContext,
