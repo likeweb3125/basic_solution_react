@@ -10,7 +10,7 @@ const TxtSelectBox = (props) => {
 
 
     return(
-        <div className={props.class}>
+        <div className={props.className}>
             <div className={`txt_select${props.hiddenTxt && !props.selected ? ' none' : ''}`}>
                 {props.limitSel ?
                     <span>{props.selected ? props.selected+"개씩" : "선택"}</span>

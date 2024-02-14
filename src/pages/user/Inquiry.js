@@ -4,19 +4,19 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { confirmPop } from "../../store/popupSlice";
+import { confirmPop, passwordCheckPop } from "../../store/popupSlice";
 import { pageNoChange, listPageData, detailPageBack } from "../../store/etcSlice";
+import { boardSettingData } from "../../store/commonSlice";
 import SearchInput from "../../components/component/SearchInput";
-import ListBoard from "../../components/component/user/ListBoard";
-import ListGallery from "../../components/component/user/ListGallery";
+import ListInquiry from "../../components/component/user/ListInquiry";
 import Pagination from "../../components/component/Pagination";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 
 
-const Board = () => {
+const Inquiry = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const board_list = enum_api_uri.board_list;
+    const board_detail = enum_api_uri.board_detail;
     const popup = useSelector((state)=>state.popup);
     const etc = useSelector((state)=>state.etc);
     const common = useSelector((state)=>state.common);
@@ -26,6 +26,7 @@ const Board = () => {
     const [menuData, setMenuData] = useState({});
     const [boardData, setBoardData] = useState({});
     const [limit, setLimit] = useState(null);
+    const [detailData, setDetailData] = useState({});
     const [scrollMove, setScrollMove] = useState(false);
 
 
@@ -46,13 +47,11 @@ const Board = () => {
     },[popup.confirmPop]);
 
 
-    //현재선택된 헤더메뉴데이터값 변경시
     useEffect(()=>{
         setMenuData(common.currentMenuData);
     },[common.currentMenuData]);
 
 
-    //현재게시판 목록설정값 적용
     useEffect(()=>{
         if(menuData && menuData.b_list_cnt){
             setLimit(menuData.b_list_cnt);
@@ -81,6 +80,11 @@ const Board = () => {
                 let data = res.data.data;
                 setBoardData(data);
 
+                //게시판설정정보 store 에 저장
+                const newData = {...data};
+                delete newData.board_list;
+                dispatch(boardSettingData(newData));
+
                 //리스트페이지 조회 데이터저장
                 let pageData = {
                     page: page,
@@ -107,6 +111,7 @@ const Board = () => {
         });
     };
 
+
     //게시판 상세정보 값 가져오고, limit 값이 변경되면 게시판리스트정보 가져오기
     useEffect(()=>{
         if(limit){
@@ -125,15 +130,48 @@ const Board = () => {
     },[etc.pageNo,etc.pageNoChange]);
 
 
-    //페이지변경시 게시판리스트정보 가져오기
-    useEffect(()=>{
-        getBoardData();
-    },[menu_idx]);
+    //제목클릭시 내용토글
+    const onDetailToggleHandler = (secret, idx, show) => {
+        if(show){
+            setDetailData({});
+        }else{
+            //비밀글일때
+            if(secret == 'Y'){
+                dispatch(passwordCheckPop({passwordCheckPop:true, passwordCheckPopCate:menu_idx, passwordCheckPopIdx:idx, passwordCheckPopModify:false}));
+            }
+            //비밀글 아닐때
+            else{
+                getDetailData(idx);
+            }
+        }
+    };
+
+
+    //글상세정보 가져오기
+    const getDetailData = (idx) => {
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",idx)}`)
+        .then((res)=>{
+            if(res.status === 200){
+                const data = res.data.data;
+                setDetailData(data);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
 
 
 
     return(<>
-        <div className="page_user_board">
+        <div className="page_user_board page_user_qna">
             <div className="section_inner">
                 <div className="board_section">
                     <div className="search_wrap">
@@ -149,32 +187,31 @@ const Board = () => {
                             />
                         </div>
                     </div>
-                    {menuData.c_content_type && menuData.c_content_type[0] === 4 ? //일반게시판일때
-                        <div className="list_board_wrap">
-                            <div className="board_util">
-                                <em className="txt_total">전체 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}건</em>
-                            </div>
-                            <ListBoard
-                                columnTitle={boardData.b_column_title == 'Y' ? true : false}
-                                columnDate={boardData.b_column_date == 'Y' ? true : false}
-                                columnView={boardData.b_column_view == 'Y' ? true : false}
-                                columnFile={boardData.b_column_file == 'Y' ? true : false}
-                                list={boardData.board_list}
-                            />
+                    <div className="list_board_wrap">
+                        <div className="board_util">
+                            <em className="txt_total">전체 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}건</em>
+                            <ul className="board_tab">
+                                <li>
+                                    <Link to={`/sub/inquiry/write/${menu_idx}`} className="btn_type21">문의 작성하기</Link>
+                                </li>
+                                <li>
+                                    <a href="#" className="btn_type24">내 Q&amp;A 보기</a>
+                                </li>
+                            </ul>
                         </div>
-                        :menuData.c_content_type && menuData.c_content_type[0] === 5 && //갤러리게시판일때
-                        <div className="gallery_board">
-                            <ListGallery
-                                columnTitle={boardData.b_column_title == 'Y' ? true : false}
-                                columnDate={boardData.b_column_date == 'Y' ? true : false}
-                                columnView={boardData.b_column_view == 'Y' ? true : false}
-                                columnFile={boardData.b_column_file == 'Y' ? true : false}
-                                list={boardData.board_list}
-                            />
-                        </div>
-                    }
+                        <ListInquiry
+                            columnTitle={boardData.b_column_title == 'Y' ? true : false}
+                            columnDate={boardData.b_column_date == 'Y' ? true : false}
+                            columnView={boardData.b_column_view == 'Y' ? true : false}
+                            columnFile={boardData.b_column_file == 'Y' ? true : false}
+                            columnGroup={boardData.b_group == 'Y' ? true : false}     //분류
+                            list={boardData.board_list}
+                            onDetailToggleHandler={onDetailToggleHandler}
+                            detailData={detailData}
+                        />
+                    </div>
                     <div className="board_btn_wrap">
-                        <Link to="" className="btn_type21">글 작성하기</Link>
+                        <Link to={`/sub/inquiry/write/${menu_idx}`} className="btn_type21">글 작성하기</Link>
                     </div>
                     {boardData.board_list && boardData.board_list.length > 0 &&
                         <Pagination 
@@ -193,4 +230,4 @@ const Board = () => {
     </>);
 };
 
-export default Board;
+export default Inquiry;

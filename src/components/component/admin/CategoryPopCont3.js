@@ -5,7 +5,7 @@ import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { confirmPop, adminSubCategoryPopData } from "../../../store/popupSlice";
 import InputBox from "../InputBox";
-import SelectBox from "./SelectBox";
+import SelectBox from "../SelectBox";
 import ConfirmPop from "../../popup/ConfirmPop";
 
 

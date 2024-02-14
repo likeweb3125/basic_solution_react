@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
-import { loginUser, siteId, maintName } from "../../store/userSlice";
+import { loginStatus, loginUser, siteId, maintName } from "../../store/userSlice";
 import { confirmPop } from "../../store/popupSlice";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import InputBox from "../../components/component/InputBox";
@@ -63,6 +63,9 @@ const Login = () => {
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
+
+                dispatch(loginStatus(true));
+
                 //로그인한회원정보 store 에 저장
                 dispatch(loginUser(data));
 

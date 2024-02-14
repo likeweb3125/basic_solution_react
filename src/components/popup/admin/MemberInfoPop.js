@@ -292,7 +292,7 @@ const MemberInfoPop = () => {
                                             <h6>회원등급</h6>
                                             <div className="input_wrap">
                                                 <TxtSelectBox 
-                                                    class="select_type2"
+                                                    className="select_type2"
                                                     list={levelList}
                                                     selected={levelSelect || ""}
                                                     selectedLevel={level}

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import 'moment/locale/ko';
 import * as CF from "../../../config/function";
-import TextareaBox from "./TextareaBox";
+import TextareaBox from "../TextareaBox";
 import ReplyWrap from "./ReplyWrap";
 import ConfirmPop from "../../popup/ConfirmPop";
 

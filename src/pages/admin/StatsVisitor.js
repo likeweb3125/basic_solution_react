@@ -6,7 +6,7 @@ import moment from "moment";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminVisitorHistoryPop } from "../../store/popupSlice";
-import SelectBox from "../../components/component/admin/SelectBox";
+import SelectBox from "../../components/component/SelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
 import InputBox from "../../components/component/InputBox";
 import TableWrap from "../../components/component/admin/TableWrap";
@@ -153,7 +153,7 @@ const StatsVisitor = () => {
                         <div className="search_wrap">
                             <div className="search_box">
                                 <SelectBox 
-                                    class="select_type3"
+                                    className="select_type3"
                                     list={["최근 1주","1개월","3개월","6개월","직접 입력"]}
                                     selected={searchType}
                                     onChangeHandler={(e)=>{
@@ -214,7 +214,7 @@ const StatsVisitor = () => {
                         {boardData.logs_list && <strong>총 {CF.MakeIntComma(boardData.logs_list.length)}개</strong>}
                     </div>
                     <TableWrap 
-                        class="tbl_wrap1"
+                        className="tbl_wrap1"
                         colgroup={["80px","12%","18%","auto","auto","20%"]}
                         thList={["번호","접속자","접속 IP","접속 경로","접속 브라우저","접근일시"]}
                         tdList={boardData.logs_list}

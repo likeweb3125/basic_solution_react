@@ -124,8 +124,8 @@ table td .txt_light {font-size: 14px; color: #999;}
 /* 보안문자 */
 .secure_wrap {display: flex; align-items: center; column-gap: 10px;}
 .secure_wrap img {max-width: 80px;}
-.secure_wrap .secure_code {display: flex; align-items: center; column-gap: 10px;}
-.secure_wrap .secure_code .btn_reload {width: 24px; height: 24px; text-indent: -9999px; text-align: left; background: url('../images/ic_reload.svg') no-repeat 50% 50%/100%;}
+.secure_wrap .secure_code > div {display: flex; align-items: center; column-gap: 10px;}
+.secure_wrap .secure_code > div a {width: 24px; height: 24px; text-indent: -9999px; text-align: left; background: url('../images/ic_reload.svg') no-repeat 50% 50%/100%;display: block;}
 
 
 .form_btn_wrap {display: flex; justify-content: flex-end; column-gap: 10px; padding-top: 24px;}

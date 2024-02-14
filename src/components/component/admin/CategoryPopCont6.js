@@ -147,7 +147,7 @@ const CategoryPopCont6 = (props) => {
                                 <h6>목록 갯수</h6>
                                 <div className="input_wrap">
                                     <TxtSelectBox 
-                                        class="select_type1"
+                                        className="select_type1"
                                         list={[10,15,30,50]}
                                         selected={limit || ""}
                                         onChangeHandler={(e)=>{

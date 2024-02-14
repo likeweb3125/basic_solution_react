@@ -15,7 +15,7 @@ import InputBox from "../../components/component/InputBox";
 const BoardDetail = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { board_category, board_idx } = useParams();
+    const { menu_idx, board_idx } = useParams();
     const api_uri = enum_api_uri.api_uri;
     const board_detail = enum_api_uri.board_detail;
     const board_modify = enum_api_uri.board_modify;
@@ -70,7 +70,7 @@ const BoardDetail = () => {
 
     //게시글정보 가져오기
     const getBoardData = () => {
-        axios.get(`${board_detail.replace(":category",board_category).replace(":idx",board_idx)}`)
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -94,7 +94,7 @@ const BoardDetail = () => {
 
     //게시글댓글리스트 가져오기
     const getCommentList = () => {
-        axios.get(`${board_comment_list.replace(":category",board_category).replace(":board_idx",board_idx)}`)
+        axios.get(`${board_comment_list.replace(":category",menu_idx).replace(":board_idx",board_idx)}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -117,7 +117,7 @@ const BoardDetail = () => {
     useEffect(()=>{
         getBoardData();
         getCommentList();
-    },[board_category,board_idx]);
+    },[menu_idx,board_idx]);
 
 
     useEffect(()=>{
@@ -140,7 +140,7 @@ const BoardDetail = () => {
 
     //첨부파일 다운로드
     const fileDownHandler = (idx, name) => {
-        axios.get(`${board_file_down.replace(":category",board_category).replace(":parent_idx",board_idx).replace(":idx",idx)}`,
+        axios.get(`${board_file_down.replace(":category",menu_idx).replace(":parent_idx",board_idx).replace(":idx",idx)}`,
             {
                 headers:{Authorization: `Bearer ${user.loginUser.accessToken}`},
                 responseType: 'blob' // 요청 데이터 형식을 blob으로 설정
@@ -223,7 +223,7 @@ const BoardDetail = () => {
     //댓글등록하기
     const enterHandler = (depth, txt, idx) => {
         const body = {
-            category: board_category,
+            category: menu_idx,
             board_idx: board_idx,
             parent_idx: idx || 0,
             depth: depth,
@@ -314,7 +314,7 @@ const BoardDetail = () => {
     //댓글 수정하기
     const enterEditHandler = (idx) => {
         const body = {
-            category: board_category,
+            category: menu_idx,
             idx: idx,
             c_contents: editComment,
         };
@@ -360,7 +360,7 @@ const BoardDetail = () => {
     //댓글 삭제하기
     const commentDeltHandler = () => {
         const body = {
-            category: board_category,
+            category: menu_idx,
             idx: deltCommentIdx,
         };
         axios.delete(`${board_comment}`,
@@ -476,7 +476,7 @@ const BoardDetail = () => {
                                 <div className="pagination_box board_prev">
                                     <b>PREV</b>
                                     <span>
-                                        <Link to={`/board/detail/${board_category}/${boardData.prev_board.idx}`}>{boardData.prev_board.b_title}</Link>
+                                        <Link to={`/board/detail/${menu_idx}/${boardData.prev_board.idx}`}>{boardData.prev_board.b_title}</Link>
                                     </span>
                                 </div>
                             }
@@ -484,7 +484,7 @@ const BoardDetail = () => {
                                 <div className="pagination_box board_next">
                                     <b>NEXT</b>
                                     <span>
-                                        <Link to={`/board/detail/${board_category}/${boardData.next_board.idx}`}>{boardData.next_board.b_title}</Link>
+                                        <Link to={`/board/detail/${menu_idx}/${boardData.next_board.idx}`}>{boardData.next_board.b_title}</Link>
                                     </span>
                                 </div>
                             }

@@ -9,7 +9,7 @@ import ConfirmPop from "../ConfirmPop";
 import InputBox from "../../component/InputBox";
 import TxtSelectBox from "../../component/admin/TxtSelectBox";
 import SmsTxtBox from "../../component/admin/SmsTxtBox";
-import TextareaBox from "../../component/admin/TextareaBox";
+import TextareaBox from "../../component/TextareaBox";
 
 
 const MsgPop = () => {

@@ -7,13 +7,12 @@ import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import { pageNoChange, listPageData, detailPageBack } from "../../store/etcSlice";
 import SearchInput from "../../components/component/SearchInput";
-import ListBoard from "../../components/component/user/ListBoard";
-import ListGallery from "../../components/component/user/ListGallery";
+import ListFaq from "../../components/component/user/ListFaq";
 import Pagination from "../../components/component/Pagination";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 
 
-const Board = () => {
+const Faq = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const board_list = enum_api_uri.board_list;
@@ -46,18 +45,17 @@ const Board = () => {
     },[popup.confirmPop]);
 
 
-    //현재선택된 헤더메뉴데이터값 변경시
     useEffect(()=>{
         setMenuData(common.currentMenuData);
     },[common.currentMenuData]);
 
 
-    //현재게시판 목록설정값 적용
     useEffect(()=>{
         if(menuData && menuData.b_list_cnt){
             setLimit(menuData.b_list_cnt);
         }
     },[menuData]);
+
 
 
     //게시판리스트정보 가져오기
@@ -125,12 +123,6 @@ const Board = () => {
     },[etc.pageNo,etc.pageNoChange]);
 
 
-    //페이지변경시 게시판리스트정보 가져오기
-    useEffect(()=>{
-        getBoardData();
-    },[menu_idx]);
-
-
 
     return(<>
         <div className="page_user_board">
@@ -149,32 +141,17 @@ const Board = () => {
                             />
                         </div>
                     </div>
-                    {menuData.c_content_type && menuData.c_content_type[0] === 4 ? //일반게시판일때
-                        <div className="list_board_wrap">
-                            <div className="board_util">
-                                <em className="txt_total">전체 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}건</em>
-                            </div>
-                            <ListBoard
-                                columnTitle={boardData.b_column_title == 'Y' ? true : false}
-                                columnDate={boardData.b_column_date == 'Y' ? true : false}
-                                columnView={boardData.b_column_view == 'Y' ? true : false}
-                                columnFile={boardData.b_column_file == 'Y' ? true : false}
-                                list={boardData.board_list}
-                            />
+                    <div className="list_board_wrap">
+                        <div className="board_util">
+                            <em className="txt_total">전체 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}건</em>
                         </div>
-                        :menuData.c_content_type && menuData.c_content_type[0] === 5 && //갤러리게시판일때
-                        <div className="gallery_board">
-                            <ListGallery
-                                columnTitle={boardData.b_column_title == 'Y' ? true : false}
-                                columnDate={boardData.b_column_date == 'Y' ? true : false}
-                                columnView={boardData.b_column_view == 'Y' ? true : false}
-                                columnFile={boardData.b_column_file == 'Y' ? true : false}
-                                list={boardData.board_list}
-                            />
-                        </div>
-                    }
-                    <div className="board_btn_wrap">
-                        <Link to="" className="btn_type21">글 작성하기</Link>
+                        <ListFaq
+                            columnTitle={boardData.b_column_title == 'Y' ? true : false}
+                            columnDate={boardData.b_column_date == 'Y' ? true : false}
+                            columnView={boardData.b_column_view == 'Y' ? true : false}
+                            columnFile={boardData.b_column_file == 'Y' ? true : false}
+                            list={boardData.board_list}
+                        />
                     </div>
                     {boardData.board_list && boardData.board_list.length > 0 &&
                         <Pagination 
@@ -193,4 +170,4 @@ const Board = () => {
     </>);
 };
 
-export default Board;
+export default Faq;

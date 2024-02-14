@@ -250,7 +250,7 @@ const TableWrap = (props) => {
 
 
     return(<>
-        <div className={props.class}>
+        <div className={props.className}>
             {tdList && tdList.length > 0 ?
                 //디자인관리 - 메인배너관리 일때
                 props.type === "banner" ?

@@ -95,8 +95,11 @@ const NotiPop = (props) => {
 
     //맨처음
     useEffect(()=>{
-        getList();
-    },[]);
+        console.log(popup.adminBoardGroupPopId);
+        if(popup.adminBoardGroupPopId){
+            getList();
+        }
+    },[popup.adminBoardGroupPopId]);
 
 
     //분류정보 가져오기
@@ -141,16 +144,16 @@ const NotiPop = (props) => {
     useEffect(()=>{
         if(Object.keys(info).length > 0){
             setNameInput(info.g_name);
-            setUiCheck(info.g_menu_ui);
-            setMenuOnImg(info.g_img_on);
-            setMenuOffImg(info.g_img_off);
+            // setUiCheck(info.g_menu_ui);
+            // setMenuOnImg(info.g_img_on);
+            // setMenuOffImg(info.g_img_off);
         }else{
             setNameInput("");
-            setUiCheck("");
-            setMenuOnImg(null);
-            setMenuOnImgData(null);
-            setMenuOffImg(null);
-            setMenuOffImgData(null);
+            // setUiCheck("");
+            // setMenuOnImg(null);
+            // setMenuOnImgData(null);
+            // setMenuOffImg(null);
+            // setMenuOffImgData(null);
         }
     },[info]);
        
@@ -244,30 +247,30 @@ const NotiPop = (props) => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        }else if(!uiCheck){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'메뉴 UI를 선택해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }else if(uiCheck == "IMG" && !menuOnImg){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'메뉴의 ON 이미지를 등록해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }else if(uiCheck == "IMG" && !menuOffImg){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'메뉴의 OFF 이미지를 등록해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+        // }else if(!uiCheck){
+        //     dispatch(confirmPop({
+        //         confirmPop:true,
+        //         confirmPopTit:'알림',
+        //         confirmPopTxt:'메뉴 UI를 선택해주세요.',
+        //         confirmPopBtn:1,
+        //     }));
+        //     setConfirm(true);
+        // }else if(uiCheck == "IMG" && !menuOnImg){
+        //     dispatch(confirmPop({
+        //         confirmPop:true,
+        //         confirmPopTit:'알림',
+        //         confirmPopTxt:'메뉴의 ON 이미지를 등록해주세요.',
+        //         confirmPopBtn:1,
+        //     }));
+        //     setConfirm(true);
+        // }else if(uiCheck == "IMG" && !menuOffImg){
+        //     dispatch(confirmPop({
+        //         confirmPop:true,
+        //         confirmPopTit:'알림',
+        //         confirmPopTxt:'메뉴의 OFF 이미지를 등록해주세요.',
+        //         confirmPopBtn:1,
+        //     }));
+        //     setConfirm(true);
         }else{
             // 새로생성일때
             if(popup.adminBoardGroupPopMenuOn === null){
@@ -286,19 +289,19 @@ const NotiPop = (props) => {
         const formData = new FormData();
         formData.append("parent_id", popup.adminBoardGroupPopId);
         formData.append("g_name", nameInput);
-        formData.append("g_menu_ui", uiCheck);
+        // formData.append("g_menu_ui", uiCheck);
 
-        if(menuOnImgData){
-            menuOnImgData.forEach((file) => {
-                formData.append("g_img_on", file);
-            });
-        }
+        // if(menuOnImgData){
+        //     menuOnImgData.forEach((file) => {
+        //         formData.append("g_img_on", file);
+        //     });
+        // }
 
-        if(menuOffImgData){
-            menuOffImgData.forEach((file) => {
-                formData.append("g_img_off", file);
-            });
-        }
+        // if(menuOffImgData){
+        //     menuOffImgData.forEach((file) => {
+        //         formData.append("g_img_off", file);
+        //     });
+        // }
         
         formData.append("use_yn", "Y");
 
@@ -313,14 +316,6 @@ const NotiPop = (props) => {
                 getList();
 
                 setInfo({});
-
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'등록되었습니다.',
-                    confirmPopBtn:1,
-                }));
-                setAddOkConfirm(true);
             }
         })
         .catch((error) => {
@@ -345,29 +340,29 @@ const NotiPop = (props) => {
         const formData = new FormData();
         formData.append("id", popup.adminBoardGroupPopMenuOn);
         formData.append("g_name", nameInput);
-        formData.append("g_menu_ui", uiCheck);
+        // formData.append("g_menu_ui", uiCheck);
 
-        if(menuOnImgData){
-            menuOnImgData.forEach((file) => {
-                formData.append("g_img_on", file);
-            });
-        }
+        // if(menuOnImgData){
+        //     menuOnImgData.forEach((file) => {
+        //         formData.append("g_img_on", file);
+        //     });
+        // }
 
-        if(menuOffImgData){
-            menuOffImgData.forEach((file) => {
-                formData.append("g_img_off", file);
-            });
-        }
+        // if(menuOffImgData){
+        //     menuOffImgData.forEach((file) => {
+        //         formData.append("g_img_off", file);
+        //     });
+        // }
 
         // 메뉴 UI 이미지일때 on,off 이미지 삭제했으면 삭제
-        if(uiCheck == "IMG"){
-            if(menuOnImg == null){
-                formData.append("g_img_on_del", "Y");
-            }
-            if(menuOffImg == null){
-                formData.append("g_img_off_del", "Y");
-            }
-        }
+        // if(uiCheck == "IMG"){
+        //     if(menuOnImg == null){
+        //         formData.append("g_img_on_del", "Y");
+        //     }
+        //     if(menuOffImg == null){
+        //         formData.append("g_img_off_del", "Y");
+        //     }
+        // }
         
         formData.append("use_yn", "Y");
 
@@ -380,14 +375,6 @@ const NotiPop = (props) => {
         .then((res)=>{
             if(res.status === 200){
                 getList();
-
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'수정되었습니다.',
-                    confirmPopBtn:1,
-                }));
-                setModifyOkConfirm(true);
             }
         })
         .catch((error) => {
@@ -562,7 +549,7 @@ const NotiPop = (props) => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="form_box form_box2">
+                                            {/* <div className="form_box form_box2">
                                                 <div className="form_input">
                                                     <h6>메뉴 UI <i>*</i></h6>
                                                     <div className="input_wrap">
@@ -600,7 +587,6 @@ const NotiPop = (props) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {/* 메뉴 UI 이미지선택시에만 노출 */}
                                                 {uiCheck == "IMG" && <>
                                                     <div className="form_input">
                                                         <h6>이미지 ON</h6>
@@ -661,7 +647,7 @@ const NotiPop = (props) => {
                                                         </div>
                                                     </div>
                                                 </>}
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </div>
                                     <div className="form_btn_wrap">

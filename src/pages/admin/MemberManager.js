@@ -7,7 +7,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminMemberInfoPopModify, adminMsgPop } from "../../store/popupSlice";
 import { pageNoChange, checkedList } from "../../store/etcSlice";
-import SelectBox from "../../components/component/admin/SelectBox";
+import SelectBox from "../../components/component/SelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
 import SearchInput from "../../components/component/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
@@ -334,7 +334,7 @@ const MemberManager = () => {
                         <div className="search_wrap">
                             <div className="search_box">
                                 <SelectBox 
-                                    class="select_type3"
+                                    className="select_type3"
                                     list={["이메일","회원명","휴대폰번호"]}
                                     selected={searchType}
                                     onChangeHandler={(e)=>{
@@ -382,7 +382,7 @@ const MemberManager = () => {
                     <div className="form_search_wrap">
                         <div className="search_wrap">
                             <SelectBox 
-                                class="select_type3 search_row_select"
+                                className="select_type3 search_row_select"
                                 list={[10,15,30,50]}
                                 selected={limit}
                                 onChangeHandler={(e)=>{
@@ -408,7 +408,7 @@ const MemberManager = () => {
                             <span>선택한 회원</span>
                             <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>명</span>
                             <SelectBox 
-                                class="select_type3"
+                                className="select_type3"
                                 list={allLevelList}
                                 selected={changeLevelNameSelect}
                                 onChangeHandler={(e)=>{
@@ -435,7 +435,7 @@ const MemberManager = () => {
                         </div>
                     </div>
                     <TableWrap 
-                        class="tbl_wrap1"
+                        className="tbl_wrap1"
                         colgroup={["80px","auto","9%","12%","9%","15%","9%","9%","9%"]}
                         thList={["","이메일","회원명","회원등급","가입일자","휴대폰번호","로그인수","게시글","댓글"]}
                         tdList={boardData.member_list}

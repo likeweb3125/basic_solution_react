@@ -112,15 +112,69 @@ const Header = () => {
 
         //1차메뉴일때
         if(depth === 1){
+            //하위메뉴가 빈메뉴아닐때
             if(data.submenu && data.submenu[0].c_content_type[0] !== 2){
                 const type = data.submenu[0].c_content_type[0];
+                //카테고리종류 HTML 일때
                 if(type === 1){
-                    url = '/html/'+data.submenu[0].id;
+                    url = '/sub/html/'+data.submenu[0].id;
+                }
+                //카테고리종류 빈메뉴 일때
+                if(type === 2){
+
+                }
+                //카테고리종류 고객맞춤 일때
+                if(type === 3){
+
+                }
+                //카테고리종류 일반게시판 or 갤러리게시판 일때
+                if(type === 4 || type === 5){
+                    url = '/sub/board/'+data.submenu[0].id;
+                }
+                //카테고리종류 FAQ 일때
+                if(type === 6){
+                    url = '/sub/faq/'+data.submenu[0].id;
+                }
+                //카테고리종류 문의게시판 일때
+                if(type === 7){
+                    url = '/sub/inquiry/'+data.submenu[0].id;
                 }
                 navigate(url);
             }
         }
-        
+
+        //2차메뉴일때
+        if(depth === 2){
+            //하위메뉴가 빈메뉴아닐때
+            if(data.c_content_type[0] !== 2){
+                const type = data.c_content_type[0];
+                //카테고리종류 HTML 일때
+                if(type === 1){
+                    url = '/sub/html/'+data.id;
+                }
+                //카테고리종류 빈메뉴 일때
+                if(type === 2){
+
+                }
+                //카테고리종류 고객맞춤 일때
+                if(type === 3){
+
+                }
+                //카테고리종류 일반게시판 or 갤러리게시판 일때
+                if(type === 4 || type === 5){
+                    url = '/sub/board/'+data.id;
+                }
+                //카테고리종류 FAQ 일때
+                if(type === 6){
+                    url = '/sub/faq/'+data.id;
+                }
+                //카테고리종류 문의게시판 일때
+                if(type === 7){
+                    url = '/sub/inquiry/'+data.id;
+                }
+                navigate(url);
+            }
+        }
     };
 
 
@@ -165,7 +219,7 @@ const Header = () => {
                                                         >
                                                             {/* <Link to={`/board/${cont2.id}`}> */}
                                                             <button type="button"
-                                                                // onClick={()=>{menuClickHandler()}}
+                                                                onClick={()=>{menuClickHandler(2, cont2)}}
                                                             >
                                                                 <span>{cont2.c_name}</span>
                                                             </button>

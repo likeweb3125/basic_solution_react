@@ -31,6 +31,9 @@ exports.enum_api_uri = {
     //회원
     signup: `${api_uri}v1/auth/signup`,
 
+    //1:1문의게시판
+    board_password: `${api_uri}v1/board/password`,
+
 
     //팝업
     auth_popup_list: `${api_uri}v1/auth/popup/`,

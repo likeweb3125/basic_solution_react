@@ -270,7 +270,7 @@ const CategoryPopCont4 = (props) => {
                                 <h6>목록 갯수</h6>
                                 <div className="input_wrap">
                                     <TxtSelectBox 
-                                        class="select_type1"
+                                        className="select_type1"
                                         list={[10,15,30,50]}
                                         selected={limit || ""}
                                         onChangeHandler={(e)=>{
@@ -290,7 +290,7 @@ const CategoryPopCont4 = (props) => {
                                     <h6>읽기권한</h6>
                                     <div className="input_wrap">
                                         <TxtSelectBox 
-                                            class="select_type2"
+                                            className="select_type2"
                                             list={levelList}
                                             selected={readSelect || ""}
                                             selectedLevel={readLevel}
@@ -310,7 +310,7 @@ const CategoryPopCont4 = (props) => {
                                     <h6>쓰기권한</h6>
                                     <div className="input_wrap">
                                         <TxtSelectBox 
-                                            class="select_type2"
+                                            className="select_type2"
                                             list={levelList}
                                             selected={writeSelect || ""}
                                             selectedLevel={writeLevel}
@@ -362,7 +362,7 @@ const CategoryPopCont4 = (props) => {
                                         </div>
                                     </div>
                                     <TxtSelectBox 
-                                        class="select_type2"
+                                        className="select_type2"
                                         list={levelList}
                                         selected={replySelect || ""}
                                         selectedLevel={replyLevel}
@@ -394,7 +394,7 @@ const CategoryPopCont4 = (props) => {
                                         </div>
                                     </div>
                                     <TxtSelectBox 
-                                        class="select_type2"
+                                        className="select_type2"
                                         list={levelList}
                                         selected={commentSelect || ""}
                                         selectedLevel={commentLevel}

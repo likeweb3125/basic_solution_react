@@ -17,6 +17,9 @@ import SubWrap from './components/component/user/SubWrap';
 import Html from './pages/user/Html';
 import Board from './pages/user/Board';
 import BoardDetail from './pages/user/BoardDetail';
+import Faq from './pages/user/Faq';
+import Inquiry from './pages/user/Inquiry';
+import InquiryWrite from './pages/user/InquiryWrite';
 import MyPage from './pages/user/MyPage';
 
 
@@ -143,14 +146,22 @@ function App() {
                 <Route path="/mypage" element={<Layout><MyPage /></Layout>} />
 
 
-                {/* 카테고리 - HTML */}
-                <Route path="/html/:current_idx" element={<Layout><Html /></Layout>} />
+                {/* 서브페이지 */}
+                <Route path="/sub" element={<Layout><SubWrap><Outlet /></SubWrap></Layout>}>
+                    {/* 카테고리종류 HTML */}
+                    <Route path="html/:menu_idx" element={<Html />}/>
 
+                    {/* 카테고리종류 일반게시판 */}
+                    <Route path="board/:menu_idx" element={<Board />}/>                                      
+                    <Route path="board/detail/:menu_idx/:board_idx" element={<BoardDetail />}/>   
 
-                {/* 카테고리 - 일반게시판,갤러리게시판,FAQ,문의게시판 */}
-                <Route path="/board" element={<Layout><SubWrap><Outlet /></SubWrap></Layout>}>
-                    <Route path=":board_category" element={<Board />}/>                                        {/* 리스트 */}
-                    <Route path="detail/:board_category/:board_idx" element={<BoardDetail />}/>                                        {/* 상세 */}
+                    {/* 카테고리종류 FAQ */}
+                    <Route path="faq/:menu_idx" element={<Faq />}/>      
+
+                    {/* 카테고리종류 문의게시판 */}
+                    <Route path="inquiry/:menu_idx" element={<Inquiry />}/>         
+                    <Route path="inquiry/write/:menu_idx" element={<InquiryWrite write={true} />}/>         
+                    <Route path="inquiry/modify/:menu_idx/:board_idx" element={<InquiryWrite />}/>         
                 </Route>
 
 

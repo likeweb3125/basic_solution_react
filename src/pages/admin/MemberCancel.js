@@ -6,7 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import { pageNoChange, checkedList } from "../../store/etcSlice";
-import SelectBox from "../../components/component/admin/SelectBox";
+import SelectBox from "../../components/component/SelectBox";
 import TxtSelectBox from "../../components/component/admin/TxtSelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
 import SearchInput from "../../components/component/SearchInput";
@@ -156,7 +156,7 @@ const MemberCancel = () => {
                     <div className="form_search_wrap">
                         <div className="search_wrap">
                             <SelectBox 
-                                class="select_type3 search_row_select"
+                                className="select_type3 search_row_select"
                                 list={[10,15,30,50]}
                                 selected={limit}
                                 onChangeHandler={(e)=>{
@@ -187,7 +187,7 @@ const MemberCancel = () => {
                         </div>
                     </div>
                     <TableWrap 
-                        class="tbl_wrap1"
+                        className="tbl_wrap1"
                         colgroup={["80px","auto"]}
                         thList={["","이메일"]}
                         tdList={boardData.secession_list}

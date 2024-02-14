@@ -9,7 +9,7 @@ const SelectBox = (props) => {
     },[props.list]);
 
     return(
-        <div className={props.class}>
+        <div className={props.className}>
             <select 
                 value={props.selected}
                 onChange={props.onChangeHandler}

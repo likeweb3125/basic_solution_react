@@ -6,7 +6,7 @@ import moment from "moment";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminVisitorHistoryPop } from "../../store/popupSlice";
-import SelectBox from "../../components/component/admin/SelectBox";
+import SelectBox from "../../components/component/SelectBox";
 import InputDatepicker from "../../components/component/admin/InputDatepicker";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
@@ -308,9 +308,9 @@ const StatsChart = () => {
                             });
                             let formattedDate = dateFormatter.format(new Date(date));
                             formattedDate = formattedDate.replace(/\s+|\.$/g, '');
-                            const tooltipHtml = `<div class="charts_tooltip">
-                                <span class="tooltip_date">${formattedDate}</span>
-                                <span class="value_area">
+                            const tooltipHtml = `<div className="charts_tooltip">
+                                <span className="tooltip_date">${formattedDate}</span>
+                                <span className="value_area">
                                     <i>${w.globals.seriesNames}</i>
                                     <b>${series[seriesIndex][dataPointIndex]}</b>
                                 </span>
@@ -451,7 +451,7 @@ const StatsChart = () => {
                                 <!-- 3개월 - 1주씩 -->
                                 <!-- 6개월 - 1달씩 --> */}
                                 <SelectBox 
-                                    class="select_type3"
+                                    className="select_type3"
                                     list={["최근 1주","1개월","3개월","6개월","직접 입력"]}
                                     selected={dateType}
                                     onChangeHandler={(e)=>{
@@ -542,7 +542,7 @@ const StatsChart = () => {
                     </ul>
                 </div>
                 <TableWrap 
-                    class="tbl_wrap1"
+                    className="tbl_wrap1"
                     colgroup={[]}
                     thList={["일자","방문수","가입회원","새 게시글","새 댓글"]}
                     tdList={statsData.list}

@@ -15,7 +15,7 @@ const SubWrap = (props) => {
     const navigate = useNavigate();
     const common = useSelector((state)=>state.common);
     const popup = useSelector((state)=>state.popup);
-    const { board_category } = useParams();
+    const { menu_idx } = useParams();
     const menu_sub_detail = enum_api_uri.menu_sub_detail;
     const [confirm, setConfirm] = useState(false);
     const [menuList, setMenuList] = useState([]);
@@ -39,7 +39,7 @@ const SubWrap = (props) => {
 
     //현재메뉴정보 가져오기
     const getMenuData = () => {
-        axios.get(`${menu_sub_detail.replace(":id",board_category)}`)
+        axios.get(`${menu_sub_detail.replace(":id",menu_idx)}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -65,16 +65,16 @@ const SubWrap = (props) => {
 
     useEffect(()=>{
         //현재메뉴정보 가져오기
-        if(board_category){
+        if(menu_idx){
             getMenuData(); 
         }
-    },[board_category]);
+    },[menu_idx]);
 
 
     //헤더메뉴리스트, 페이지변경시
     useEffect(() => {
         //현재메뉴 메인배너값 찾기
-        const result = findObjectByIdWithDepthCheck(menuList, board_category);
+        const result = findObjectByIdWithDepthCheck(menuList, menu_idx);
         if(result){
             const data = {
                 c_main_banner: result.c_main_banner ? result.c_main_banner : '1',
@@ -84,13 +84,13 @@ const SubWrap = (props) => {
         }
 
         //현재메뉴 부모이름 찾기
-        const foundItem = findItemByIdAndTopParents(menuList, board_category);
+        const foundItem = findItemByIdAndTopParents(menuList, menu_idx);
         if(foundItem){
             const list = foundItem.parents.map((item) => item.c_name);
             const newList = list.concat(foundItem.c_name);
             setParents(newList);
         }
-    }, [board_category, menuList]);
+    }, [menu_idx, menuList]);
     
 
 

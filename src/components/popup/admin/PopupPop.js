@@ -634,7 +634,7 @@ const PopupPop = () => {
                                                         txt={`세로`}
                                                     />
                                                 </div>
-                                                :   <div class="input_wrap">
+                                                :   <div className="input_wrap">
                                                         <p>* 모바일의 경우 등록한 최신순을 가장 먼저 중앙 정렬되어 노출됩니다.</p>
                                                     </div>
                                             }

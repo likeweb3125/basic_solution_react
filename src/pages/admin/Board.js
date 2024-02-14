@@ -7,7 +7,7 @@ import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import { pageNoChange, checkedList, listPageData, detailPageBack } from "../../store/etcSlice";
 import { boardSettingData } from "../../store/commonSlice";
-import SelectBox from "../../components/component/admin/SelectBox";
+import SelectBox from "../../components/component/SelectBox";
 import SearchInput from "../../components/component/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
@@ -405,7 +405,7 @@ const Board = () => {
                     <h3>
                         <b>{boardTit}</b>
                         <SelectBox 
-                            class="tit_select"
+                            className="tit_select"
                             list={common.boardMenu}
                             selected={boardTit}
                             onChangeHandler={(e)=>{
@@ -421,7 +421,7 @@ const Board = () => {
                     <div className="form_search_wrap">
                         <div className="search_wrap">
                             <SelectBox 
-                                class="select_type3 search_row_select"
+                                className="select_type3 search_row_select"
                                 list={[10,15,30,50]}
                                 selected={limit}
                                 onChangeHandler={(e)=>{
@@ -433,7 +433,7 @@ const Board = () => {
                             />
                             <div className="search_box">
                                 <SelectBox 
-                                    class="select_type3"
+                                    className="select_type3"
                                     list={["제목만","제목+내용","작성자"]}
                                     selected={searchType}
                                     onChangeHandler={(e)=>{
@@ -470,7 +470,7 @@ const Board = () => {
                             {/* 동일한 게시판유형이있을때만 노출 */}
                             {boardData.board_Name && boardData.board_Name.length > 0 && <>
                                 <SelectBox 
-                                    class="select_type3"
+                                    className="select_type3"
                                     list={boardData.board_Name}
                                     selected={moveSelect}
                                     onChangeHandler={(e)=>{
@@ -490,7 +490,7 @@ const Board = () => {
                         </div>
                     </div>
                     <TableWrap 
-                        class="tbl_wrap1"
+                        className="tbl_wrap1"
                         colgroup={["80px","10%","auto","12%","9%","13%","13%"]}
                         thList={["","번호","제목","게시판 유형","작성자","작성일시","공지 설정"]}
                         tdList={boardData.board_list}

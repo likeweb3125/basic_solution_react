@@ -81,7 +81,7 @@ const VisitorHistoryPop = () => {
                             <p className="txt">* 최대 20개까지 확인할 수 있습니다.</p>
                             <div className="scroll_wrap">
                                 <TableWrap 
-                                    class="tbl_wrap1"
+                                    className="tbl_wrap1"
                                     colgroup={["80px","auto","25%"]}
                                     thList={["순위",popup.adminVisitorHistoryPopType === 1 ? "경로" : "브라우저","횟수"]}
                                     tdList={list}

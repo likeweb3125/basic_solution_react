@@ -4,7 +4,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { adminNotiPop, confirmPop } from "../../../store/popupSlice";
 import { alarm, userLevelList } from "../../../store/commonSlice";
-import { loginUser, siteId, maintName } from "../../../store/userSlice";
+import { loginStatus, loginUser, siteId, maintName } from "../../../store/userSlice";
 import { checkedList, activeMenuId } from "../../../store/etcSlice";
 import { enum_api_uri } from "../../../config/enum";
 import * as CF from "../../../config/function";
@@ -194,6 +194,7 @@ const Layout = (props) => {
     const logoutHandler = () => {
 
         //로그인했을때 저장된 정보들 지우기
+        dispatch(loginStatus(false));
         dispatch(loginUser({}));
         dispatch(siteId(""));
         dispatch(maintName(""));

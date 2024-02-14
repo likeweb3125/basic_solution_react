@@ -8,12 +8,12 @@ const ListGallery = ({columnTitle, columnDate, columnView, columnFile, list}) =>
     const api_uri = enum_api_uri.api_uri;
 
     return(<>
-        <ul className="list_gallery">
-            {list && list.length > 0 ? 
-                list.map((cont,i)=>{
+        {list && list.length > 0 ? 
+            <ul className="list_gallery">
+                {list.map((cont,i)=>{
                     return(
                         <li key={i}>
-                            <Link to={`/board/detail/${cont.category}/${cont.idx}`}>
+                            <Link to={`/sub/board/detail/${cont.category}/${cont.idx}`}>
                                 <div className="img">
                                     <img src={api_uri+'/'+cont.b_img} alt="image" />
                                 </div>
@@ -38,9 +38,10 @@ const ListGallery = ({columnTitle, columnDate, columnView, columnFile, list}) =>
                         </li>
                         );
                     })
-                : <div className="none_data">데이터가 없습니다.</div>
-            }
-        </ul>
+                }
+            </ul>
+            : <div className="none_data">데이터가 없습니다.</div>
+        }
     </>);
 };
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import * as CF from "../../../config/function";
-import TextareaBox from "./TextareaBox";
+import TextareaBox from "../TextareaBox";
 import ConfirmPop from "../../popup/ConfirmPop";
 
 

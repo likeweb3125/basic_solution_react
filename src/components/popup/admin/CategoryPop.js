@@ -477,7 +477,7 @@ const CategoryPop = () => {
                                     </div>
                                 </div>
                                 <TableWrap 
-                                    class="tbl_wrap1 tbl_wrap1_1"
+                                    className="tbl_wrap1 tbl_wrap1_1"
                                     colgroup={["6%","9%","65%","10%","10%"]}
                                     thList={["","순서","메뉴명","하위","순서"]}
                                     tdList={etc.cateMenuList}

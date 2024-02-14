@@ -6,7 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import { pageNoChange, listPageData, detailPageBack } from "../../store/etcSlice";
-import SelectBox from "../../components/component/admin/SelectBox";
+import SelectBox from "../../components/component/SelectBox";
 import SearchInput from "../../components/component/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
@@ -167,7 +167,7 @@ const Maint = () => {
                     <div className="form_search_wrap">
                         <div className="search_wrap">
                             <SelectBox 
-                                class="select_type3 select_status"
+                                className="select_type3 select_status"
                                 list={processList}
                                 selected={process}
                                 onChangeHandler={(e)=>{
@@ -178,7 +178,7 @@ const Maint = () => {
                                 hiddenTxt={`진행상황 선택`}
                             />
                             <SelectBox 
-                                class="select_type3 search_row_select"
+                                className="select_type3 search_row_select"
                                 list={[10,15,30,50]}
                                 selected={limit}
                                 onChangeHandler={(e)=>{
@@ -190,7 +190,7 @@ const Maint = () => {
                             />
                             <div className="search_box">
                                 <SelectBox 
-                                    class="select_type3"
+                                    className="select_type3"
                                     list={["제목만","제목+내용"]}
                                     selected={searchType}
                                     onChangeHandler={(e)=>{
@@ -212,7 +212,7 @@ const Maint = () => {
                         </div>
                     </div>
                     <TableWrap 
-                        class="tbl_wrap1"
+                        className="tbl_wrap1"
                         colgroup={["12%","auto","12%","9%","15%"]}
                         thList={["번호","제목","작성자","진행상황","작성일"]}
                         tdList={boardData.board_list}

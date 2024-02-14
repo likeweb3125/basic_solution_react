@@ -8,6 +8,7 @@ const TextareaBox = (props) => {
                 value={props.value}
                 onChange={props.onChangeHandler}
                 maxLength={props.countMax}
+                id={props.id}
             ></textarea>
             {props.countShow && <span className="char_cnt">{`${props.count}/${props.countMax}`}</span>}
         </div>

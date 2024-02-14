@@ -14,6 +14,12 @@ const popup = createSlice({
         termsPop: false,
         termsPopIdx: null,
 
+        //비밀글 비밀번호확인 팝업
+        passwordCheckPop: false,
+        passwordCheckPopCate: null,
+        passwordCheckPopIdx: null,
+        passwordCheckPopModify: false,
+
 
         // 관리자-------------------------------
         //알림 팝업
@@ -82,6 +88,12 @@ const popup = createSlice({
         termsPop: (state, action) => {
             state.termsPop = action.payload.termsPop;
             state.termsPopIdx = action.payload.termsPopIdx;
+        },
+        passwordCheckPop: (state, action) => {
+            state.passwordCheckPop = action.payload.passwordCheckPop;
+            state.passwordCheckPopCate = action.payload.passwordCheckPopCate;
+            state.passwordCheckPopIdx = action.payload.passwordCheckPopIdx;
+            state.passwordCheckPopModify = action.payload.passwordCheckPopModify;
         },
 
         // 관리자-------------------------------
@@ -173,7 +185,7 @@ export const {
     confirmPop, 
 
     termsPop,
-
+    passwordCheckPop,
 
     adminNotiPop,
     adminPolicyPop,

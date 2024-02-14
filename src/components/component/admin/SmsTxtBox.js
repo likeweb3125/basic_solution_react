@@ -1,4 +1,4 @@
-import TextareaBox from "./TextareaBox";
+import TextareaBox from "../TextareaBox";
 
 
 const SmsTxtBox = (props) => {

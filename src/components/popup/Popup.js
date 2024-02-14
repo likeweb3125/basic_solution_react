@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import { createPortal } from "react-dom";
 
 import TermsPop from "./user/TermsPop";
+import PasswordCheckPop from "./user/PasswordCheckPop";
 
 import AdminPoilicyPop from "./admin/PolicyPop";
 import AdminCategoryPop from "./admin/CategoryPop";
@@ -24,6 +25,9 @@ const Popup = () => {
             {/* 사용자 --------------------------------------*/}
             {/* 회원가입 - 이용약관 팝업 */}
             {popup.termsPop && <TermsPop />}
+
+            {/* 비밀글 비밀번호확인 팝업 */}
+            {popup.passwordCheckPop && <PasswordCheckPop />}
 
 
 

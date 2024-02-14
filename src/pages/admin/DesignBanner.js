@@ -6,7 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, adminBannerPop ,adminBannerPopWrite, adminBannerPopModify } from "../../store/popupSlice";
 import { pageNoChange, checkedList } from "../../store/etcSlice";
-import SelectBox from "../../components/component/admin/SelectBox";
+import SelectBox from "../../components/component/SelectBox";
 import SearchInput from "../../components/component/SearchInput";
 import TableWrap from "../../components/component/admin/TableWrap";
 import ConfirmPop from "../../components/popup/ConfirmPop";
@@ -305,7 +305,7 @@ const DesignBanner = () => {
                     <div className="form_search_wrap">
                         <div className="search_wrap">
                             <SelectBox 
-                                class="select_type3 search_row_select"
+                                className="select_type3 search_row_select"
                                 list={[10,15,30,50]}
                                 selected={limit}
                                 onChangeHandler={(e)=>{
@@ -359,7 +359,7 @@ const DesignBanner = () => {
                         </div>
                     </div>
                     <TableWrap 
-                        class="tbl_wrap1 tbl_wrap1_1"
+                        className="tbl_wrap1 tbl_wrap1_1"
                         colgroup={["80px","15%","calc(36% - 80px)","15%","15%","12%","7%"]}
                         thList={["","썸네일","제목","기간","배너 노출 사이즈","사용여부","순서"]}
                         tdList={boardData.banner_list}

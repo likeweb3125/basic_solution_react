@@ -197,7 +197,7 @@ const Main = () => {
                     <div className="board_box">
                         <h4>최근 게시판 조회</h4>
                         <TableWrap 
-                            class="tbl_wrap1"
+                            className="tbl_wrap1"
                             colgroup={["12%","18%","auto","30%"]}
                             thList={["번호","게시판명","제목","작성일시"]}
                             tdList={boardList}
@@ -234,7 +234,7 @@ const Main = () => {
                             <h4>접속자 이력 조회</h4>
                             <div className="tbl_wrap1">
                                 <TableWrap 
-                                    class="tbl_wrap1"
+                                    className="tbl_wrap1"
                                     colgroup={["12.12%","27.27%","auto","30.30%"]}
                                     thList={["접속자","접속 IP","접속 브라우저","접속일시"]}
                                     tdList={connectorList}

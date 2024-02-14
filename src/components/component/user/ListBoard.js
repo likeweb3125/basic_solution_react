@@ -1,9 +1,13 @@
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { scrollY } from "../../../store/etcSlice";
 import * as CF from "../../../config/function";
 import ic_clip from "../../../images/ic_clip.svg";
 
 
 const ListBoard = ({columnTitle, columnDate, columnView, columnFile, list}) => {
+    const dispatch = useDispatch();
+
     return(<>
         <ul className="list_board">
             {list && list.length > 0 ? 
@@ -19,8 +23,8 @@ const ListBoard = ({columnTitle, columnDate, columnView, columnFile, list}) => {
                                     </div>
                                     <div className="item_link">
                                         {columnTitle && <>
-                                            <span>
-                                                <Link to={`/board/detail/${cont.category}/${cont.idx}`}>{cont.b_title}</Link>
+                                            <span onClick={()=>{dispatch(scrollY(window.scrollY))}}>
+                                                <Link to={`/sub/board/detail/${cont.category}/${cont.idx}`}>{cont.b_title}</Link>
                                             </span>
                                             {cont.comment_count > 0 &&
                                                 <b>{CF.MakeIntComma(cont.comment_count)}</b>
