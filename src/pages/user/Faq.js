@@ -28,10 +28,10 @@ const Faq = () => {
     const [boardData, setBoardData] = useState({});
     const [limit, setLimit] = useState(null);
     const [detailData, setDetailData] = useState({});
-    const [tabList, setTabList] = useState(['전체','배송']);
+    const [tabList, setTabList] = useState([]);
     const [tabOn, setTabOn] = useState(0);
+    const [firstTime, setFirstTime] = useState(true);
     
-
 
     // Confirm팝업 닫힐때
     useEffect(()=>{
@@ -58,9 +58,8 @@ const Faq = () => {
         axios.get(`${board_group_list.replace(":parent_id",menu_idx)}`)
         .then((res)=>{
             if(res.status === 200){
-                let data = res.data.data;
-                let newList = data.filter((item)=>item.g_num !== "0"); //숨긴분류 제외
-                newList = newList.map((item)=>item.g_name); //분류이름만 배열로생성
+                const data = res.data.data;
+                const newList = data.filter((item)=>item.g_num !== "0"); //숨긴분류 제외
                 setTabList(newList);
             }
         })
@@ -86,8 +85,13 @@ const Faq = () => {
 
     //게시판리스트정보 가져오기
     const getBoardData = (page) => {
+        let tab = '';
+        if(tabOn > 0){
+            tab = tabOn;
+        }
+        console.log(tab)
 
-        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search=title&searchtxt="+searchTxt : ""}`)
+        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search=title&searchtxt="+searchTxt : ""}&group_id=${tab}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -110,6 +114,10 @@ const Faq = () => {
     useEffect(()=>{
         if(limit){
             getBoardData();
+
+            if(firstTime){
+                setFirstTime(false);
+            }
         }
     },[limit]);
 
@@ -122,6 +130,14 @@ const Faq = () => {
             dispatch(pageNoChange(false));
         }
     },[etc.pageNo,etc.pageNoChange]);
+
+
+
+    useEffect(()=>{
+        if(!firstTime){
+            getBoardData();
+        }
+    },[tabOn]);
 
 
     //제목클릭시 내용토글
@@ -164,13 +180,14 @@ const Faq = () => {
                     {tabList.length > 0 &&
                         <ul className="tab_type4">
                             <li className={tabOn === 0 ? 'on' : ''}>
-                                <button type="button" onClick={()=>setTabOn(0)}>전체</button>
+                                <button type="button" 
+                                    onClick={()=>setTabOn(0)}
+                                >전체</button>
                             </li>
                             {tabList.map((cont,i)=>{
-                                const idx = i+1;
                                 return(
-                                    <li key={i} className={tabOn === idx ? 'on' : ''}>
-                                        <button type="button" onClick={()=>setTabOn(idx)}>{cont}</button>
+                                    <li key={i} className={tabOn === cont.id ? 'on' : ''}>
+                                        <button type="button" onClick={()=>setTabOn(cont.id)}>{cont.g_name}</button>
                                     </li>
                                 );
                             })}

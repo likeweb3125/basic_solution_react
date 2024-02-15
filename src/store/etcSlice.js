@@ -12,6 +12,7 @@ const etc = createSlice({
         unMenuCheckList: [],
         cateMenuList: [],        //관리자단-메뉴관리-카테고리관리 1차카테고리 메뉴리스트
         activeMenuId: null,
+        inquiryDetailIdx: null,
     },
     reducers:{
         pageNo: (state, action) => {
@@ -41,6 +42,9 @@ const etc = createSlice({
         activeMenuId: (state, action) => {
             state.activeMenuId = action.payload;
         },
+        inquiryDetailIdx: (state, action) => {
+            state.inquiryDetailIdx = action.payload;
+        },
     }
 });
 
@@ -54,5 +58,6 @@ export const {
     unMenuCheckList,
     cateMenuList,
     activeMenuId,
+    inquiryDetailIdx
 } = etc.actions;
 export default etc;

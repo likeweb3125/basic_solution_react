@@ -5,7 +5,7 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop, passwordCheckPop } from "../../store/popupSlice";
-import { pageNoChange } from "../../store/etcSlice";
+import { pageNoChange, inquiryDetailIdx } from "../../store/etcSlice";
 import { boardSettingData, listPageData, detailPageBack } from "../../store/commonSlice";
 import SearchInput from "../../components/component/SearchInput";
 import ListInquiry from "../../components/component/user/ListInquiry";
@@ -76,7 +76,7 @@ const Inquiry = () => {
             searchText = searchTxt;
         }
 
-        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search=title&searchtxt="+searchText : ""}`)
+        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search=title&searchtxt="+searchText : ""}&group_id=`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -119,7 +119,7 @@ const Inquiry = () => {
         if(limit){
             getBoardData();
         }
-    },[limit]);
+    },[limit, menu_idx]);
 
 
     //페이지네이션 클릭으로 페이지변경시
@@ -132,12 +132,6 @@ const Inquiry = () => {
     },[etc.pageNo,etc.pageNoChange]);
 
 
-    //페이지변경시 게시판리스트정보 가져오기
-    useEffect(()=>{
-        getBoardData();
-    },[menu_idx]);
-
-
     //제목클릭시 내용토글
     const onDetailToggleHandler = (secret, idx, show) => {
         if(show){
@@ -145,7 +139,7 @@ const Inquiry = () => {
         }else{
             //비밀글일때
             if(secret == 'Y'){
-                dispatch(passwordCheckPop({passwordCheckPop:true, passwordCheckPopCate:menu_idx, passwordCheckPopIdx:idx, passwordCheckPopModify:false}));
+                dispatch(passwordCheckPop({passwordCheckPop:true, passwordCheckPopCate:menu_idx, passwordCheckPopIdx:idx, passwordCheckPopMoveUrl:null}));
             }
             //비밀글 아닐때
             else{
@@ -175,6 +169,15 @@ const Inquiry = () => {
             setConfirm(true);
         });
     };
+
+
+    useEffect(()=>{
+        if(etc.inquiryDetailIdx){
+            getDetailData(etc.inquiryDetailIdx);
+            
+            dispatch(inquiryDetailIdx(null));
+        }
+    },[etc.inquiryDetailIdx]);
 
 
     //글작성 권한 체크하기

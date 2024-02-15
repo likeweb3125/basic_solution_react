@@ -4,6 +4,7 @@ import moment from "moment";
 import 'moment/locale/ko';
 import * as CF from "../../../config/function";
 import TextareaBox from "../TextareaBox";
+import InputBox from "../InputBox";
 import ReplyWrap from "./ReplyWrap";
 import ConfirmPop from "../../popup/ConfirmPop";
 
@@ -12,6 +13,7 @@ const CommentWrap2 = (
     {
         commentList,
         name,
+        login,
         comment,
         onTextChangeHandler,
         onEnterHandler,
@@ -23,7 +25,15 @@ const CommentWrap2 = (
         onEditEnterHandler,
         onEditBtnClickHandler,
         editShow,
-        onDeltHandler
+        onDeltHandler,
+        onNameChangeHandler,
+        onPasswordChangeHandler,
+        commentName,
+        commentPassword,
+        onReplyNameChangeHandler,
+        onReplyPasswordChangeHandler,
+        replyName,
+        replyPassword,
     }) => {
     const popup = useSelector((state)=>state.popup);
     const [confirm, setConfirm] = useState(false);
@@ -194,6 +204,7 @@ const CommentWrap2 = (
                                 {/* 대댓글 */}
                                 <ReplyWrap 
                                     name={name}
+                                    login={login}
                                     data={cont} 
                                     onEnterHandler={onEnterHandler}
                                     onReplyToggleHandler={onReplyToggleHandler} 
@@ -203,6 +214,10 @@ const CommentWrap2 = (
                                     writeReply={writeReply}
                                     onWriteReplyHandler={onWriteReplyHandler}
                                     onWriteReplyCancelHandler={()=>setWriteReply(null)}
+                                    onReplyNameChangeHandler={onReplyNameChangeHandler}
+                                    onReplyPasswordChangeHandler={onReplyPasswordChangeHandler}
+                                    replyName={replyName}
+                                    replyPassword={replyPassword}
                                     //댓글수정
                                     editComment={editComment}
                                     onEditTextChangeHandler={onEditTextChangeHandler}
@@ -218,11 +233,36 @@ const CommentWrap2 = (
                     })}
                 </div>
                 <div className="write_comment_wrap">
-                    <div className="writer_wrap">
-                        <div className="writer_info">
-                            <strong className="user_name">{name}</strong>
+                    {login ? //로그인시
+                        <div className="writer_wrap">
+                            <div className="writer_info">
+                                <strong className="user_name">{name}</strong>
+                            </div>
                         </div>
-                    </div>
+                        :   //미로그인시
+                        <div className="writer_wrap">
+                            <div className="writer_info">
+                                <strong>작성자</strong>
+                                <InputBox
+                                    className="input_box" 
+                                    type={`text`}
+                                    placeholder={`작성자를 입력해주세요.`}
+                                    value={commentName}
+                                    onChangeHandler={onNameChangeHandler}
+                                />
+                            </div>
+                            <div className="writer_info">
+                                <strong>비밀번호</strong>
+                                <InputBox
+                                    className="input_box" 
+                                    type={`text`}
+                                    placeholder={`비밀번호를 입력해주세요.`}
+                                    value={commentPassword}
+                                    onChangeHandler={onPasswordChangeHandler}
+                                />
+                            </div>
+                        </div>
+                    }
                     <div className="write_comment">
                         <TextareaBox 
                             cols={30}

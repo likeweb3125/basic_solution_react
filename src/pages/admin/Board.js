@@ -113,7 +113,7 @@ const Board = () => {
             searchText = searchTxt;
         }
 
-        axios.get(`${board_list.replace(":category",board_category).replace(":limit",limitNum)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search="+search+"&searchtxt="+searchText : ""}`,
+        axios.get(`${board_list.replace(":category",board_category).replace(":limit",limitNum)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search="+search+"&searchtxt="+searchText : ""}&group_id=`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{

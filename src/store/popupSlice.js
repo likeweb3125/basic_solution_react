@@ -18,7 +18,7 @@ const popup = createSlice({
         passwordCheckPop: false,
         passwordCheckPopCate: null,
         passwordCheckPopIdx: null,
-        passwordCheckPopModify: false,
+        passwordCheckPopMoveUrl: null,
 
 
         // 관리자-------------------------------
@@ -93,7 +93,7 @@ const popup = createSlice({
             state.passwordCheckPop = action.payload.passwordCheckPop;
             state.passwordCheckPopCate = action.payload.passwordCheckPopCate;
             state.passwordCheckPopIdx = action.payload.passwordCheckPopIdx;
-            state.passwordCheckPopModify = action.payload.passwordCheckPopModify;
+            state.passwordCheckPopMoveUrl = action.payload.passwordCheckPopMoveUrl;
         },
 
         // 관리자-------------------------------

@@ -600,6 +600,7 @@ const BoardDetail = () => {
                                 <CommentWrap2 
                                     commentList={commentList}
                                     name={`관리자`}
+                                    login={true}
                                     // 댓글
                                     comment={comment}
                                     onTextChangeHandler={onTextChangeHandler}

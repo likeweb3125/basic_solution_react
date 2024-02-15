@@ -5,6 +5,7 @@ import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { confirmPop, passwordCheckPop } from "../../../store/popupSlice";
+import { inquiryDetailIdx } from "../../../store/etcSlice";
 import InputBox from "../../component/InputBox";
 import ConfirmPop from "../ConfirmPop";
 
@@ -30,7 +31,7 @@ const PasswordCheckPop = () => {
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(passwordCheckPop({passwordCheckPop:false,passwordCheckPopCate:null,passwordCheckPopIdx:null,passwordCheckPopModify:false}));
+        dispatch(passwordCheckPop({passwordCheckPop:false,passwordCheckPopCate:null,passwordCheckPopIdx:null,passwordCheckPopMoveUrl:null}));
     };
 
 
@@ -55,11 +56,11 @@ const PasswordCheckPop = () => {
             if(res.status === 200){
                 closePopHandler();
 
-                //
-                if(popup.passwordCheckPopModify){
-                    navigate('/sub/inquiry/modify/'+popup.passwordCheckPopCate+'/'+popup.passwordCheckPopIdx);
+                //게시글 상세페이지로 이동일때
+                if(popup.passwordCheckPopMoveUrl){
+                    navigate(popup.passwordCheckPopMoveUrl+popup.passwordCheckPopCate+'/'+popup.passwordCheckPopIdx);
                 }else{
-
+                    dispatch(inquiryDetailIdx(popup.passwordCheckPopIdx));
                 }
             }
         })

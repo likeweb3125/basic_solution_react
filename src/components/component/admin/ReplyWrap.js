@@ -6,6 +6,7 @@ import TextareaBox from "../TextareaBox";
 const ReplyWrap = (
     {   
         name,
+        login,
         data, 
         onReplyToggleHandler,
         replyShow,
@@ -20,7 +21,11 @@ const ReplyWrap = (
         onEditBtnClickHandler,
         editShow,
         onEnterHandler,
-        onDeltHandler
+        onDeltHandler,
+        onReplyNameChangeHandler,
+        onReplyPasswordChangeHandler,
+        replyName,
+        replyPassword,
     }
     ) => {
 
@@ -91,6 +96,7 @@ const ReplyWrap = (
                                     {/* 대댓글 */}
                                     <ReplyWrap 
                                         name={name}
+                                        login={login}
                                         data={reply} 
                                         onEnterHandler={onEnterHandler}
                                         onReplyToggleHandler={onReplyToggleHandler} 
@@ -100,6 +106,10 @@ const ReplyWrap = (
                                         writeReply={writeReply}
                                         onWriteReplyHandler={onWriteReplyHandler}
                                         onWriteReplyCancelHandler={onWriteReplyCancelHandler}
+                                        onReplyNameChangeHandler={onReplyNameChangeHandler}
+                                        onReplyPasswordChangeHandler={onReplyPasswordChangeHandler}
+                                        replyName={replyName}
+                                        replyPassword={replyPassword}
                                         //댓글수정
                                         editComment={editComment}
                                         onEditTextChangeHandler={onEditTextChangeHandler}
@@ -123,6 +133,11 @@ const ReplyWrap = (
                             depth={data.depth + 1}
                             idx={data.idx}
                             name={name}
+                            login={login}
+                            onReplyNameChangeHandler={onReplyNameChangeHandler}
+                            onReplyPasswordChangeHandler={onReplyPasswordChangeHandler}
+                            replyName={replyName}
+                            replyPassword={replyPassword}
                         />
                     }
                 </div>

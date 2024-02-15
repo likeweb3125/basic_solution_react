@@ -34,7 +34,6 @@ const BoardWrite = (props) => {
     const [filesData, setFilesData] = useState([]);
     const [deltFiles, setDeltFiles] = useState([]);
     const [notice, setNotice] = useState(0);
-    const [password, setPassword] = useState("");
     const [passwordOn, setPasswordOn] = useState(false);
     const [showRaw, setShowRaw] = useState(false);
     const [rawHtml, setRawHtml] = useState('');
@@ -43,6 +42,7 @@ const BoardWrite = (props) => {
     const [groupList, setGroupList] = useState([]);
     const [groupSelect, setGroupSelect] = useState("");
     const [groupSelectId, setGroupSelectId] = useState(null);
+    const [secret, setSecret] = useState(false);
 
 
     // Confirm팝업 닫힐때
@@ -108,6 +108,7 @@ const BoardWrite = (props) => {
 
     //게시글수정페이지일때 게시글정보 값 뿌려주기
     useEffect(()=>{
+        console.log(boardData);
         if(boardData.b_notice){
             setNotice(boardData.b_notice);
         }
@@ -130,7 +131,6 @@ const BoardWrite = (props) => {
         }
         if(boardData.m_pwd){
             setPasswordOn(true);
-            setPassword(boardData.m_pwd);
         }
     },[boardData]);
 
@@ -359,6 +359,16 @@ const BoardWrite = (props) => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
+        }
+        // 비밀글설정체크시 비밀번호입력 체크
+        else if(secret && !boardData.m_pwd){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'비밀글 설정 시 비밀번호를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         }else{
             if(deltFiles.length > 0){
                 fileDeltHandler();
@@ -398,14 +408,20 @@ const BoardWrite = (props) => {
             cont = content;
         }
 
+        let b_secret = '';
+        if(secret){
+            b_secret = 'Y';
+        }
+
         formData.append("category", board_category);
         formData.append("m_email", user.loginUser.m_email);
         formData.append("m_name", user.loginUser.m_name);
-        formData.append("m_pwd", password);
+        formData.append("m_pwd", boardData.m_pwd);
         formData.append("b_title", boardData.b_title);
         formData.append("b_contents", cont);
         formData.append("b_depth", 0);
         formData.append("b_notice", notice);
+        formData.append("b_secret", b_secret);
 
         //분류사용시 유형선택값 보내기
         if(boardSettingData.b_group == "Y"){
@@ -652,6 +668,35 @@ const BoardWrite = (props) => {
                                                         })}
                                                     </ul>
                                                 }
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr className="tr_pwd">
+                                        <th>비밀번호</th>
+                                        <td colSpan={3}>
+                                            <div className="pwd_wrap">
+                                                <InputBox
+                                                    className="input_box" 
+                                                    type={`text`}
+                                                    placeholder={`비밀번호를 설정해주세요.`}
+                                                    value={boardData.m_pwd || ""}
+                                                    onChangeHandler={onInputChangeHandler}
+                                                    id={`m_pwd`}
+                                                />
+                                                <div className="chk_box1">
+                                                    <input type="checkbox" id="chkSecret" className="blind" 
+                                                        onChange={(e)=>{
+                                                            const checked = e.currentTarget.checked;
+                                                            if(checked){
+                                                                setSecret(true);
+                                                            }else{
+                                                                setSecret(false);
+                                                            }
+                                                        }}
+                                                        checked={secret ? true : false}
+                                                    />
+                                                    <label htmlFor="chkSecret">비밀글(관리자만 볼 수 있습니다.)</label>
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>

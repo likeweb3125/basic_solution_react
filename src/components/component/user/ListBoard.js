@@ -1,12 +1,15 @@
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { scrollY } from "../../../store/commonSlice";
+import { passwordCheckPop } from "../../../store/popupSlice";
 import * as CF from "../../../config/function";
 import ic_clip from "../../../images/ic_clip.svg";
 
 
 const ListBoard = ({columnTitle, columnDate, columnView, columnFile, list}) => {
     const dispatch = useDispatch();
+    const { menu_idx } = useParams();
+
 
     return(<>
         <ul className="list_board">
@@ -24,11 +27,19 @@ const ListBoard = ({columnTitle, columnDate, columnView, columnFile, list}) => {
                                     <div className="item_link">
                                         {columnTitle && <>
                                             <span onClick={()=>{dispatch(scrollY(window.scrollY))}}>
-                                                <Link to={`/sub/board/detail/${cont.category}/${cont.idx}`}>{cont.b_title}</Link>
+                                                {cont.b_secret == 'Y' ? 
+                                                    <button type="button"
+                                                        onClick={()=>{
+                                                            dispatch(passwordCheckPop({passwordCheckPop:true, passwordCheckPopCate:menu_idx, passwordCheckPopIdx:cont.idx, passwordCheckPopMoveUrl:'/sub/board/detail/'}));
+                                                        }}
+                                                    >{cont.b_title}</button>
+                                                    :<Link to={`/sub/board/detail/${cont.category}/${cont.idx}`}>{cont.b_title}</Link>
+                                                }
                                             </span>
                                             {cont.comment_count > 0 &&
                                                 <b>{CF.MakeIntComma(cont.comment_count)}</b>
                                             }
+                                            {cont.b_secret == 'Y' && <i>잠금 게시물</i>}
                                         </>}
                                     </div>
                                 </div>

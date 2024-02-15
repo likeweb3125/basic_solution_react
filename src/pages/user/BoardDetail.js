@@ -33,11 +33,17 @@ const BoardDetail = () => {
     const [answerTxt, setAnswerTxt] = useState(null);
     const [commentList, setCommentList] = useState([]);
     const [comment, setComment] = useState("");
+    const [commentName, setCommentName] = useState('');
+    const [commentPassword, setCommentPassword] = useState('');
+    const [replyName, setReplyName] = useState('');
+    const [replyPassword, setReplyPassword] = useState('');
     const [replyComment, setReplyComment] = useState("");
     const [editComment, setEditComment] = useState("");
     const [editShow, setEditShow] = useState(null);
     const [replyEnterOk, setReplyEnterOk] = useState(false);
     const [deltCommentIdx, setDeltCommentIdx] = useState(null);
+    const [login, setLogin] = useState(false);
+    const [myPost, setMyPost] = useState(false);
 
 
     //상세페이지 뒤로가기
@@ -63,6 +69,16 @@ const BoardDetail = () => {
             setCommentDeltConfirm(false);
         }
     },[popup.confirmPop]);
+
+
+    //로그인했는지 체크
+    useEffect(()=>{
+        if(user.loginStatus){
+            setLogin(true);
+        }else{
+            setLogin(false);
+        }
+    },[user.loginStatus]);
 
 
     //게시글정보 가져오기
@@ -121,6 +137,21 @@ const BoardDetail = () => {
         //게시판설정정보 가져오기
         setBoardSettingData(common.currentMenuData);
     },[common.currentMenuData]);
+
+
+    //내가작성한글인지 체크
+    useEffect(()=>{
+        //로그인시
+        if(login){
+            if(boardData.m_email === user.loginUser.m_email){
+                setMyPost(true);
+            }else{
+                setMyPost(false);
+            }
+        }else{
+            setMyPost(false);
+        }
+    },[boardData, login, user.loginUser]);
 
 
     //인풋값 변경시
@@ -192,6 +223,17 @@ const BoardDetail = () => {
         setComment(val);
     };
 
+    //댓글 미로그인시 작성자 값 변경시
+    const onCommentNameChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setCommentName(val);
+    };
+
+    //댓글 미로그인시 비밀번호 값 변경시
+    const onCommentPasswordChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setCommentPassword(val);
+    };
 
     //대댓글 textarea 값 변경시
     const onReplyTextChangeHandler = (e) => {
@@ -199,34 +241,87 @@ const BoardDetail = () => {
         setReplyComment(val);
     };
 
+    //대댓글 미로그인시 작성자 값 변경시
+    const onReplyNameChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setReplyName(val);
+    };
+
+    //대댓글 미로그인시 비밀번호 값 변경시
+    const onReplyPasswordChangeHandler = (e) => {
+        const val = e.currentTarget.value;
+        setReplyPassword(val);
+    };
+
 
     //댓글등록버튼 클릭시
     const enterBtnClickHandler = (depth, txt, idx) => {
-        console.log(depth)
-        if(txt.length == 0){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'댓글을 입력해주세요.',
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        }else{
-            enterHandler(depth, txt, idx);
+        //로그인시
+        if(login){
+            if(txt.length === 0){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'댓글을 입력해주세요.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }else{
+                enterHandler(depth, txt, idx);
+            }
+        }
+        //미로그인시
+        else{
+            if(commentName.length === 0){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'작성자를 입력해주세요.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }else if(commentPassword.length === 0){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'비밀번호를 입력해주세요.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }else if(txt.length === 0){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'댓글을 입력해주세요.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }else{
+                enterHandler(depth, txt, idx);
+            }
         }
     };
 
 
     //댓글등록하기
     const enterHandler = (depth, txt, idx) => {
+        let m_email = '';
+        let m_name = commentName;
+        let m_pwd = commentPassword;
+        if(login){
+            m_email = user.loginUser.m_email;
+            m_name = user.loginUser.m_name;
+            m_pwd = '';
+        }
+
         const body = {
             category: menu_idx,
             board_idx: board_idx,
             parent_idx: idx || 0,
             depth: depth,
-            m_email: user.loginUser.m_email,
-            m_name: user.loginUser.m_name,
-            m_pwd: '',
+            m_email: m_email,
+            m_name: m_name,
+            m_pwd: m_pwd,
             c_contents: txt,
         };
         axios.post(`${board_comment}`, body, 
@@ -294,7 +389,7 @@ const BoardDetail = () => {
 
     //댓글수정 등록버튼 클릭시
     const enterEditBtnClickHandler = (idx) => {
-        if(editComment.length == 0){
+        if(editComment.length === 0){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -409,10 +504,12 @@ const BoardDetail = () => {
                                     </li>
                                 </ul>
                             </div>
-                            <div className="btn_util">
-                                <button type="button" className="btn_type11">수정</button>
-                                <button type="button" className="btn_type12">삭제</button>
-                            </div>
+                            {myPost &&
+                                <div className="btn_util">
+                                    <Link to={`/sub/board/modify/${menu_idx}/${boardData.idx}`} className="btn_type11">수정</Link>
+                                    <button type="button" className="btn_type12">삭제</button>
+                                </div>
+                            }
                         </div>
                         <div className="board_con">
                             {/* 갤러리게시판일때만 썸네일이미지 보이기 */}
@@ -444,14 +541,23 @@ const BoardDetail = () => {
                                 <CommentWrap2 
                                     commentList={commentList}
                                     name={`관리자`}
+                                    login={login}
                                     // 댓글
                                     comment={comment}
                                     onTextChangeHandler={onTextChangeHandler}
                                     onEnterHandler={enterBtnClickHandler}
+                                    onNameChangeHandler={onCommentNameChangeHandler}               //미로그인시 작성자이름
+                                    onPasswordChangeHandler={onCommentPasswordChangeHandler}       //미로그인시 비밀번호
+                                    commentName={commentName}
+                                    commentPassword={commentPassword}
                                     // 대댓글
                                     replyComment={replyComment}
                                     onReplyTextChangeHandler={onReplyTextChangeHandler}
                                     replyEnterOk={replyEnterOk}
+                                    onReplyNameChangeHandler={onReplyNameChangeHandler}            //미로그인시 작성자이름
+                                    onReplyPasswordChangeHandler={onReplyPasswordChangeHandler}    //미로그인시 비밀번호
+                                    replyName={replyName}
+                                    replyPassword={replyPassword}
                                     //댓글수정
                                     editComment={editComment}
                                     onEditTextChangeHandler={onEditTextChangeHandler}

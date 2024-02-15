@@ -156,6 +156,7 @@ function App() {
                     <Route path="board/:menu_idx" element={<Board />}/>                               {/* 리스트 */}                
                     <Route path="board/detail/:menu_idx/:board_idx" element={<BoardDetail />}/>       {/* 상세 */}
                     <Route path="board/write/:menu_idx" element={<BoardWrite write={true} />}/>       {/* 작성 */}
+                    <Route path="board/modify/:menu_idx/:board_idx" element={<BoardWrite />}/>        {/* 수정 */}
 
                     {/* 카테고리종류 FAQ */}
                     <Route path="faq/:menu_idx" element={<Faq />}/>      

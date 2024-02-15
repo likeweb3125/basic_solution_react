@@ -78,7 +78,7 @@ const Board = () => {
             searchText = searchTxt;
         }
 
-        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search=title&searchtxt="+searchText : ""}`)
+        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search=title&searchtxt="+searchText : ""}&group_id=`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -120,7 +120,7 @@ const Board = () => {
         if(limit){
             getBoardData();
         }
-    },[limit]);
+    },[limit, menu_idx]);
 
 
     //페이지네이션 클릭으로 페이지변경시
@@ -131,12 +131,6 @@ const Board = () => {
             dispatch(pageNoChange(false));
         }
     },[etc.pageNo,etc.pageNoChange]);
-
-
-    //페이지변경시 게시판리스트정보 가져오기
-    useEffect(()=>{
-        getBoardData();
-    },[menu_idx]);
 
 
     //글작성 권한 체크하기

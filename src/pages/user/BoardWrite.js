@@ -15,7 +15,6 @@ import { confirmPop } from "../../store/popupSlice";
 import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
-import SelectBox from "../../components/component/SelectBox";
 
 
 const BoardWrite = (props) => {
@@ -37,8 +36,6 @@ const BoardWrite = (props) => {
     const [files, setFiles] = useState([]);
     const [filesData, setFilesData] = useState([]);
     const [deltFiles, setDeltFiles] = useState([]);
-    const [notice, setNotice] = useState(0);
-    const [password, setPassword] = useState("");
     const [passwordOn, setPasswordOn] = useState(false);
     const [showRaw, setShowRaw] = useState(false);
     const [rawHtml, setRawHtml] = useState('');
@@ -48,6 +45,7 @@ const BoardWrite = (props) => {
     const [groupSelect, setGroupSelect] = useState("");
     const [groupSelectId, setGroupSelectId] = useState(null);
     const [secret, setSecret] = useState(false);
+    const [login, setLogin] = useState(false);
 
 
     // Confirm팝업 닫힐때
@@ -57,6 +55,15 @@ const BoardWrite = (props) => {
         }
     },[popup.confirmPop]);
 
+
+    //로그인했는지 체크
+    useEffect(()=>{
+        if(user.loginStatus){
+            setLogin(true);
+        }else{
+            setLogin(false);
+        }
+    },[user.loginStatus]);
 
 
     //게시글정보 가져오기
@@ -99,9 +106,6 @@ const BoardWrite = (props) => {
 
     //게시글수정페이지일때 게시글정보 값 뿌려주기
     useEffect(()=>{
-        if(boardData.b_notice){
-            setNotice(boardData.b_notice);
-        }
         if(boardData.b_contents){
             setContent(boardData.b_contents);
         }
@@ -121,7 +125,9 @@ const BoardWrite = (props) => {
         }
         if(boardData.m_pwd){
             setPasswordOn(true);
-            setPassword(boardData.m_pwd);
+        }
+        if(boardData.b_secret === 'Y'){
+            setSecret(true);
         }
     },[boardData]);
 
@@ -136,6 +142,16 @@ const BoardWrite = (props) => {
         //게시판 분류사용시 분류유형리스트 가져오기
         if(boardSettingData.b_group == "Y"){
             getGroupList();
+        }
+
+        //비밀글설정일때
+        if(boardSettingData.b_secret == "Y"){
+            setPasswordOn(true);
+
+            //미로그인시 비밀글체크 고정
+            if(!login){
+                setSecret(true);
+            }
         }
     },[boardSettingData]);
 
@@ -309,7 +325,45 @@ const BoardWrite = (props) => {
             cont = content.replace(/<p><br><\/p>/g, "");
         }
 
-        if(!boardData.b_title){
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/;
+
+        let user_captcha = document.getElementById("user_captcha_input").value;
+
+        // 비회원일때 작성자,이메일, 비밀글작성 필수값체크
+        if(!login && !boardData.m_name){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'작성자를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(!login && !boardData.m_email){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'이메일을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(!login && boardData.m_email && !emailRegex.test(boardData.m_email)){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'올바른 이메일 형식이 아닙니다.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(!login && !secret){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'비회원인 경우 비밀글로 작성해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+        else if(!boardData.b_title){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -342,6 +396,24 @@ const BoardWrite = (props) => {
                 confirmPop:true,
                 confirmPopTit:'알림',
                 confirmPopTxt:'유형을 선택해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+        // 비밀글설정체크시 비밀번호입력 체크
+        else if(secret && !boardData.m_pwd){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'비밀글 설정 시 비밀번호를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if (validateCaptcha(user_captcha) == false) {
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'보안문자를 잘못 입력했습니다.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -384,14 +456,29 @@ const BoardWrite = (props) => {
             cont = content;
         }
 
+        let m_name = '';
+        let m_email = '';
+        if(login){
+            m_name = user.loginUser.m_name;
+            m_email = user.loginUser.m_email;
+        }else{
+            m_name = boardData.m_name;
+            m_email = boardData.m_email;
+        }
+
+        let b_secret = '';
+        if(secret){
+            b_secret = 'Y';
+        }
+
         formData.append("category", menu_idx);
-        formData.append("m_email", user.loginUser.m_email);
-        formData.append("m_name", user.loginUser.m_name);
-        formData.append("m_pwd", password);
+        formData.append("m_email", m_email);
+        formData.append("m_name", m_name);
+        formData.append("m_pwd", boardData.m_pwd);
         formData.append("b_title", boardData.b_title);
         formData.append("b_contents", cont);
         formData.append("b_depth", 0);
-        formData.append("b_notice", notice);
+        formData.append("b_secret", b_secret);
 
         //분류사용시 유형선택값 보내기
         if(boardSettingData.b_group == "Y"){
@@ -469,20 +556,32 @@ const BoardWrite = (props) => {
                                     <col style={{'width':'auto'}}/>
                                 </colgroup>
                                 <tbody>
-                                    <tr>
-                                        <th>작성자</th>
-                                        <td>
-                                            <div className="input_box">
-                                                <input type="text" placeholder="작성자를 입력해주세요."/>
-                                            </div>
-                                        </td>
-                                        <th>이메일</th>
-                                        <td>
-                                            <div className="input_box">
-                                                <input type="text" placeholder="ID@example.com"/>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    {!login &&
+                                        <tr>
+                                            <th>작성자</th>
+                                            <td>
+                                                <InputBox
+                                                    className="input_box" 
+                                                    type={`text`}
+                                                    placeholder={`작성자를 입력해주세요.`}
+                                                    value={boardData.m_name || ""}
+                                                    onChangeHandler={onInputChangeHandler}
+                                                    id={`m_name`}
+                                                />
+                                            </td>
+                                            <th>이메일</th>
+                                            <td>
+                                                <InputBox
+                                                    className="input_box" 
+                                                    type={`text`}
+                                                    placeholder={`이메일을 입력해주세요.`}
+                                                    value={boardData.m_email || ""}
+                                                    onChangeHandler={onInputChangeHandler}
+                                                    id={`m_email`}
+                                                />
+                                            </td>
+                                        </tr>
+                                    }
                                     <tr>
                                         <th>제목</th>
                                         <td colSpan="3">
@@ -669,7 +768,9 @@ const BoardWrite = (props) => {
                             </div>
                             <div className="between_box">
                                 <button type="button" className="btn_type22" onClick={()=>{navigate(-1)}}>취소</button>
-                                <a href="#" className="btn_type23">등록</a>
+                                <button type="button" className="btn_type23"
+                                    onClick={submitClickHandler}
+                                >등록</button>
                             </div>
                         </div>
                     </div>
