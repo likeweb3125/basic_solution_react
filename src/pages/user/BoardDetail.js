@@ -5,11 +5,11 @@ import axios from "axios";
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import history from "../../config/history";
-import { confirmPop } from "../../store/popupSlice";
-import { detailPageBack } from "../../store/commonSlice";
+import { confirmPop, commentPassCheckPop } from "../../store/popupSlice";
+import { detailPageBack, secretPassCheck } from "../../store/commonSlice";
+import { commentPassCheck, commentDeltPassCheck } from "../../store/etcSlice";
 import CommentWrap2 from "../../components/component/admin/CommentWrap2";
 import ConfirmPop from "../../components/popup/ConfirmPop";
-import InputBox from "../../components/component/InputBox";
 
 
 const BoardDetail = () => {
@@ -26,7 +26,9 @@ const BoardDetail = () => {
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
+    const etc = useSelector((state)=>state.etc);
     const [confirm, setConfirm] = useState(false);
+    const [deltConfirm, setDeltConfirm] = useState(false);
     const [commentDeltConfirm, setCommentDeltConfirm] = useState(false);
     const [boardData, setBoardData] = useState({});
     const [boardSettingData, setBoardSettingData] = useState({});
@@ -39,17 +41,22 @@ const BoardDetail = () => {
     const [replyPassword, setReplyPassword] = useState('');
     const [replyComment, setReplyComment] = useState("");
     const [editComment, setEditComment] = useState("");
-    const [editShow, setEditShow] = useState(null);
+    const [editCommentShow, setEditCommentShow] = useState(null);
     const [replyEnterOk, setReplyEnterOk] = useState(false);
     const [deltCommentIdx, setDeltCommentIdx] = useState(null);
     const [login, setLogin] = useState(false);
     const [myPost, setMyPost] = useState(false);
+    const [name, setName] = useState('');
+    const [moCommentEditBox, setMoCommentEditBox] = useState(null);
 
 
     //상세페이지 뒤로가기
     useEffect(() => {
         const listenBackEvent = () => {
             dispatch(detailPageBack(true));
+
+            //비밀글 비밀번호체크값 초기화
+            dispatch(secretPassCheck(false));
         };
     
         const unlistenHistoryEvent = history.listen(({ action }) => {
@@ -66,6 +73,7 @@ const BoardDetail = () => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
+            setDeltConfirm(false);
             setCommentDeltConfirm(false);
         }
     },[popup.confirmPop]);
@@ -81,9 +89,24 @@ const BoardDetail = () => {
     },[user.loginStatus]);
 
 
+    //로그인시 댓글창 이름값 넣기
+    useEffect(()=>{
+        if(login){ 
+            setName(user.loginUser.m_name);
+        }else{
+            setName('');
+        }
+    },[login]);
+
+
     //게시글정보 가져오기
     const getBoardData = () => {
-        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}`)
+        let pass = false;
+        if(common.secretPassCheck){
+            pass = true;
+        }
+
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}${pass ? '?pass=T' : ''}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -130,7 +153,7 @@ const BoardDetail = () => {
     useEffect(()=>{
         getBoardData();
         getCommentList();
-    },[menu_idx,board_idx]);
+    },[menu_idx,board_idx,common.secretPassCheck]);
 
 
     useEffect(()=>{
@@ -139,38 +162,32 @@ const BoardDetail = () => {
     },[common.currentMenuData]);
 
 
-    //내가작성한글인지 체크
+    //게시글 수정,삭제 버튼 노출체크하기
     useEffect(()=>{
         //로그인시
         if(login){
+            //내가작성한글일때만 수정,삭제버튼 노출
             if(boardData.m_email === user.loginUser.m_email){
                 setMyPost(true);
             }else{
                 setMyPost(false);
             }
         }else{
-            setMyPost(false);
+            //비회원이 작성한비밀글일때만 수정,삭제버튼 노출
+            if(boardData.m_pwd && boardData.m_pwd.length > 0){
+                setMyPost(true);
+            }else{
+                setMyPost(false);
+            }
         }
     },[boardData, login, user.loginUser]);
-
-
-    //인풋값 변경시
-    const onInputChangeHandler = (e) => {
-        const id = e.currentTarget.id;
-        const val = e.currentTarget.value;
-
-        let newData = {...boardData};
-            newData[id] = val;
-            
-        setBoardData(newData);
-    };
 
 
     //첨부파일 다운로드
     const fileDownHandler = (idx, name) => {
         axios.get(`${board_file_down.replace(":category",menu_idx).replace(":parent_idx",board_idx).replace(":idx",idx)}`,
             {
-                headers:{Authorization: `Bearer ${user.loginUser.accessToken}`},
+                // headers:{Authorization: `Bearer ${user.loginUser.accessToken}`},
                 responseType: 'blob' // 요청 데이터 형식을 blob으로 설정
             }
         )
@@ -203,6 +220,50 @@ const BoardDetail = () => {
     };
 
 
+    //삭제버튼 클릭시
+    const deltBtnClickHandler = () => {
+        dispatch(confirmPop({
+            confirmPop:true,
+            confirmPopTit:'알림',
+            confirmPopTxt:'해당 게시글을 삭제하시겠습니까?',
+            confirmPopBtn:2,
+        }));
+        setDeltConfirm(true);
+    };
+
+
+    //게시글 삭제하기
+    const deltHandler = () => {
+        const body = {
+            idx: board_idx,
+            category: menu_idx
+        };
+        axios.delete(`${board_modify}`,
+            {
+                data: body,
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                navigate(-1);
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
+
+    //------------------------------------- 댓글 -------------------------------------
     //댓글 300자초과시 알림팝업 띄우기
     useEffect(()=>{
         if(comment.length === 300){
@@ -255,7 +316,7 @@ const BoardDetail = () => {
 
 
     //댓글등록버튼 클릭시
-    const enterBtnClickHandler = (depth, txt, idx) => {
+    const enterBtnClickHandler = (reply, depth, txt, idx) => {
         //로그인시
         if(login){
             if(txt.length === 0){
@@ -267,51 +328,95 @@ const BoardDetail = () => {
                 }));
                 setConfirm(true);
             }else{
-                enterHandler(depth, txt, idx);
+                enterHandler(reply, depth, txt, idx);
             }
         }
         //미로그인시
         else{
-            if(commentName.length === 0){
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'작성자를 입력해주세요.',
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }else if(commentPassword.length === 0){
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'비밀번호를 입력해주세요.',
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }else if(txt.length === 0){
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt:'댓글을 입력해주세요.',
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }else{
-                enterHandler(depth, txt, idx);
+            //대댓글일때
+            if(reply){
+                if(replyName.length === 0){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'작성자를 입력해주세요.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else if(replyPassword.length === 0){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'비밀번호를 입력해주세요.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else if(txt.length === 0){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'댓글을 입력해주세요.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else{
+                    enterHandler(reply, depth, txt, idx);
+                }
+            }
+            //댓글일때
+            else{
+                if(commentName.length === 0){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'작성자를 입력해주세요.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else if(commentPassword.length === 0){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'비밀번호를 입력해주세요.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else if(txt.length === 0){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'댓글을 입력해주세요.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else{
+                    enterHandler(reply, depth, txt, idx);
+                }
             }
         }
     };
 
 
     //댓글등록하기
-    const enterHandler = (depth, txt, idx) => {
+    const enterHandler = (reply, depth, txt, idx) => {
+
         let m_email = '';
         let m_name = commentName;
         let m_pwd = commentPassword;
+
+        //로그인시
         if(login){
             m_email = user.loginUser.m_email;
             m_name = user.loginUser.m_name;
             m_pwd = '';
+        }
+        //미로그인시
+        else{
+            //대댓글일때
+            if(reply){
+                m_name = replyName;
+                m_pwd = replyPassword;
+            }
         }
 
         const body = {
@@ -324,8 +429,9 @@ const BoardDetail = () => {
             m_pwd: m_pwd,
             c_contents: txt,
         };
+
         axios.post(`${board_comment}`, body, 
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+            // {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
             if(res.status === 200){
@@ -367,17 +473,46 @@ const BoardDetail = () => {
     },[replyEnterOk]);
 
 
-    //댓글수정버튼 클릭시
+    //댓글수정,수정취소 버튼 클릭시
     const onEditBtnClickHandler = (idx, txt) => {
-        setEditShow(idx);
+        //수정일때
+        if(idx){
+            //로그인시
+            if(login){
+                setEditCommentShow(idx);
 
-        //댓글내용값 있을때 값넣기
-        if(txt){
-            setEditComment(txt);
-        }else{//없을때 지우기
-            setEditComment('');
+                //댓글내용값 있을때 값넣기
+                if(txt){
+                    setEditComment(txt);
+                }else{//없을때 지우기
+                    setEditComment('');
+                }
+            }
+            //미로그인시
+            else{
+                dispatch(commentPassCheckPop({commentPassCheckPop:true,commentPassCheckPopIdx:idx,commentPassCheckPopTxt:txt,commentPassCheckPopDelt:false}));
+            }
+        }
+        //수정취소일때
+        else{
+            setEditCommentShow(null);
         }
     };
+
+
+    //비회원댓글 비밀번호체크후 수정가능
+    useEffect(()=>{
+        if(etc.commentPassCheck){
+            //댓글내용값 있을때 값넣기
+            if(etc.commentPassCheckTxt){
+                setEditComment(etc.commentPassCheckTxt);
+            }else{//없을때 지우기
+                setEditComment('');
+            }
+            setEditCommentShow(etc.commentPassCheckIdx);
+            dispatch(commentPassCheck({commentPassCheck:false, commentPassCheckIdx:null, commentPassCheckTxt:''}));
+        }
+    },[etc.commentPassCheck]);
 
 
     //댓글수정 textarea 값 변경시
@@ -411,12 +546,12 @@ const BoardDetail = () => {
             c_contents: editComment,
         };
         axios.put(`${board_comment}`, body, 
-            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+            // {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
             if(res.status === 200){
                 getCommentList();
-                setEditShow(null); //댓글수정 영역 미노출
+                setEditCommentShow(null); //댓글수정 영역 미노출
             }
         })
         .catch((error) => {
@@ -440,14 +575,38 @@ const BoardDetail = () => {
     const commentDeltBtnClickHandler = (idx) => {
         setDeltCommentIdx(idx);//삭제할 댓글 idx 저장
 
-        dispatch(confirmPop({
-            confirmPop:true,
-            confirmPopTit:'알림',
-            confirmPopTxt:'해당 댓글을 삭제하시겠습니까?',
-            confirmPopBtn:2,
-        }));
-        setCommentDeltConfirm(true);
+        //로그인시
+        if(login){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'해당 댓글을 삭제하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+            setCommentDeltConfirm(true);
+        }
+        //미로그인시
+        else{
+            dispatch(commentPassCheckPop({commentPassCheckPop:true,commentPassCheckPopIdx:idx,commentPassCheckPopTxt:'',commentPassCheckPopDelt:true}));
+        }
     };
+
+
+    //비회원댓글 비밀번호체크후 삭제가능
+    useEffect(()=>{
+        if(etc.commentDeltPassCheck){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'해당 댓글을 삭제하시겠습니까?',
+                confirmPopBtn:2,
+            }));
+            setCommentDeltConfirm(true);
+
+            dispatch(commentDeltPassCheck(false));
+        }
+    },[etc.commentDeltPassCheck]);
+
 
     //댓글 삭제하기
     const commentDeltHandler = () => {
@@ -458,7 +617,7 @@ const BoardDetail = () => {
         axios.delete(`${board_comment}`,
             {
                 data: body,
-                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
+                // headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
             }
         )
         .then((res)=>{
@@ -483,7 +642,6 @@ const BoardDetail = () => {
     };
 
 
-
     return(<>
         <div className="page_user_board">
             <div className="section_inner">
@@ -504,10 +662,11 @@ const BoardDetail = () => {
                                     </li>
                                 </ul>
                             </div>
+                            {/* 내가 작성한글일때 수정,삭제버튼 노출 */}
                             {myPost &&
                                 <div className="btn_util">
                                     <Link to={`/sub/board/modify/${menu_idx}/${boardData.idx}`} className="btn_type11">수정</Link>
-                                    <button type="button" className="btn_type12">삭제</button>
+                                    <button type="button" className="btn_type12" onClick={deltBtnClickHandler}>삭제</button>
                                 </div>
                             }
                         </div>
@@ -540,7 +699,7 @@ const BoardDetail = () => {
                             {boardSettingData.b_comment == 'Y' &&
                                 <CommentWrap2 
                                     commentList={commentList}
-                                    name={`관리자`}
+                                    name={name}
                                     login={login}
                                     // 댓글
                                     comment={comment}
@@ -563,7 +722,15 @@ const BoardDetail = () => {
                                     onEditTextChangeHandler={onEditTextChangeHandler}
                                     onEditEnterHandler={enterEditBtnClickHandler}
                                     onEditBtnClickHandler={onEditBtnClickHandler}
-                                    editShow={editShow}
+                                    editShow={editCommentShow}
+                                    onMoEditBoxClickHandler={(show,idx)=>{
+                                        if(show){
+                                            setMoCommentEditBox(null);
+                                        }else{
+                                            setMoCommentEditBox(idx);
+                                        }
+                                    }}
+                                    moCommentEditBox={moCommentEditBox}
                                     //댓글삭제
                                     onDeltHandler={commentDeltBtnClickHandler}
                                 />
@@ -596,6 +763,9 @@ const BoardDetail = () => {
                 </div>
             </div>
         </div>
+
+        {/* 게시글삭제 confirm팝업 */}
+        {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
 
         {/* 댓글삭제 confirm팝업 */}
         {commentDeltConfirm && <ConfirmPop onClickHandler={commentDeltHandler} />}

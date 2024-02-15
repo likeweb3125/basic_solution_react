@@ -40,6 +40,7 @@ const BoardDetail = () => {
     const [editShow, setEditShow] = useState(null);
     const [replyEnterOk, setReplyEnterOk] = useState(false);
     const [deltCommentIdx, setDeltCommentIdx] = useState(null);
+    const [name, setName] = useState('');
 
 
     //상세페이지 뒤로가기
@@ -66,6 +67,12 @@ const BoardDetail = () => {
             setCommentDeltConfirm(false);
         }
     },[popup.confirmPop]);
+
+
+    //댓글창 이름값 넣기
+    useEffect(()=>{
+        setName(user.loginUser.m_name);
+    },[user.loginUser]);
 
 
     //게시판 제목
@@ -599,8 +606,9 @@ const BoardDetail = () => {
                             {boardSettingData.b_comment == 'Y' &&
                                 <CommentWrap2 
                                     commentList={commentList}
-                                    name={`관리자`}
+                                    name={name}
                                     login={true}
+                                    admin={true}
                                     // 댓글
                                     comment={comment}
                                     onTextChangeHandler={onTextChangeHandler}

@@ -14,6 +14,7 @@ const CommentWrap2 = (
         commentList,
         name,
         login,
+        admin,
         comment,
         onTextChangeHandler,
         onEnterHandler,
@@ -34,14 +35,34 @@ const CommentWrap2 = (
         onReplyPasswordChangeHandler,
         replyName,
         replyPassword,
+        onMoEditBoxClickHandler,
+        moCommentEditBox
     }) => {
     const popup = useSelector((state)=>state.popup);
+    const user = useSelector((state)=>state.user);
     const [confirm, setConfirm] = useState(false);
     const [list, setList] = useState([]);
     const [listCount, setListCount] = useState(0);
     const [replyShow, setReplyShow] = useState({});
     const [writeReply, setWriteReply] = useState(null);
     const [firstTime, setFirstTime] = useState(false);
+    const [width, setWidth] = useState(window.innerWidth);
+
+
+    useEffect(() => {
+        // 창 크기 변경 이벤트 핸들러
+        const handleResize = () => {
+          setWidth(window.innerWidth);
+        };
+    
+        // 컴포넌트가 마운트될 때 이벤트 리스너 등록
+        window.addEventListener('resize', handleResize);
+    
+        // 컴포넌트가 언마운트될 때 이벤트 리스너 해제
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
 
     // Confirm팝업 닫힐때
@@ -146,6 +167,7 @@ const CommentWrap2 = (
     },[firstTime]);
 
 
+
     return(<>
         <div className="comment_section">
             <div className="txt">
@@ -155,8 +177,37 @@ const CommentWrap2 = (
             <div className="comment_wrap">
                 <div className="comment_box">
                     {list.map((cont,i)=>{
-                        
                         const time = moment(cont.c_reg_date).format('YYYY-MM-DD A hh:mm:ss');
+
+                        //댓글수정,삭제 노출결정
+                        let editBtnBox = false;
+                        if(admin){ //관리자일때 노출
+                            editBtnBox = true;
+                        }else{
+                            //로그인시
+                            if(login){
+                                if(user.loginUser.m_email === cont.m_email){
+                                    editBtnBox = true;
+                                }
+                            }
+                            //미로그인시
+                            else{
+                                if(cont.m_email.length === 0){
+                                    editBtnBox = true;
+                                }
+                            }
+                        }
+
+                        //모바일일때 댓글 수정,삭제 부분
+                        let editBtnBoxStyle = {};
+                        if(width <= 1417 && moCommentEditBox === cont.idx){
+                            editBtnBoxStyle = {'display':'block'};
+                        }
+
+                        let editBtnBoxShow = false;
+                        if(moCommentEditBox === cont.idx){
+                            editBtnBoxShow = true;
+                        }
 
                         return(
                             <div className="comment" key={i}>
@@ -194,17 +245,23 @@ const CommentWrap2 = (
                                             :<p>{cont.c_contents}</p>
                                         }
                                     </div>
-                                    <div className="comment_util">
-                                        {editShow == cont.idx ? <button type="button" className="btn_type11" onClick={()=>onEditBtnClickHandler(null)}>취소</button>
-                                            :<button type="button" className="btn_type11" onClick={()=>onEditBtnClickHandler(cont.idx, cont.c_contents)}>수정</button>
-                                        }
-                                        <button type="button" className="btn_type12" onClick={()=>onDeltHandler(cont.idx)}>삭제</button>
-                                    </div>
+                                    {editBtnBox &&  <>
+                                        <button type="button" className="btn_comment_util"
+                                            onClick={()=>onMoEditBoxClickHandler(editBtnBoxShow, cont.idx)}
+                                        ><span>수정/삭제 열기</span></button>
+                                        <div className="comment_util" style={editBtnBoxStyle}>
+                                            {editShow == cont.idx ? <button type="button" className="btn_type11" onClick={()=>onEditBtnClickHandler(null)}>취소</button>
+                                                :<button type="button" className="btn_type11" onClick={()=>onEditBtnClickHandler(cont.idx, cont.c_contents)}>수정</button>
+                                            }
+                                            <button type="button" className="btn_type12" onClick={()=>onDeltHandler(cont.idx)}>삭제</button>
+                                        </div>
+                                    </>}
                                 </div>
                                 {/* 대댓글 */}
                                 <ReplyWrap 
                                     name={name}
                                     login={login}
+                                    admin={admin}
                                     data={cont} 
                                     onEnterHandler={onEnterHandler}
                                     onReplyToggleHandler={onReplyToggleHandler} 
@@ -224,6 +281,8 @@ const CommentWrap2 = (
                                     onEditEnterHandler={onEditEnterHandler}
                                     onEditBtnClickHandler={onEditBtnClickHandler}
                                     editShow={editShow}
+                                    onMoEditBoxClickHandler={onMoEditBoxClickHandler}
+                                    moCommentEditBox={moCommentEditBox}
                                     //댓글삭제
                                     onDeltHandler={onDeltHandler}
                                 />
@@ -274,7 +333,7 @@ const CommentWrap2 = (
                             value={comment}
                             onChangeHandler={onTextChangeHandler}
                         />
-                        <button type="button" className="btn_type14" onClick={()=>onEnterHandler(0,comment)}>등록</button>
+                        <button type="button" className="btn_type14" onClick={()=>onEnterHandler(false, 0, comment)}>등록</button>
                     </div>
                 </div>
             </div>

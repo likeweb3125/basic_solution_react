@@ -14,6 +14,7 @@ const common = createSlice({
         detailPageBack: false,
         listPageData: {},
         scrollY: null,
+        secretPassCheck: false,       //비밀글 비밀번호체크
     },
     reducers:{
         boardMenu: (state, action) => {
@@ -49,6 +50,9 @@ const common = createSlice({
         scrollY: (state, action) => {
             state.scrollY = action.payload;
         },
+        secretPassCheck: (state, action) => {
+            state.secretPassCheck = action.payload;
+        },
     }
 });
 
@@ -64,5 +68,6 @@ export const {
     detailPageBack,
     listPageData,
     scrollY,
+    secretPassCheck
 } = common.actions;
 export default common;

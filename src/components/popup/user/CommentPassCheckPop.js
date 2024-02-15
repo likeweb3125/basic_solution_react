@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
-import { confirmPop, passwordCheckPop } from "../../../store/popupSlice";
-import { inquiryDetailIdx } from "../../../store/etcSlice";
-import { secretPassCheck } from "../../../store/commonSlice";
+import { confirmPop, commentPassCheckPop } from "../../../store/popupSlice";
+import { commentPassCheck, commentDeltPassCheck } from "../../../store/etcSlice";
 import InputBox from "../../component/InputBox";
 import ConfirmPop from "../ConfirmPop";
 
 
-const PasswordCheckPop = () => {
+const CommentPassCheckPop = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const popup = useSelector((state)=>state.popup);
-    const board_password = enum_api_uri.board_password;
+    const comment_password = enum_api_uri.comment_password;
     const [confirm, setConfirm] = useState(false);
     const [password, setPassword] = useState("");
     const [passView, setPassView] = useState(false);
     const [error, setError] = useState({});
+
+    useEffect(()=>{
+
+    });
 
 
     // Confirm팝업 닫힐때
@@ -32,7 +33,7 @@ const PasswordCheckPop = () => {
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(passwordCheckPop({passwordCheckPop:false,passwordCheckPopCate:null,passwordCheckPopIdx:null,passwordCheckPopMoveUrl:null}));
+        dispatch(commentPassCheckPop({commentPassCheckPop:false,commentPassCheckPopIdx:null,commentPassCheckPopTxt:'',commentPassCheckPopDelt:false}));
     };
 
 
@@ -49,23 +50,22 @@ const PasswordCheckPop = () => {
     //비밀번호 확인하기
     const passwordCheck = () => {
         const body = {
-            idx: popup.passwordCheckPopIdx,
+            idx: popup.commentPassCheckPopIdx,
             password: password,
         };
-        axios.post(board_password, body)
+        axios.post(comment_password, body)
         .then((res)=>{
             if(res.status === 200){
-                closePopHandler();
-
-                //게시글 상세페이지로 이동일때
-                if(popup.passwordCheckPopMoveUrl){
-                    navigate(popup.passwordCheckPopMoveUrl+popup.passwordCheckPopCate+'/'+popup.passwordCheckPopIdx);
-                }else{
-                    dispatch(inquiryDetailIdx(popup.passwordCheckPopIdx));
+                //댓글 삭제일때
+                if(popup.commentPassCheckPopDelt){
+                    dispatch(commentDeltPassCheck(true));
+                }
+                //댓글 수정일때
+                else{
+                    dispatch(commentPassCheck({commentPassCheck:true,commentPassCheckIdx:popup.commentPassCheckPopIdx,commentPassCheckTxt:popup.commentPassCheckPopTxt}));
                 }
 
-                //비밀번호체크 성공
-                dispatch(secretPassCheck(true));
+                closePopHandler();
             }
         })
         .catch((error) => {
@@ -77,9 +77,6 @@ const PasswordCheckPop = () => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-
-            //비밀번호체크 실패
-            dispatch(secretPassCheck(false));
         });
     };
 
@@ -97,7 +94,7 @@ const PasswordCheckPop = () => {
                     <div className="pop_con">
                         <div className="con_box">
                             <div className="txt_box">
-                                이 글은 비밀글입니다.
+                                댓글작성시 입력한
                                 <br/>
                                 <b>비밀번호</b>를 입력해 주세요.
                             </div>
@@ -141,4 +138,4 @@ const PasswordCheckPop = () => {
     </>);
 };
 
-export default PasswordCheckPop;
+export default CommentPassCheckPop;

@@ -12,6 +12,7 @@ import {
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
+import { secretPassCheck } from "../../store/commonSlice";
 import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
@@ -68,7 +69,12 @@ const BoardWrite = (props) => {
 
     //게시글정보 가져오기
     const getBoardData = () => {
-        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}`)
+        let pass = false;
+        if(common.secretPassCheck){
+            pass = true;
+        }
+
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}${pass ? '?pass=T' : ''}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -91,7 +97,6 @@ const BoardWrite = (props) => {
     //맨처음 
     useEffect(()=>{
         //게시판설정정보 가져오기
-        console.log(common.boardSettingData);
         setBoardSettingData(common.boardSettingData);
 
         //새로작성페이지가 아닐때만 게시글정보 가져오기 
@@ -354,7 +359,7 @@ const BoardWrite = (props) => {
                 confirmPopBtn:1,
             }));
             setConfirm(true);
-        }else if(!login && !secret){
+        }else if(boardSettingData.b_secret == "Y" && !login && !secret){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -474,11 +479,12 @@ const BoardWrite = (props) => {
         formData.append("category", menu_idx);
         formData.append("m_email", m_email);
         formData.append("m_name", m_name);
-        formData.append("m_pwd", boardData.m_pwd);
+        formData.append("m_pwd", boardData.m_pwd || '');
         formData.append("b_title", boardData.b_title);
         formData.append("b_contents", cont);
         formData.append("b_depth", 0);
         formData.append("b_secret", b_secret);
+
 
         //분류사용시 유형선택값 보내기
         if(boardSettingData.b_group == "Y"){

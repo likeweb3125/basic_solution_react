@@ -13,6 +13,10 @@ const etc = createSlice({
         cateMenuList: [],        //관리자단-메뉴관리-카테고리관리 1차카테고리 메뉴리스트
         activeMenuId: null,
         inquiryDetailIdx: null,
+        commentPassCheck: false,    //비회원 댓글 수정 시 비밀번호체크
+        commentPassCheckIdx: null,
+        commentPassCheckTxt: '',
+        commentDeltPassCheck: false,    //비회원 댓글 삭제 시 비밀번호체크
     },
     reducers:{
         pageNo: (state, action) => {
@@ -45,6 +49,14 @@ const etc = createSlice({
         inquiryDetailIdx: (state, action) => {
             state.inquiryDetailIdx = action.payload;
         },
+        commentPassCheck: (state, action) => {
+            state.commentPassCheck = action.payload.commentPassCheck;
+            state.commentPassCheckIdx = action.payload.commentPassCheckIdx;
+            state.commentPassCheckTxt = action.payload.commentPassCheckTxt;
+        },
+        commentDeltPassCheck: (state, action) => {
+            state.commentDeltPassCheck = action.payload;
+        },
     }
 });
 
@@ -58,6 +70,8 @@ export const {
     unMenuCheckList,
     cateMenuList,
     activeMenuId,
-    inquiryDetailIdx
+    inquiryDetailIdx,
+    commentPassCheck,
+    commentDeltPassCheck,
 } = etc.actions;
 export default etc;

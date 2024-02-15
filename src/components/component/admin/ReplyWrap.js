@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import moment from "moment";
 import 'moment/locale/ko';
 import WriteReplyWrap from "./WriteReplyWrap";
@@ -7,6 +9,7 @@ const ReplyWrap = (
     {   
         name,
         login,
+        admin,
         data, 
         onReplyToggleHandler,
         replyShow,
@@ -26,8 +29,29 @@ const ReplyWrap = (
         onReplyPasswordChangeHandler,
         replyName,
         replyPassword,
+        onMoEditBoxClickHandler,
+        moCommentEditBox
     }
     ) => {
+    const user = useSelector((state)=>state.user);
+    const [width, setWidth] = useState(window.innerWidth);
+
+
+    useEffect(() => {
+        // 창 크기 변경 이벤트 핸들러
+        const handleResize = () => {
+          setWidth(window.innerWidth);
+        };
+    
+        // 컴포넌트가 마운트될 때 이벤트 리스너 등록
+        window.addEventListener('resize', handleResize);
+    
+        // 컴포넌트가 언마운트될 때 이벤트 리스너 해제
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
 
     return (
         <div className={`reply_wrap${(data.children.length > 0 || data.idx == writeReply) ? ' on' : ''}`}>
@@ -48,6 +72,36 @@ const ReplyWrap = (
                         </button>
                         {data.children.map((reply, i) => {
                             const time = moment(reply.c_reg_date).format('YYYY-MM-DD A hh:mm:ss');
+
+                            //댓글수정,삭제 노출결정
+                            let editBtnBox = false;
+                            if(admin){ //관리자일때 노출
+                                editBtnBox = true;
+                            }else{
+                                //로그인시
+                                if(login){
+                                    if(user.loginUser.m_email === reply.m_email){
+                                        editBtnBox = true;
+                                    }
+                                }
+                                //미로그인시
+                                else{
+                                    if(reply.m_email.length === 0){
+                                        editBtnBox = true;
+                                    }
+                                }
+                            }
+
+                            //모바일일때 댓글 수정,삭제 부분
+                            let editBtnBoxStyle = {};
+                            if(width <= 1417 && moCommentEditBox === reply.idx){
+                                editBtnBoxStyle = {'display':'block'};
+                            }
+
+                            let editBtnBoxShow = false;
+                            if(moCommentEditBox === reply.idx){
+                                editBtnBoxShow = true;
+                            }
 
                             return(
                                 <div className="comment" key={i}>
@@ -86,17 +140,23 @@ const ReplyWrap = (
                                                 :<p>{reply.c_contents}</p>
                                             }
                                         </div>
-                                        <div className="comment_util">
-                                            {editShow == reply.idx ? <button type="button" className="btn_type11" onClick={()=>onEditBtnClickHandler(null)}>취소</button>
-                                                :<button type="button" className="btn_type11" onClick={()=>onEditBtnClickHandler(reply.idx, reply.c_contents)}>수정</button>
-                                            }
-                                            <button type="button" className="btn_type12" onClick={()=>onDeltHandler(reply.idx)}>삭제</button>
-                                        </div>
+                                        {editBtnBox && <>
+                                            <button type="button" className="btn_comment_util"
+                                                onClick={()=>onMoEditBoxClickHandler(editBtnBoxShow, reply.idx)}
+                                            ><span>수정/삭제 열기</span></button>
+                                            <div className="comment_util" style={editBtnBoxStyle}>
+                                                {editShow == reply.idx ? <button type="button" className="btn_type11" onClick={()=>onEditBtnClickHandler(null)}>취소</button>
+                                                    :<button type="button" className="btn_type11" onClick={()=>onEditBtnClickHandler(reply.idx, reply.c_contents)}>수정</button>
+                                                }
+                                                <button type="button" className="btn_type12" onClick={()=>onDeltHandler(reply.idx)}>삭제</button>
+                                            </div>
+                                        </>}
                                     </div>
                                     {/* 대댓글 */}
                                     <ReplyWrap 
                                         name={name}
                                         login={login}
+                                        admin={admin}
                                         data={reply} 
                                         onEnterHandler={onEnterHandler}
                                         onReplyToggleHandler={onReplyToggleHandler} 

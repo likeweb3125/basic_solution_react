@@ -60,7 +60,7 @@ const WriteReplyWrap = (
                     value={replyComment}
                     onChangeHandler={onReplyTextChangeHandler}
                 />
-                <button type="button" className="btn_type14"  onClick={()=>onEnterHandler(depth, replyComment, idx)}>등록</button>
+                <button type="button" className="btn_type14"  onClick={()=>onEnterHandler(true, depth, replyComment, idx)}>등록</button>
                 <button type="button" className="btn_cancel" onClick={onWriteReplyCancelHandler}>답글 취소</button>
             </div>
         </div>

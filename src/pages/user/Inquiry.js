@@ -151,7 +151,12 @@ const Inquiry = () => {
 
     //글상세정보 가져오기
     const getDetailData = (idx) => {
-        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",idx)}`)
+        let pass = false;
+        if(common.secretPassCheck){
+            pass = true;
+        }
+
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",idx)}${pass ? '?pass=T' : ''}`)
         .then((res)=>{
             if(res.status === 200){
                 const data = res.data.data;

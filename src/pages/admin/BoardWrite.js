@@ -416,7 +416,7 @@ const BoardWrite = (props) => {
         formData.append("category", board_category);
         formData.append("m_email", user.loginUser.m_email);
         formData.append("m_name", user.loginUser.m_name);
-        formData.append("m_pwd", boardData.m_pwd);
+        formData.append("m_pwd", boardData.m_pw || '');
         formData.append("b_title", boardData.b_title);
         formData.append("b_contents", cont);
         formData.append("b_depth", 0);

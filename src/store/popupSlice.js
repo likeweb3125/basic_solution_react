@@ -20,6 +20,12 @@ const popup = createSlice({
         passwordCheckPopIdx: null,
         passwordCheckPopMoveUrl: null,
 
+        //비회원댓글 비밀번호확인 팝업
+        commentPassCheckPop: false,
+        commentPassCheckPopIdx: null,
+        commentPassCheckPopTxt: '',
+        commentPassCheckPopDelt: false,
+
 
         // 관리자-------------------------------
         //알림 팝업
@@ -94,6 +100,12 @@ const popup = createSlice({
             state.passwordCheckPopCate = action.payload.passwordCheckPopCate;
             state.passwordCheckPopIdx = action.payload.passwordCheckPopIdx;
             state.passwordCheckPopMoveUrl = action.payload.passwordCheckPopMoveUrl;
+        },
+        commentPassCheckPop: (state, action) => {
+            state.commentPassCheckPop = action.payload.commentPassCheckPop;
+            state.commentPassCheckPopIdx = action.payload.commentPassCheckPopIdx;
+            state.commentPassCheckPopTxt = action.payload.commentPassCheckPopTxt;
+            state.commentPassCheckPopDelt = action.payload.commentPassCheckPopDelt;
         },
 
         // 관리자-------------------------------
@@ -186,6 +198,7 @@ export const {
 
     termsPop,
     passwordCheckPop,
+    commentPassCheckPop,
 
     adminNotiPop,
     adminPolicyPop,
