@@ -6,7 +6,7 @@ import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import history from "../../config/history";
 import { confirmPop, commentPassCheckPop } from "../../store/popupSlice";
-import { detailPageBack, secretPassCheck } from "../../store/commonSlice";
+import { detailPageBack, secretPassCheckOk } from "../../store/commonSlice";
 import { commentPassCheck, commentDeltPassCheck } from "../../store/etcSlice";
 import CommentWrap2 from "../../components/component/admin/CommentWrap2";
 import ConfirmPop from "../../components/popup/ConfirmPop";
@@ -56,7 +56,7 @@ const BoardDetail = () => {
             dispatch(detailPageBack(true));
 
             //비밀글 비밀번호체크값 초기화
-            dispatch(secretPassCheck(false));
+            dispatch(secretPassCheckOk(false));
         };
     
         const unlistenHistoryEvent = history.listen(({ action }) => {
@@ -102,7 +102,7 @@ const BoardDetail = () => {
     //게시글정보 가져오기
     const getBoardData = () => {
         let pass = false;
-        if(common.secretPassCheck){
+        if(common.secretPassCheckOk){
             pass = true;
         }
 
@@ -153,7 +153,7 @@ const BoardDetail = () => {
     useEffect(()=>{
         getBoardData();
         getCommentList();
-    },[menu_idx,board_idx,common.secretPassCheck]);
+    },[menu_idx,board_idx,common.secretPassCheckOk]);
 
 
     useEffect(()=>{
@@ -234,9 +234,15 @@ const BoardDetail = () => {
 
     //게시글 삭제하기
     const deltHandler = () => {
+        let pass = '';
+        if(common.secretPassCheckOk){
+            pass = 'Y';
+        }
+
         const body = {
             idx: board_idx,
-            category: menu_idx
+            category: menu_idx,
+            pass: pass
         };
         axios.delete(`${board_modify}`,
             {
@@ -260,7 +266,6 @@ const BoardDetail = () => {
             setConfirm(true);
         });
     };
-
 
 
     //------------------------------------- 댓글 -------------------------------------
@@ -490,7 +495,11 @@ const BoardDetail = () => {
             }
             //미로그인시
             else{
+                //비밀번호 체크팝업 열기
                 dispatch(commentPassCheckPop({commentPassCheckPop:true,commentPassCheckPopIdx:idx,commentPassCheckPopTxt:txt,commentPassCheckPopDelt:false}));
+
+                //다른 댓글수정 열려있을수있으니 commentPassCheck값 초기화
+                dispatch(commentPassCheck({commentPassCheck:false, commentPassCheckIdx:null, commentPassCheckTxt:''}));
             }
         }
         //수정취소일때
@@ -510,9 +519,16 @@ const BoardDetail = () => {
                 setEditComment('');
             }
             setEditCommentShow(etc.commentPassCheckIdx);
-            dispatch(commentPassCheck({commentPassCheck:false, commentPassCheckIdx:null, commentPassCheckTxt:''}));
         }
     },[etc.commentPassCheck]);
+
+
+    //댓글 수정하는값 null일때 commentPassCheck 값 초기화
+    useEffect(()=>{
+        if(editCommentShow === null){
+            dispatch(commentPassCheck({commentPassCheck:false, commentPassCheckIdx:null, commentPassCheckTxt:''}));
+        }
+    },[editCommentShow]);
 
 
     //댓글수정 textarea 값 변경시
@@ -540,18 +556,25 @@ const BoardDetail = () => {
 
     //댓글 수정하기
     const enterEditHandler = (idx) => {
+        let pass = '';
+        if(etc.commentPassCheck){
+            pass = 'Y';
+        }
+
         const body = {
             category: menu_idx,
             idx: idx,
             c_contents: editComment,
+            pass: pass
         };
-        axios.put(`${board_comment}`, body, 
-            // {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
-        )
+        axios.put(`${board_comment}`, body)
         .then((res)=>{
             if(res.status === 200){
                 getCommentList();
                 setEditCommentShow(null); //댓글수정 영역 미노출
+
+                //비회원 비밀번호체크후 댓글수정일때 commentPassCheck값 초기화
+                dispatch(commentPassCheck({commentPassCheck:false, commentPassCheckIdx:null, commentPassCheckTxt:''}));
             }
         })
         .catch((error) => {
@@ -602,27 +625,33 @@ const BoardDetail = () => {
                 confirmPopBtn:2,
             }));
             setCommentDeltConfirm(true);
-
-            dispatch(commentDeltPassCheck(false));
         }
     },[etc.commentDeltPassCheck]);
 
 
     //댓글 삭제하기
     const commentDeltHandler = () => {
+        let pass = '';
+        if(etc.commentDeltPassCheck){
+            pass = 'Y';
+        }
+
         const body = {
             category: menu_idx,
             idx: deltCommentIdx,
+            pass: pass
         };
         axios.delete(`${board_comment}`,
             {
                 data: body,
-                // headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
             }
         )
         .then((res)=>{
             if(res.status === 200){
                 getCommentList();
+
+                //비회원 비밀번호체크후 댓글삭제일때 commentDeltPassCheck값 초기화
+                dispatch(commentDeltPassCheck(false));
             }
         })
         .catch((error) => {
@@ -640,6 +669,7 @@ const BoardDetail = () => {
             }
         });
     };
+
 
 
     return(<>

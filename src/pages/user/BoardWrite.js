@@ -12,7 +12,7 @@ import {
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
-import { secretPassCheck } from "../../store/commonSlice";
+import { secretPassCheckOk } from "../../store/commonSlice";
 import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
@@ -70,7 +70,7 @@ const BoardWrite = (props) => {
     //게시글정보 가져오기
     const getBoardData = () => {
         let pass = false;
-        if(common.secretPassCheck){
+        if(common.secretPassCheckOk){
             pass = true;
         }
 
@@ -494,6 +494,12 @@ const BoardWrite = (props) => {
         //게시글 수정일때
         if(!props.write){
             formData.append("idx", board_idx);
+
+            //비밀글 비밀번호체크후 수정일때 pass 값 추가
+            if(common.secretPassCheckOk){
+                formData.append("pass", 'Y');
+            }
+
             axios.put(`${board_modify}`, formData, {
                 headers: {
                     // Authorization: `Bearer ${user.loginUser.accessToken}`,

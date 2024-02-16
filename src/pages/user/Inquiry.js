@@ -152,7 +152,7 @@ const Inquiry = () => {
     //글상세정보 가져오기
     const getDetailData = (idx) => {
         let pass = false;
-        if(common.secretPassCheck){
+        if(common.secretPassCheckOk){
             pass = true;
         }
 

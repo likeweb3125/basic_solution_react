@@ -6,7 +6,7 @@ import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { confirmPop, passwordCheckPop } from "../../../store/popupSlice";
 import { inquiryDetailIdx } from "../../../store/etcSlice";
-import { secretPassCheck } from "../../../store/commonSlice";
+import { secretPassCheckOk } from "../../../store/commonSlice";
 import InputBox from "../../component/InputBox";
 import ConfirmPop from "../ConfirmPop";
 
@@ -65,7 +65,7 @@ const PasswordCheckPop = () => {
                 }
 
                 //비밀번호체크 성공
-                dispatch(secretPassCheck(true));
+                dispatch(secretPassCheckOk(true));
             }
         })
         .catch((error) => {
@@ -79,7 +79,7 @@ const PasswordCheckPop = () => {
             setConfirm(true);
 
             //비밀번호체크 실패
-            dispatch(secretPassCheck(false));
+            dispatch(secretPassCheckOk(false));
         });
     };
 

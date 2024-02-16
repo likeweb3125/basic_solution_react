@@ -217,6 +217,7 @@ const Header = () => {
                                     <li key={i}
                                         onMouseEnter={()=>setMenuOn(i)}
                                         onMouseLeave={()=>setMenuOn(null)}
+                                        onClick={()=>setMenuOn(i)}
                                     >
                                         <button type="button"
                                             onClick={()=>{menuClickHandler(1, cont)}}
