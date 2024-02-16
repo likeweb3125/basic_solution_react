@@ -81,7 +81,7 @@ exports.enum_api_uri = {
     popup_detail: `${api_uri}v1/admin/popup/:idx`,
 
     //환경설정
-    site_info: `${api_uri}v1/admin/config/site/:site_id`,
+    site_info: `${api_uri}v1/admin/config/site/:site_id/:c_lang`,
     site_info_modify: `${api_uri}v1/admin/config/site`,
     site_policy: `${api_uri}v1/admin/config/policy`,
     policy_use: `${api_uri}v1/admin/config/policy/use`,

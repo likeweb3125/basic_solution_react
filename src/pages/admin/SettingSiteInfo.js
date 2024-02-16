@@ -34,7 +34,7 @@ const SettingSiteInfo = () => {
 
     //사이트정보 가져오기
     const getInfo = () => {
-        axios.get(`${site_info.replace(":site_id",user.siteId)}`,
+        axios.get(`${site_info.replace(":site_id",user.siteId).replace(":c_lang",'KR')}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{

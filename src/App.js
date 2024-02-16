@@ -86,7 +86,7 @@ function App() {
 
     //사이트정보 가져오기
     const getSiteInfo = () => {
-        axios.get(`${site_info.replace(":site_id",siteId)}`)
+        axios.get(`${site_info.replace(":site_id",siteId).replace(":c_lang",'KR')}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
