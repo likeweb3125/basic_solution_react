@@ -48,6 +48,7 @@ const BoardDetail = () => {
     const [myPost, setMyPost] = useState(false);
     const [name, setName] = useState('');
     const [moCommentEditBox, setMoCommentEditBox] = useState(null);
+    const passOk = 'T';
 
 
     //상세페이지 뒤로가기
@@ -106,7 +107,7 @@ const BoardDetail = () => {
             pass = true;
         }
 
-        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}${pass ? '?pass=T' : ''}`)
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}${pass ? '?pass='+passOk : ''}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -236,7 +237,7 @@ const BoardDetail = () => {
     const deltHandler = () => {
         let pass = '';
         if(common.secretPassCheckOk){
-            pass = 'Y';
+            pass = passOk;
         }
 
         const body = {
@@ -558,7 +559,7 @@ const BoardDetail = () => {
     const enterEditHandler = (idx) => {
         let pass = '';
         if(etc.commentPassCheck){
-            pass = 'Y';
+            pass = passOk;
         }
 
         const body = {
@@ -633,7 +634,7 @@ const BoardDetail = () => {
     const commentDeltHandler = () => {
         let pass = '';
         if(etc.commentDeltPassCheck){
-            pass = 'Y';
+            pass = passOk;
         }
 
         const body = {

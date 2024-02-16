@@ -36,10 +36,10 @@ const ListBoard = ({columnTitle, columnDate, columnView, columnFile, list}) => {
                                                     :<Link to={`/sub/board/detail/${cont.category}/${cont.idx}`}>{cont.b_title}</Link>
                                                 }
                                             </span>
+                                            {cont.b_secret == 'Y' && <i>잠금 게시물</i>}
                                             {cont.comment_count > 0 &&
                                                 <b>{CF.MakeIntComma(cont.comment_count)}</b>
                                             }
-                                            {cont.b_secret == 'Y' && <i>잠금 게시물</i>}
                                         </>}
                                     </div>
                                 </div>
