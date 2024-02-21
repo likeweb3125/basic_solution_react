@@ -60,7 +60,7 @@ const CategoryPopCont1 = (props) => {
 
 
     useEffect(()=>{
-        let newData = {...info};
+        let newData = {...props.info};
         if(tab === 1 && !showRaw){ //CH에디터 탭에 입력값
             newData.content = content;
         }else if(tab === 1 && showRaw){ //CH에디터 탭에 HTML입력값

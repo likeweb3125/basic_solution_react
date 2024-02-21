@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { scrollY } from "../../../store/commonSlice";
 import * as CF from "../../../config/function";
 
 
-const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGroup, list, onDetailToggleHandler, detailData}) => {
+const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGroup, list, onDetailToggleHandler, detailData, login, onDeltHandler}) => {
     const dispatch = useDispatch();
     const { menu_idx } = useParams();
+    const user = useSelector((state)=>state.user);
     const [detailOn, setDetailOn] = useState(false);
 
 
@@ -33,6 +34,22 @@ const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGro
                     let liOn = false;
                     if(detailOn && detailData.idx === cont.idx){
                         liOn = true;
+                    }
+
+                    //글 수정/삭제 버튼 노출결정
+                    let editBtnBox = false;
+
+                    //로그인시
+                    if(login){
+                        if(user.loginUser.m_email === cont.m_email){
+                            editBtnBox = true;
+                        }
+                    }
+                    //미로그인시
+                    else{
+                        if(cont.m_email.length === 0){
+                            editBtnBox = true;
+                        }
                     }
 
                     return(
@@ -65,23 +82,27 @@ const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGro
                                 <div className="answer_box">
                                     <div className="q_box">
                                         <div dangerouslySetInnerHTML={{__html:detailData.b_contents}}></div>
-                                        <div className="btn_util">
-                                            <Link 
-                                                to={`/sub/inquiry/modify/${menu_idx}/${cont.idx}`} 
-                                                className="btn_type11"
-                                                onClick={()=>{dispatch(scrollY(window.scrollY))}}
-                                            >수정</Link>
-                                            <button type="button" className="btn_type12">삭제</button>
-                                        </div>
+                                        {editBtnBox &&
+                                            <div className="btn_util">
+                                                <Link 
+                                                    to={`/sub/inquiry/modify/${menu_idx}/${cont.idx}`} 
+                                                    className="btn_type11"
+                                                    onClick={()=>{dispatch(scrollY(window.scrollY))}}
+                                                >수정</Link>
+                                                <button type="button" className="btn_type12" onClick={()=>onDeltHandler(cont.idx)}>삭제</button>
+                                            </div>
+                                        }
                                     </div>
-                                    <div className="a_box">
-                                        <div className="answer_info">
-                                            <b>답변</b>
-                                            <span>담당자</span>
-                                            {/* <span>2023.07.23</span> */}
+                                    {cont.g_status == '답변완료' &&
+                                        <div className="a_box">
+                                            <div className="answer_info">
+                                                <b>답변</b>
+                                                <span>담당자</span>
+                                                {/* <span>2023.07.23</span> */}
+                                            </div>
+                                            <p>{detailData.b_reply}</p>
                                         </div>
-                                        <p>{detailData.b_reply}</p>
-                                    </div>
+                                    }
                                 </div>
                             }
                         </li>

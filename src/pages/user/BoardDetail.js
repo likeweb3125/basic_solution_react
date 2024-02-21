@@ -8,6 +8,7 @@ import history from "../../config/history";
 import { confirmPop, commentPassCheckPop } from "../../store/popupSlice";
 import { detailPageBack, secretPassCheckOk } from "../../store/commonSlice";
 import { commentPassCheck, commentDeltPassCheck } from "../../store/etcSlice";
+import { passOk } from "../../config/constants";
 import CommentWrap2 from "../../components/component/admin/CommentWrap2";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 
@@ -48,7 +49,6 @@ const BoardDetail = () => {
     const [myPost, setMyPost] = useState(false);
     const [name, setName] = useState('');
     const [moCommentEditBox, setMoCommentEditBox] = useState(null);
-    const passOk = 'T';
 
 
     //상세페이지 뒤로가기
@@ -102,6 +102,7 @@ const BoardDetail = () => {
 
     //게시글정보 가져오기
     const getBoardData = () => {
+        //비밀글일때 비밀번호체크했는지 확인
         let pass = false;
         if(common.secretPassCheckOk){
             pass = true;
@@ -235,6 +236,7 @@ const BoardDetail = () => {
 
     //게시글 삭제하기
     const deltHandler = () => {
+        //비밀글일때 비밀번호체크했는지 확인
         let pass = '';
         if(common.secretPassCheckOk){
             pass = passOk;
@@ -557,6 +559,7 @@ const BoardDetail = () => {
 
     //댓글 수정하기
     const enterEditHandler = (idx) => {
+        //비회원댓글 비밀번호체크했는지 확인
         let pass = '';
         if(etc.commentPassCheck){
             pass = passOk;
@@ -632,6 +635,7 @@ const BoardDetail = () => {
 
     //댓글 삭제하기
     const commentDeltHandler = () => {
+        //비회원댓글 비밀번호체크했는지 확인
         let pass = '';
         if(etc.commentDeltPassCheck){
             pass = passOk;

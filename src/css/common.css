@@ -202,7 +202,7 @@ table td .txt_light {font-size: 14px; color: #999;}
 /* 공통 컨펌팝업 */
 .confirm_pop{position: fixed;width: 100%;height: 100%;top: 0;left: 0;z-index: 999;display: -webkit-box; display: -ms-flexbox; display: -webkit-flex; display: flex; -webkit-box-pack: center; -ms-flex-pack: center;-webkit-justify-content: center; justify-content: center;-webkit-box-align: center; -ms-flex-align: center;-webkit-align-items: center; align-items: center;}
 .confirm_pop .dim{position: absolute;width: 100%;height:100%;top: 0;left: 0;background: rgba(0,0,0,0.6);}
-.confirm_pop>.pop_cont{position: relative;width: 440px;border-radius: 16px;background: #fff;padding: 24px 20px;}
+.confirm_pop>.pop_cont{position: relative;width: 440px;max-width: calc(100% - 30px); border-radius: 16px;background: #fff;padding: 24px 20px;}
 .confirm_pop>.pop_cont>.txt{font-size: 16px;color: #222;text-align: center;padding-bottom:30px;}
 .confirm_pop .pop_tit {padding-bottom: 16px;color: #222;}
 .confirm_pop .pop_tit p{font-size: 24px;font-weight: 500;}

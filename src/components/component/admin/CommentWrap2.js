@@ -179,7 +179,7 @@ const CommentWrap2 = (
                     {list.map((cont,i)=>{
                         const time = moment(cont.c_reg_date).format('YYYY-MM-DD A hh:mm:ss');
 
-                        //댓글수정,삭제 노출결정
+                        //댓글 수정/삭제 버튼 노출결정
                         let editBtnBox = false;
                         if(admin){ //관리자일때 노출
                             editBtnBox = true;

@@ -14,6 +14,7 @@ import * as CF from "../../config/function";
 import history from "../../config/history";
 import { confirmPop } from "../../store/popupSlice";
 import { detailPageBack } from "../../store/commonSlice";
+import { passOk } from "../../config/constants";
 import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import TextareaBox from "../../components/component/TextareaBox";
@@ -50,6 +51,7 @@ const InquiryWrite = (props) => {
     const [alarmOn, setAlarmOn] = useState(false);
     const [emailOn, setEmailOn] = useState(false);
     const [SmsOn, setSmsOn] = useState(false);
+    const [login, setLogin] = useState(false);
 
 
     //상세페이지 뒤로가기
@@ -76,9 +78,25 @@ const InquiryWrite = (props) => {
     },[popup.confirmPop]);
 
 
+    //로그인했는지 체크
+    useEffect(()=>{
+        if(user.loginStatus){
+            setLogin(true);
+        }else{
+            setLogin(false);
+        }
+    },[user.loginStatus]);
+
+
     //게시글정보 가져오기
     const getBoardData = () => {
-        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}`)
+        //비밀글일때 비밀번호체크했는지 확인
+        let pass = false;
+        if(common.secretPassCheckOk){
+            pass = true;
+        }
+
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}${pass ? '?pass='+passOk : ''}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -117,24 +135,6 @@ const InquiryWrite = (props) => {
     },[]);
 
 
-
-    useEffect(()=>{
-        console.log(boardSettingData);
-        if(boardSettingData.b_secret == 'Y'){
-            setPasswordOn(true);
-        } 
-        if(boardSettingData.b_write_alarm == 'Y'){
-            setAlarmOn(true);
-            if(boardSettingData.b_write_send == 'Y'){
-                setEmailOn(true);
-            }
-            if(boardSettingData.b_write_sms == 'Y'){
-                setSmsOn(true);
-            }
-        } 
-    },[boardSettingData]);
-
-
     //게시글수정페이지일때 게시글정보 값 뿌려주기
     useEffect(()=>{
         if(boardData.b_contents){
@@ -158,6 +158,9 @@ const InquiryWrite = (props) => {
             setPasswordOn(true);
             setPassword(boardData.m_pwd);
         }
+        if(boardData.b_secret === 'Y'){
+            setSecret(true);
+        }
     },[boardData]);
 
 
@@ -172,6 +175,27 @@ const InquiryWrite = (props) => {
         if(boardSettingData.b_group == "Y"){
             getGroupList();
         }
+
+        //비밀글설정일때
+        if(boardSettingData.b_secret == 'Y'){
+            setPasswordOn(true);
+
+            //미로그인시 비밀글체크 고정
+            if(!login){
+                setSecret(true);
+            }
+        } 
+
+        //답변 알림 수신일때
+        if(boardSettingData.b_write_alarm == 'Y'){
+            setAlarmOn(true);
+            if(boardSettingData.b_write_send == 'Y'){
+                setEmailOn(true);
+            }
+            if(boardSettingData.b_write_sms == 'Y'){
+                setSmsOn(true);
+            }
+        } 
     },[boardSettingData]);
 
 
@@ -222,28 +246,6 @@ const InquiryWrite = (props) => {
             
         setBoardData(newData);
     };
-    
-
-    //미리보기이미지 등록
-    const { getRootProps: getRootProps2, getInputProps: getInputProps2 } = useDropzone({
-        accept: {
-            'image/*': []
-        },
-        onDrop: acceptedFiles => {
-            const file = acceptedFiles[0];
-        
-            // 이미지 파일의 이름과 URL 생성 및 설정
-            const imgName = file.name;
-            const imgUrl = URL.createObjectURL(file);
-
-            setThumbImg({
-                name: imgName,
-                url: imgUrl
-            });
-
-            setThumbImgData(acceptedFiles);
-        }
-    });
 
 
     //첨부파일 등록
@@ -286,7 +288,6 @@ const InquiryWrite = (props) => {
         axios.delete(`${board_file}`,
             {
                 data: body,
-                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
             }
         )
         .then((res)=>{
@@ -296,17 +297,13 @@ const InquiryWrite = (props) => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-                navigate("/console/login");
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         });
     };
 
@@ -328,6 +325,24 @@ const InquiryWrite = (props) => {
                 confirmPop:true,
                 confirmPopTit:'알림',
                 confirmPopTxt:'문의내용을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+        // 비회원일때 작성자, 비밀글작성 필수값체크
+        else if(!login && !boardData.m_name){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'작성자를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(boardSettingData.b_secret == "Y" && !login && !secret){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt:'비회원인 경우 비밀글로 작성해주세요.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);
@@ -382,14 +397,23 @@ const InquiryWrite = (props) => {
             formData.append("b_file", "");
         }
 
+        let m_name = '';
+        let m_email = '';
+        if(login){
+            m_name = user.loginUser.m_name;
+            m_email = user.loginUser.m_email;
+        }else{
+            m_name = boardData.m_name;
+        }
+
         let b_secret = '';
         if(secret){
             b_secret = 'Y';
         }
 
         formData.append("category", menu_idx);
-        formData.append("m_email", user.loginUser.m_email || '');
-        formData.append("m_name", user.loginUser.m_name || '');
+        formData.append("m_email", m_email);
+        formData.append("m_name", m_name);
         formData.append("m_pwd", password);
         formData.append("b_title", boardData.b_title);
         formData.append("b_contents", boardData.b_contents);
@@ -404,9 +428,14 @@ const InquiryWrite = (props) => {
         //게시글 수정일때
         if(!props.write){
             formData.append("idx", board_idx);
+
+            //비밀글 비밀번호체크후 수정일때 pass 값 추가
+            if(common.secretPassCheckOk){
+                formData.append("pass", passOk);
+            }
+
             axios.put(`${board_modify}`, formData, {
                 headers: {
-                    // Authorization: `Bearer ${user.loginUser.accessToken}`,
                     "Content-Type": "multipart/form-data",
                 },
             })
@@ -431,7 +460,6 @@ const InquiryWrite = (props) => {
         else{
             axios.post(`${board_modify}`, formData, {
                 headers: {
-                    // Authorization: `Bearer ${user.loginUser.accessToken}`,
                     "Content-Type": "multipart/form-data",
                 },
             })
@@ -472,6 +500,21 @@ const InquiryWrite = (props) => {
                                     <col style={{'width':'auto'}}/>
                                 </colgroup>
                                 <tbody>
+                                    {!login &&
+                                        <tr>
+                                            <th>작성자 <i>*</i></th>
+                                            <td>
+                                                <InputBox
+                                                    className="input_box" 
+                                                    type={`text`}
+                                                    placeholder={`작성자를 입력해주세요.`}
+                                                    value={boardData.m_name || ""}
+                                                    onChangeHandler={onInputChangeHandler}
+                                                    id={`m_name`}
+                                                />
+                                            </td>
+                                        </tr>
+                                    }
                                     {boardSettingData.b_group == "Y" &&
                                         <tr>
                                             <th>유형 <i>*</i></th>

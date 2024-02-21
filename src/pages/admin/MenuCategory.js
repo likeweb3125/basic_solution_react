@@ -20,6 +20,7 @@ const MenuCategory = () => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);
+    const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [menuList, setMenuList] = useState([]);
@@ -33,6 +34,8 @@ const MenuCategory = () => {
     const [checkedNum, setCheckedNum] = useState(0);
     const [unCheckedNum, setUnCheckedNum] = useState(0);
     const [parents, setParents] = useState([]);
+    const [tabList, setTabList] = useState([]);
+    const [tabOn, setTabOn] = useState(0);
 
 
     useEffect(()=>{
@@ -48,10 +51,23 @@ const MenuCategory = () => {
         }
     },[popup.confirmPop]);
 
+
+    useEffect(()=>{
+        const list = common.siteLangList;
+        setTabList(list);
+        console.log(list);
+    },[common.siteLangList]);
+
+
     
     // 전체카테고리 가져오기
     const getMenuList = () => {
-        axios.get(menu_list,
+        let lang = common.siteLang;
+        if(tabList.length > 1){
+            lang = tabList[tabOn].site_lang;
+        }
+        
+        axios.get(`${menu_list}?c_lang=${lang}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -91,7 +107,7 @@ const MenuCategory = () => {
     //맨처음 전체카테고리 가져오기
     useEffect(()=>{
         getMenuList();
-    },[]);
+    },[tabOn]);
 
 
     //카테고리수정,삭제시 전체카테고리 가져오기
@@ -305,7 +321,22 @@ const MenuCategory = () => {
     const mappingBtnClickHandler = (use, parentId) => {
         if(use == 'N'){ //매핑해제하기
             if(etc.menuCheckList.length > 0){
-                mappingHandler(use, parentId);
+                const list = currentMenu.submenu;
+                const filteredItems = list.filter(item => etc.menuCheckList.includes(item.id));
+                const itemsWithSubMenu = filteredItems.filter(item => item.submenu && item.submenu.length > 0);
+
+                //선택한 카테고리중 하위카테고리가 있는지 체크
+                if(itemsWithSubMenu.length > 0){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'선택한 카테고리의 하위카테고리들을 먼저 매핑 해제해주세요.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else{
+                    mappingHandler(use, parentId);
+                }
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -434,6 +465,13 @@ const MenuCategory = () => {
 
     return(<>
         <div className="page_admin_category">
+            <ul className="tab_type1">
+                {tabList.length > 1 && tabList.map((cont,i)=>
+                    <li key={i} className={tabOn === i ? 'on' : ''}>
+                        <button type="button" onClick={()=>setTabOn(i)}>{cont.site_lang}</button>
+                    </li>
+                )}
+            </ul>
             <div className="content_box">
                 <div className="flex_between">
                     <div className="tit">

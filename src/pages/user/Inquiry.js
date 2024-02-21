@@ -7,6 +7,7 @@ import * as CF from "../../config/function";
 import { confirmPop, passwordCheckPop } from "../../store/popupSlice";
 import { pageNoChange, inquiryDetailIdx } from "../../store/etcSlice";
 import { boardSettingData, listPageData, detailPageBack } from "../../store/commonSlice";
+import { passOk } from "../../config/constants";
 import SearchInput from "../../components/component/SearchInput";
 import ListInquiry from "../../components/component/user/ListInquiry";
 import Pagination from "../../components/component/Pagination";
@@ -17,12 +18,14 @@ const Inquiry = () => {
     const dispatch = useDispatch();
     const board_list = enum_api_uri.board_list;
     const board_detail = enum_api_uri.board_detail;
+    const board_modify = enum_api_uri.board_modify;
     const popup = useSelector((state)=>state.popup);
     const etc = useSelector((state)=>state.etc);
     const common = useSelector((state)=>state.common);
     const user = useSelector((state)=>state.user);
     const { menu_idx } = useParams();
     const [confirm, setConfirm] = useState(false);
+    const [deltConfirm, setDeltConfirm] = useState(false);
     const [searchTxt, setSearchTxt] = useState("");
     const [menuData, setMenuData] = useState({});
     const [boardData, setBoardData] = useState({});
@@ -30,6 +33,8 @@ const Inquiry = () => {
     const [detailData, setDetailData] = useState({});
     const [scrollMove, setScrollMove] = useState(false);
     const [writeBtn, setWriteBtn] = useState(false);
+    const [login, setLogin] = useState(false);
+    const [deltIdx, setDeltIdx] = useState(null);
 
 
     //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
@@ -45,8 +50,19 @@ const Inquiry = () => {
     useEffect(()=>{
         if(popup.confirmPop === false){
             setConfirm(false);
+            setDeltConfirm(false);
         }
     },[popup.confirmPop]);
+
+
+    //로그인했는지 체크
+    useEffect(()=>{
+        if(user.loginStatus){
+            setLogin(true);
+        }else{
+            setLogin(false);
+        }
+    },[user.loginStatus]);
 
 
     useEffect(()=>{
@@ -148,15 +164,19 @@ const Inquiry = () => {
         }
     };
 
+    useEffect(()=>{
+        console.log(common.secretPassCheckOk);
+    },[common.secretPassCheckOk]);
 
     //글상세정보 가져오기
     const getDetailData = (idx) => {
+        //비밀글일때 비밀번호체크했는지 확인
         let pass = false;
         if(common.secretPassCheckOk){
             pass = true;
         }
 
-        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",idx)}${pass ? '?pass=T' : ''}`)
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",idx)}${pass ? '?pass='+passOk : ''}`)
         .then((res)=>{
             if(res.status === 200){
                 const data = res.data.data;
@@ -223,6 +243,57 @@ const Inquiry = () => {
     },[boardData]);
 
 
+    //삭제버튼 클릭시
+    const deltBtnClickHandler = (idx) => {
+        setDeltIdx(idx);
+
+        dispatch(confirmPop({
+            confirmPop:true,
+            confirmPopTit:'알림',
+            confirmPopTxt:'해당 게시글을 삭제하시겠습니까?',
+            confirmPopBtn:2,
+        }));
+        setDeltConfirm(true);
+    };
+
+
+    //게시글 삭제하기
+    const deltHandler = () => {
+        //비밀글일때 비밀번호체크했는지 확인
+        let pass = '';
+        if(common.secretPassCheckOk){
+            pass = passOk;
+        }
+
+        const body = {
+            idx: deltIdx,
+            category: menu_idx,
+            pass: pass
+        };
+        axios.delete(`${board_modify}`,
+            {
+                data: body,
+            }
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                getBoardData();
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        });
+    };
+
+
 
     return(<>
         <div className="page_user_board page_user_qna">
@@ -266,6 +337,8 @@ const Inquiry = () => {
                             list={boardData.board_list}
                             onDetailToggleHandler={onDetailToggleHandler}
                             detailData={detailData}
+                            login={login}
+                            onDeltHandler={deltBtnClickHandler}
                         />
                     </div>
                     {boardData.board_list && boardData.board_list.length > 0 &&
@@ -279,6 +352,9 @@ const Inquiry = () => {
                 </div>
             </div>
         </div>
+
+        {/* 게시글삭제 confirm팝업 */}
+        {deltConfirm && <ConfirmPop onClickHandler={deltHandler} />}
 
         {/* confirm팝업 */}
         {confirm && <ConfirmPop />}

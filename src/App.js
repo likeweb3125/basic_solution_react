@@ -5,7 +5,7 @@ import axios from "axios";
 import * as CF from "./config/function";
 import { enum_api_uri } from './config/enum';
 import { confirmPop } from './store/popupSlice';
-import { siteInfo, siteInfoEdit } from './store/commonSlice';
+import { siteInfo, siteInfoEdit, siteLangList, siteLang } from './store/commonSlice';
 import MetaTag from './components/component/MetaTag';
 import ConfirmPop from './components/popup/ConfirmPop';
 import Layout from './components/layout/user/Layout';
@@ -86,13 +86,21 @@ function App() {
 
     //사이트정보 가져오기
     const getSiteInfo = () => {
-        axios.get(`${site_info.replace(":site_id",siteId).replace(":c_lang",'KR')}`)
+        axios.get(`${site_info.replace(":site_id",siteId).replace(":c_lang",common.siteLang)}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
                     data.site_id = siteId;
                 setSiteInfoData(data);
+
+                //store 에 사이트정보저장
                 dispatch(siteInfo(data));
+
+                //store 에 사이트언어 저장
+                const lang = data.c_lang;
+                const langList = data.c_site_lang;
+                dispatch(siteLang(lang));
+                dispatch(siteLangList(langList));
             }
         })
         .catch((error) => {

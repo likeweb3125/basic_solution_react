@@ -62,6 +62,9 @@ const DesignPopup = () => {
             if(res.status === 200){
                 let data = res.data.data;
                 setBoardData(data);
+
+                //store 에 저장된 checkedList 값 삭제
+                dispatch(checkedList([]));
             }
         })
         .catch((error) => {
@@ -191,7 +194,6 @@ const DesignPopup = () => {
         .then((res)=>{
             if(res.status === 200){
                 getBoardData();
-                dispatch(checkedList([]));
             }
         })
         .catch((error) => {

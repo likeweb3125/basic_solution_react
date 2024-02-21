@@ -350,6 +350,7 @@ const MemberUser = () => {
                                     setLevelSelect(level);
                                 }}
                                 objectSel={`level_list`}
+                                selHidden={true}
                                 hiddenTxt={`회원 등급별 보기`}
                             />
                             <div className="search_box">

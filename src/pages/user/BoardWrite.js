@@ -12,7 +12,7 @@ import {
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
-import { secretPassCheckOk } from "../../store/commonSlice";
+import { passOk } from "../../config/constants";
 import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
@@ -69,12 +69,13 @@ const BoardWrite = (props) => {
 
     //게시글정보 가져오기
     const getBoardData = () => {
+        //비밀글일때 비밀번호체크했는지 확인
         let pass = false;
         if(common.secretPassCheckOk){
             pass = true;
         }
 
-        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}${pass ? '?pass=T' : ''}`)
+        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",board_idx)}${pass ? '?pass='+passOk : ''}`)
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -296,7 +297,6 @@ const BoardWrite = (props) => {
         axios.delete(`${board_file}`,
             {
                 data: body,
-                headers: {Authorization: `Bearer ${user.loginUser.accessToken}`}
             }
         )
         .then((res)=>{
@@ -306,17 +306,13 @@ const BoardWrite = (props) => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
-                navigate("/console/login");
-            }else{
-                dispatch(confirmPop({
-                    confirmPop:true,
-                    confirmPopTit:'알림',
-                    confirmPopTxt: err_msg,
-                    confirmPopBtn:1,
-                }));
-                setConfirm(true);
-            }
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: err_msg,
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
         });
     };
 
@@ -497,12 +493,11 @@ const BoardWrite = (props) => {
 
             //비밀글 비밀번호체크후 수정일때 pass 값 추가
             if(common.secretPassCheckOk){
-                formData.append("pass", 'Y');
+                formData.append("pass", passOk);
             }
 
             axios.put(`${board_modify}`, formData, {
                 headers: {
-                    // Authorization: `Bearer ${user.loginUser.accessToken}`,
                     "Content-Type": "multipart/form-data",
                 },
             })
@@ -526,7 +521,6 @@ const BoardWrite = (props) => {
         else{
             axios.post(`${board_modify}`, formData, {
                 headers: {
-                    // Authorization: `Bearer ${user.loginUser.accessToken}`,
                     "Content-Type": "multipart/form-data",
                 },
             })

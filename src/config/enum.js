@@ -104,4 +104,7 @@ exports.enum_api_uri = {
     maint_comment: `${api_uri}v1/admin/maintenance/comment`,
     maint_create: `${api_uri}v1/admin/maintenance/create`,
     maint_file_down: `${api_uri}v1/admin/maintenance/download/:list_no`,
+
+
+
 }

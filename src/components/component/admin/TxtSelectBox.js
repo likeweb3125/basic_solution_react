@@ -14,8 +14,6 @@ const TxtSelectBox = (props) => {
             <div className={`txt_select${props.hiddenTxt && !props.selected ? ' none' : ''}`}>
                 {props.limitSel ?
                     <span>{props.selected ? props.selected+"개씩" : "선택"}</span>
-                    :props.objectSel === "level_list" ?
-                    <span>{props.selected}</span>
                     :<span>{props.selected ? props.selected : props.hiddenTxt ? props.hiddenTxt : "선택"}</span>
                 }
                 {props.objectSel === "level_list" && //회원등급 리스트일때 

@@ -10,7 +10,6 @@ const ListBoard = ({columnTitle, columnDate, columnView, columnFile, list}) => {
     const dispatch = useDispatch();
     const { menu_idx } = useParams();
 
-
     return(<>
         <ul className="list_board">
             {list && list.length > 0 ? 

@@ -21,6 +21,8 @@ const SettingSiteInfo = () => {
     const [confirm, setConfirm] = useState(false);
     const [info, setInfo] = useState({});
     const [error, setError] = useState({});
+    const [tabList, setTabList] = useState([]);
+    const [tabOn, setTabOn] = useState(0);
 
 
     // Confirm팝업 닫힐때
@@ -33,8 +35,8 @@ const SettingSiteInfo = () => {
 
 
     //사이트정보 가져오기
-    const getInfo = () => {
-        axios.get(`${site_info.replace(":site_id",user.siteId).replace(":c_lang",'KR')}`,
+    const getInfo = (lang) => {
+        axios.get(`${site_info.replace(":site_id",user.siteId).replace(":c_lang",lang)}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -42,6 +44,10 @@ const SettingSiteInfo = () => {
                 let data = res.data.data;
                     data.site_id = user.siteId;
                 setInfo(data);
+
+                //사이트언어 리스트
+                const langList = data.c_site_lang;
+                setTabList(langList);
             }
         })
         .catch((error) => {
@@ -61,17 +67,14 @@ const SettingSiteInfo = () => {
     };
 
     
-    //맨처음 사이트정보 가져오기
+    //언어탭변경시 사이트정보 가져오기
     useEffect(()=>{
-        getInfo();
-    },[]);
-
-
-    useEffect(()=>{
-        if(Object.keys(info).length > 0){
-            setInfo(info);
+        let lang = 'KR';
+        if(tabList.length > 1){
+            lang = tabList[tabOn].site_lang;
         }
-    },[info]);
+        getInfo(lang);
+    },[tabOn]);
 
 
     //인풋값 변경시
@@ -118,7 +121,13 @@ const SettingSiteInfo = () => {
 
     //사이트정보 저장하기
     const saveHandler = () => {
+        const langList = tabList.map(item => item.site_lang);
+        const lang = tabList[tabOn].site_lang;
         const body = info;
+        body.site_lang = langList;
+        body.c_lang = lang;
+        delete body.c_site_lang;
+
         axios.put(`${site_info_modify}`, body, 
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
@@ -126,6 +135,8 @@ const SettingSiteInfo = () => {
             if(res.status === 200){
                 dispatch(siteInfo(body));
                 dispatch(siteInfoEdit(true));
+
+                setTabOn(0);
 
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -168,11 +179,19 @@ const SettingSiteInfo = () => {
     //취소하기 사이트정보 다시 가져오기
     const cancelHandler = () => {
         getInfo();
+        setTabOn(0);
     };
     
 
     return(<>
         <div className="page_admin_setting">
+            <ul className="tab_type1">
+                {tabList.length > 1 && tabList.map((cont,i)=>
+                    <li key={i} className={tabOn === i ? 'on' : ''}>
+                        <button type="button" onClick={()=>setTabOn(i)}>{cont.site_lang}</button>
+                    </li>
+                )}
+            </ul>
             <div className="content_box">
                 <div className="tit">
                     <h3>

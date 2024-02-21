@@ -153,6 +153,7 @@ const SubCategoryPop = () => {
                 admin_file_path:'',
                 sms:'',
                 email:'',
+                c_lang:'KR',
             };
             setInfo({...data});
         }
@@ -210,7 +211,6 @@ const SubCategoryPop = () => {
     //저장버튼 클릭시 필수입력 체크
     const saveBtnClickHandler = () => {
         const data = popup.adminSubCategoryPopData;
-        console.log(data)
 
         //공통 필수값 체크 (카테고리명, 카테고리종류) --------------
         if(!data || !data.c_name){
@@ -258,6 +258,8 @@ const SubCategoryPop = () => {
         const body = popup.adminSubCategoryPopData;
         const formData = new FormData();
 
+        console.log(body);
+
         //수정일때
         if(popup.adminSubCategoryPopIdx){
             // 객체를 순회하며 모든 속성을 formData에 추가
@@ -283,9 +285,103 @@ const SubCategoryPop = () => {
                 formData.append("c_main_banner_file_del", "Y");
             }
 
-            formData.append("c_use_yn", "Y");
 
-            console.log(body);
+            if(!body.hasOwnProperty('content')){
+                formData.append("content", "");
+            }
+            if(!body.hasOwnProperty('b_list_cnt')){
+                formData.append("b_list_cnt", 10);
+            }
+            if(!body.hasOwnProperty('b_column_title')){
+                formData.append("b_column_title", '');
+            }
+            if(!body.hasOwnProperty('b_column_date')){
+                formData.append("b_column_date", '');
+            }
+            if(!body.hasOwnProperty('b_column_view')){
+                formData.append("b_column_view", '');
+            }
+            if(!body.hasOwnProperty('b_column_recom')){
+                formData.append("b_column_recom", '');
+            }
+            if(!body.hasOwnProperty('b_column_file')){
+                formData.append("b_column_file", '');
+            }
+            if(!body.hasOwnProperty('b_thumbnail_with')){
+                formData.append("b_thumbnail_with", 0);
+            }
+            if(!body.hasOwnProperty('b_thumbnail_height')){
+                formData.append("b_thumbnail_height", 0);
+            }
+            if(!body.hasOwnProperty('b_thumbnail')){
+                formData.append("b_thumbnail", '1');
+            }
+            if(!body.hasOwnProperty('b_read_lv')){
+                formData.append("b_read_lv", 0);
+            }
+            if(!body.hasOwnProperty('b_write_lv')){
+                formData.append("b_write_lv", 0);
+            }
+            if(!body.hasOwnProperty('b_group')){
+                formData.append("b_group", '');
+            }
+            if(!body.hasOwnProperty('b_secret')){
+                formData.append("b_secret", '');
+            }
+            if(!body.hasOwnProperty('b_reply')){
+                formData.append("b_reply", '');
+            }
+            if(!body.hasOwnProperty('b_reply_lv')){
+                formData.append("b_reply_lv", 0);
+            }
+            if(!body.hasOwnProperty('b_comment')){
+                formData.append("b_comment", '');
+            }
+            if(!body.hasOwnProperty('b_comment_lv')){
+                formData.append("b_comment_lv", 0);
+            }
+            if(!body.hasOwnProperty('b_write_alarm')){
+                formData.append("b_write_alarm", '');
+            }
+            if(!body.hasOwnProperty('b_write_send')){
+                formData.append("b_write_send", '');
+            }
+            if(!body.hasOwnProperty('b_alarm')){
+                formData.append("b_alarm", '');
+            }
+            if(!body.hasOwnProperty('b_alarm_phone')){
+                formData.append("b_alarm_phone", '');
+            }
+            if(!body.hasOwnProperty('b_top_html')){
+                formData.append("b_top_html", '');
+            }
+            if(!body.hasOwnProperty('b_template')){
+                formData.append("b_template", '');
+            }
+            if(!body.hasOwnProperty('b_template_text')){
+                formData.append("b_template_text", '');
+            }
+            if(!body.hasOwnProperty('c_type')){
+                formData.append("c_type", '');
+            }
+            if(!body.hasOwnProperty('file_path')){
+                formData.append("file_path", '');
+            }
+            if(!body.hasOwnProperty('admin_file_path')){
+                formData.append("admin_file_path", '');
+            }
+            if(!body.hasOwnProperty('sms')){
+                formData.append("sms", '');
+            }
+            if(!body.hasOwnProperty('email')){
+                formData.append("email", '');
+            }
+            if(!body.hasOwnProperty('c_use_yn')){
+                formData.append("c_use_yn", "Y");
+            }
+            if(!body.hasOwnProperty('c_lang')){
+                formData.append("c_lang", "KR");
+            }
 
             axios.put(menu_sub, formData, {
                 headers: {
@@ -340,7 +436,10 @@ const SubCategoryPop = () => {
                 formData.append("c_main_banner_file_del", "Y");
             }
 
-            formData.append("c_use_yn", "Y");
+            
+            if(!body.c_use_yn){
+                formData.append("c_use_yn", "Y");
+            }
 
 
             axios.post(menu_sub, formData, {
@@ -371,6 +470,7 @@ const SubCategoryPop = () => {
             });
         }
     };
+    
 
     
     //삭제버튼 클릭시

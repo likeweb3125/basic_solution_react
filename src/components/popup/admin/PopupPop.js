@@ -18,6 +18,7 @@ const PopupPop = () => {
     const navigate = useNavigate();
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
+    const common = useSelector((state)=>state.common);
     const popup_detail = enum_api_uri.popup_detail;
     const popup_list = enum_api_uri.popup_list;
     const [confirm, setConfirm] = useState(false);
@@ -34,6 +35,8 @@ const PopupPop = () => {
     const [endDate, setEndDate] = useState('');
     const [scrollCheck, setScrollCheck] = useState("Y");
     const [linkCheck, setLinkCheck] = useState("1");
+    const [langList, setLangList] = useState([]);
+    const [langCheck, setLangCheck] = useState(0);
 
 
     // Confirm팝업 닫힐때
@@ -155,6 +158,12 @@ const PopupPop = () => {
             }
         }
     },[info]);
+
+
+    useEffect(()=>{
+        const list = common.siteLangList;
+        setLangList(list);
+    },[common.siteLangList]);
 
 
     //인풋값 변경시
@@ -485,6 +494,34 @@ const PopupPop = () => {
                         <div className="con_box">
                             <div className="form_pop_inner">
                                 <div className="form_inner">
+                                    {langList.length > 1 &&
+                                        <div className="form_box2">
+                                            <div className="form_input">
+                                                <h6>언어 선택 <i>*</i></h6>
+                                                <div className="input_wrap">
+                                                    <div className="chk_rdo_wrap">
+                                                        {langList.map((cont,i)=>{
+                                                            return(
+                                                                <div className="rdo_box1" key={i}>
+                                                                    <input type="radio" id={`check_lang${i}`} className="blind"
+                                                                        onChange={(e)=>{
+                                                                            const checked = e.currentTarget.checked;
+                                                                            if(checked){
+                                                                                setLangCheck(i);
+                                                                            }
+                                                                        }}
+                                                                        checked={langCheck === i ? true : false}
+                                                                        name="check_lang"
+                                                                    />
+                                                                    <label htmlFor={`check_lang${i}`}>{cont.site_lang}</label>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
                                     <div className="form_box">
                                         <div className="form_input">
                                             <h6>제목 <i>*</i></h6>
@@ -610,7 +647,7 @@ const PopupPop = () => {
                                             {error.p_size && <em className="txt_err">팝업창 사이즈를 입력해주세요.</em>}
                                         </div>
                                         <div className="form_input">
-                                            <h6>팝업창 위치 지정 <i>*</i><b>권장 : 550 * 250</b></h6>
+                                            <h6>팝업창 위치 지정 {popup.adminPopupPopType == "P" && <><i>*</i><b>권장 : 550 * 250</b></>}</h6>
                                             {popup.adminPopupPopType == "P" ?
                                                 <div className="input_wrap input_wrap2">
                                                     <InputBox2 
