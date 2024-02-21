@@ -59,7 +59,7 @@ const CategoryPop = () => {
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(adminCategoryPop({adminCategoryPop:false, adminCategoryPopIdx:null}));
+        dispatch(adminCategoryPop({adminCategoryPop:false, adminCategoryPopIdx:null, adminCategoryPopLang:''}));
     };
 
 
@@ -197,6 +197,7 @@ const CategoryPop = () => {
             formData.append("c_main_banner", sizeCheck);
             formData.append("c_main_banner_file", c_main_banner_file);
             formData.append("c_use_yn", 'Y');
+            formData.append("c_lang", popup.adminCategoryPopLang);
 
             axios.put(menu_modify, formData, {
                 headers: {
@@ -214,6 +215,8 @@ const CategoryPop = () => {
                 const err_msg = CF.errorMsgHandler(error);
                 if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                     navigate("/console/login");
+                    
+                    closePopHandler();
                 }else{
                     dispatch(confirmPop({
                         confirmPop:true,
@@ -234,6 +237,7 @@ const CategoryPop = () => {
             formData.append("c_main_banner", sizeCheck);
             formData.append("c_main_banner_file", c_main_banner_file);
             formData.append("c_use_yn", 'Y');
+            formData.append("c_lang", popup.adminCategoryPopLang);
 
             axios.post(menu_modify, formData, {
                 headers: {
@@ -251,6 +255,8 @@ const CategoryPop = () => {
                 const err_msg = CF.errorMsgHandler(error);
                 if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                     navigate("/console/login");
+
+                    closePopHandler();
                 }else{
                     dispatch(confirmPop({
                         confirmPop:true,
@@ -325,6 +331,8 @@ const CategoryPop = () => {
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                 navigate("/console/login");
+
+                closePopHandler();
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,

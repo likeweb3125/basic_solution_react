@@ -10,7 +10,7 @@ import ConfirmPop from "../../popup/ConfirmPop";
 import Editor from "../Editor";
 
 
-const CategoryPopCont4 = (props) => {
+const SubCategoryPopCont4 = (props) => {
     const dispatch = useDispatch();
     const popup = useSelector((state)=>state.popup);
     const common = useSelector((state)=>state.common);
@@ -543,4 +543,4 @@ const CategoryPopCont4 = (props) => {
     </>);
 };
 
-export default CategoryPopCont4;
+export default SubCategoryPopCont4;

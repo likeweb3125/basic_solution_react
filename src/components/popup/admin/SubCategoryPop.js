@@ -8,13 +8,13 @@ import { enum_api_uri } from "../../../config/enum";
 import { adminSubCategoryPop, confirmPop , adminSubCategoryPopData, adminSubCategoryPopModify, adminSubCategoryPopParentData } from "../../../store/popupSlice";
 import ConfirmPop from "../ConfirmPop";
 import InputBox from "../../component/InputBox";
-import CategoryPopCont1 from "../../component/admin/CategoryPopCont1";
-import CategoryPopCont2 from "../../component/admin/CategoryPopCont2";
-import CategoryPopCont3 from "../../component/admin/CategoryPopCont3";
-import CategoryPopCont4 from "../../component/admin/CategoryPopCont4";
-import CategoryPopCont5 from "../../component/admin/CategoryPopCont5";
-import CategoryPopCont6 from "../../component/admin/CategoryPopCont6";
-import CategoryPopCont7 from "../../component/admin/CategoryPopCont7";
+import SubCategoryPopCont1 from "../../component/admin/SubCategoryPopCont1";
+import SubCategoryPopCont2 from "../../component/admin/SubCategoryPopCont2";
+import SubCategoryPopCont3 from "../../component/admin/SubCategoryPopCont3";
+import SubCategoryPopCont4 from "../../component/admin/SubCategoryPopCont4";
+import SubCategoryPopCont5 from "../../component/admin/SubCategoryPopCont5";
+import SubCategoryPopCont6 from "../../component/admin/SubCategoryPopCont6";
+import SubCategoryPopCont7 from "../../component/admin/SubCategoryPopCont7";
 
 
 const SubCategoryPop = () => {
@@ -35,6 +35,11 @@ const SubCategoryPop = () => {
     const [tabList, setTabList] = useState(["HTML","빈 메뉴","고객맞춤","일반 게시판","갤러리 게시판","FAQ","문의게시판"]);
     const [tab, setTab] = useState(1);
     const [titImgDelt, setTitImgDelt] = useState(false);
+
+
+    useEffect(()=>{
+        console.log(popup.adminSubCategoryPopLang);
+    },[popup.adminSubCategoryPopLang]);
 
 
     // Confirm팝업 닫힐때
@@ -60,7 +65,7 @@ const SubCategoryPop = () => {
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(adminSubCategoryPop({adminSubCategoryPop:false,adminSubCategoryPopIdx:null}));
+        dispatch(adminSubCategoryPop({adminSubCategoryPop:false,adminSubCategoryPopIdx:null,adminSubCategoryPopLang:''}));
         dispatch(adminSubCategoryPopData({}));
     };
 
@@ -98,6 +103,8 @@ const SubCategoryPop = () => {
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                 navigate("/console/login");
+
+                closePopHandler();
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -148,12 +155,12 @@ const SubCategoryPop = () => {
                 b_top_html:'',
                 b_template:'',
                 b_template_text:'',
-                c_type:'',
+                c_type:1,
                 file_path:'',
                 admin_file_path:'',
                 sms:'',
                 email:'',
-                c_lang:'KR',
+                c_lang: popup.adminSubCategoryPopLang,
             };
             setInfo({...data});
         }
@@ -362,7 +369,7 @@ const SubCategoryPop = () => {
                 formData.append("b_template_text", '');
             }
             if(!body.hasOwnProperty('c_type')){
-                formData.append("c_type", '');
+                formData.append("c_type", 1);
             }
             if(!body.hasOwnProperty('file_path')){
                 formData.append("file_path", '');
@@ -380,7 +387,7 @@ const SubCategoryPop = () => {
                 formData.append("c_use_yn", "Y");
             }
             if(!body.hasOwnProperty('c_lang')){
-                formData.append("c_lang", "KR");
+                formData.append("c_lang", popup.adminSubCategoryPopLang);
             }
 
             axios.put(menu_sub, formData, {
@@ -399,6 +406,8 @@ const SubCategoryPop = () => {
                 const err_msg = CF.errorMsgHandler(error);
                 if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                     navigate("/console/login");
+                    
+                    closePopHandler();
                 }else{
                     dispatch(confirmPop({
                         confirmPop:true,
@@ -458,6 +467,8 @@ const SubCategoryPop = () => {
                 const err_msg = CF.errorMsgHandler(error);
                 if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                     navigate("/console/login");
+
+                    closePopHandler();
                 }else{
                     dispatch(confirmPop({
                         confirmPop:true,
@@ -506,6 +517,8 @@ const SubCategoryPop = () => {
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                 navigate("/console/login");
+
+                closePopHandler();
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -597,13 +610,13 @@ const SubCategoryPop = () => {
                                     })}
                                 </ul>
                                 <div className="tab_con_wrap">
-                                    {tab === 1 ? <CategoryPopCont1 info={info} />
-                                        : tab === 2 ? <CategoryPopCont2 info={info} />
-                                        : tab === 3 ? <CategoryPopCont3 info={info} />
-                                        : tab === 4 ? <CategoryPopCont4 info={info} />
-                                        : tab === 5 ? <CategoryPopCont5 info={info} />
-                                        : tab === 6 ? <CategoryPopCont6 info={info} />
-                                        : tab === 7 && <CategoryPopCont7 info={info} />
+                                    {tab === 1 ? <SubCategoryPopCont1 info={info} />
+                                        : tab === 2 ? <SubCategoryPopCont2 info={info} />
+                                        : tab === 3 ? <SubCategoryPopCont3 info={info} />
+                                        : tab === 4 ? <SubCategoryPopCont4 info={info} />
+                                        : tab === 5 ? <SubCategoryPopCont5 info={info} />
+                                        : tab === 6 ? <SubCategoryPopCont6 info={info} />
+                                        : tab === 7 && <SubCategoryPopCont7 info={info} />
                                     }
                                 </div>
                             </div>

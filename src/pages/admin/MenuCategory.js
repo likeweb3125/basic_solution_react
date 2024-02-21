@@ -36,6 +36,7 @@ const MenuCategory = () => {
     const [parents, setParents] = useState([]);
     const [tabList, setTabList] = useState([]);
     const [tabOn, setTabOn] = useState(0);
+    const [tabLang, setTabLang] = useState('');
 
 
     useEffect(()=>{
@@ -55,14 +56,13 @@ const MenuCategory = () => {
     useEffect(()=>{
         const list = common.siteLangList;
         setTabList(list);
-        console.log(list);
     },[common.siteLangList]);
 
 
     
     // 전체카테고리 가져오기
     const getMenuList = () => {
-        let lang = common.siteLang;
+        let lang = 'KR';
         if(tabList.length > 1){
             lang = tabList[tabOn].site_lang;
         }
@@ -108,6 +108,16 @@ const MenuCategory = () => {
     useEffect(()=>{
         getMenuList();
     },[tabOn]);
+
+
+    //언어탭변경시 tabLang 값 변경
+    useEffect(()=>{
+        let lang = 'KR';
+        if(tabList.length > 0){
+            lang = tabList[tabOn].site_lang;
+        }
+        setTabLang(lang);
+    },[tabOn, tabList]);
 
 
     //카테고리수정,삭제시 전체카테고리 가져오기
@@ -380,8 +390,11 @@ const MenuCategory = () => {
             }
         }
 
+        const c_depth = currentMenu.c_depth+1;
+
         const body = {
             id: idList,
+            c_depth: c_depth,
             c_depth_parent: c_depth_parent,
             c_use_yn: use,
         };
@@ -396,13 +409,17 @@ const MenuCategory = () => {
         })
         .catch((error) => {
             const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
         });
     };
 
@@ -468,7 +485,7 @@ const MenuCategory = () => {
             <ul className="tab_type1">
                 {tabList.length > 1 && tabList.map((cont,i)=>
                     <li key={i} className={tabOn === i ? 'on' : ''}>
-                        <button type="button" onClick={()=>setTabOn(i)}>{cont.site_lang}</button>
+                        <button type="button" onClick={()=>setTabOn(i)}>{cont.site_lang_hangul}</button>
                     </li>
                 )}
             </ul>
@@ -481,13 +498,13 @@ const MenuCategory = () => {
                         {menuOn && //현재 선택된카테고리가 있을때만 노출
                             <button type="button" className="btn_type12"
                                 onClick={()=>{
-                                    dispatch(adminCategoryPop({adminCategoryPop:true, adminCategoryPopIdx:menuOn}));
+                                    dispatch(adminCategoryPop({adminCategoryPop:true, adminCategoryPopIdx:menuOn, adminCategoryPopLang:tabLang}));
                                 }}
                             >카테고리 관리</button>
                         }
                         <button type="button" className="btn_type5 lm8"
                             onClick={()=>{
-                                dispatch(adminCategoryPop({adminCategoryPop:true, adminCategoryPopIdx:null}));
+                                dispatch(adminCategoryPop({adminCategoryPop:true, adminCategoryPopIdx:null, adminCategoryPopLang:tabLang}));
                             }}
                         >1차 카테고리 추가</button>
                     </div>
@@ -535,7 +552,7 @@ const MenuCategory = () => {
                             {parents.length > 0 && //현재선택된 카테고리가 하위카테고리일때만 노출
                                 <button type="button" className="btn_type12"
                                     onClick={()=>{
-                                        dispatch(adminSubCategoryPop({adminSubCategoryPop:true,adminSubCategoryPopIdx:currentMenu.id}));
+                                        dispatch(adminSubCategoryPop({adminSubCategoryPop:true, adminSubCategoryPopIdx:currentMenu.id, adminSubCategoryPopLang:tabLang}));
                                     }}
                                 >카테고리 관리</button>
                             }
@@ -543,7 +560,7 @@ const MenuCategory = () => {
                                 <button type="button" className="btn_type6 lm8"
                                     onClick={()=>{
                                         dispatch(adminSubCategoryPopParentData(currentMenu)); //현재선택된 카테고리정보 store 에 저장
-                                        dispatch(adminSubCategoryPop({adminSubCategoryPop:true, adminSubCategoryPopIdx:null}));
+                                        dispatch(adminSubCategoryPop({adminSubCategoryPop:true, adminSubCategoryPopIdx:null, adminSubCategoryPopLang:tabLang}));
                                     }}
                                 >하위 카테고리 등록</button>
                             }

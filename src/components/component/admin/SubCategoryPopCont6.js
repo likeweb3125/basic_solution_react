@@ -11,7 +11,7 @@ import ConfirmPop from "../../popup/ConfirmPop";
 import Editor from "../Editor";
 
 
-const CategoryPopCont6 = (props) => {
+const SubCategoryPopCont6 = (props) => {
     const dispatch = useDispatch();
     const level_list = enum_api_uri.level_list;
     const popup = useSelector((state)=>state.popup);
@@ -265,4 +265,4 @@ const CategoryPopCont6 = (props) => {
     </>);
 };
 
-export default CategoryPopCont6;
+export default SubCategoryPopCont6;

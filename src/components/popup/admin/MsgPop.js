@@ -79,6 +79,8 @@ const MsgPop = () => {
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                 navigate("/console/login");
+
+                closePopHandler();
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -113,6 +115,8 @@ const MsgPop = () => {
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                 navigate("/console/login");
+
+                closePopHandler();
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -179,6 +183,8 @@ const MsgPop = () => {
                 const err_msg = CF.errorMsgHandler(error);
                 if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                     navigate("/console/login");
+
+                    closePopHandler();
                 }else{
                     dispatch(confirmPop({
                         confirmPop:true,

@@ -1,4 +1,4 @@
-const CategoryPopCont2 = (props) => {
+const SubCategoryPopCont2 = (props) => {
     return(
         <div className="tab_con tab_con2">
             <div className="tab_inner">
@@ -8,4 +8,4 @@ const CategoryPopCont2 = (props) => {
     );
 };
 
-export default CategoryPopCont2;
+export default SubCategoryPopCont2;

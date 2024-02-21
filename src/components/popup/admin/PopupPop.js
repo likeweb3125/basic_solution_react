@@ -36,7 +36,7 @@ const PopupPop = () => {
     const [scrollCheck, setScrollCheck] = useState("Y");
     const [linkCheck, setLinkCheck] = useState("1");
     const [langList, setLangList] = useState([]);
-    const [langCheck, setLangCheck] = useState(0);
+    const [langCheck, setLangCheck] = useState('KR');
 
 
     // Confirm팝업 닫힐때
@@ -86,6 +86,8 @@ const PopupPop = () => {
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                 navigate("/console/login");
+
+                closePopHandler();
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -160,6 +162,7 @@ const PopupPop = () => {
     },[info]);
 
 
+    //사이트 언어리스트 가져오기
     useEffect(()=>{
         const list = common.siteLangList;
         setLangList(list);
@@ -453,6 +456,8 @@ const PopupPop = () => {
             const err_msg = CF.errorMsgHandler(error);
             if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
                 navigate("/console/login");
+
+                closePopHandler();
             }else{
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -464,6 +469,7 @@ const PopupPop = () => {
             }
         });
     };
+
 
 
 
@@ -507,13 +513,13 @@ const PopupPop = () => {
                                                                         onChange={(e)=>{
                                                                             const checked = e.currentTarget.checked;
                                                                             if(checked){
-                                                                                setLangCheck(i);
+                                                                                setLangCheck(cont.site_lang);
                                                                             }
                                                                         }}
-                                                                        checked={langCheck === i ? true : false}
+                                                                        checked={langCheck == cont.site_lang ? true : false}
                                                                         name="check_lang"
                                                                     />
-                                                                    <label htmlFor={`check_lang${i}`}>{cont.site_lang}</label>
+                                                                    <label htmlFor={`check_lang${i}`}>{cont.site_lang_hangul}</label>
                                                                 </div>
                                                             );
                                                         })}

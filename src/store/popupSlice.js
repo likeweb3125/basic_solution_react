@@ -40,12 +40,14 @@ const popup = createSlice({
         //1차카테고리 설정팝업
         adminCategoryPop: false,
         adminCategoryPopIdx: null,
+        adminCategoryPopLang: '',
         adminCategoryPopModify: false,
         adminCategoryPopDelt: false,
 
         //하위카테고리 설정팝업
         adminSubCategoryPop: false,
         adminSubCategoryPopIdx: null,
+        adminSubCategoryPopLang: '',
         adminSubCategoryPopData: {},
         adminSubCategoryPopModify: false,
         adminSubCategoryPopParentData: {},
@@ -126,6 +128,7 @@ const popup = createSlice({
         adminCategoryPop: (state, action) => {
             state.adminCategoryPop = action.payload.adminCategoryPop;
             state.adminCategoryPopIdx = action.payload.adminCategoryPopIdx;
+            state.adminCategoryPopLang = action.payload.adminCategoryPopLang;
         },
         adminCategoryPopModify: (state, action) => {
             state.adminCategoryPopModify = action.payload;
@@ -136,6 +139,7 @@ const popup = createSlice({
         adminSubCategoryPop: (state, action) => {
             state.adminSubCategoryPop = action.payload.adminSubCategoryPop;
             state.adminSubCategoryPopIdx = action.payload.adminSubCategoryPopIdx;
+            state.adminSubCategoryPopLang = action.payload.adminSubCategoryPopLang;
         },
         adminSubCategoryPopData: (state, action) => {
             state.adminSubCategoryPopData = action.payload;

@@ -188,7 +188,7 @@ const SettingSiteInfo = () => {
             <ul className="tab_type1">
                 {tabList.length > 1 && tabList.map((cont,i)=>
                     <li key={i} className={tabOn === i ? 'on' : ''}>
-                        <button type="button" onClick={()=>setTabOn(i)}>{cont.site_lang}</button>
+                        <button type="button" onClick={()=>setTabOn(i)}>{cont.site_lang_hangul}</button>
                     </li>
                 )}
             </ul>
