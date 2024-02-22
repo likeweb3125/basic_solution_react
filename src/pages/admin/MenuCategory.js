@@ -104,8 +104,9 @@ const MenuCategory = () => {
     };
     
 
-    //맨처음 전체카테고리 가져오기
+    //언어 탭변경시 전체카테고리 가져오기
     useEffect(()=>{
+        dispatch(activeMenuId(null));
         getMenuList();
     },[tabOn]);
 
@@ -312,6 +313,7 @@ const MenuCategory = () => {
 
     //하위카테고리 부모카테고리 리스트값 변경시 최고부모 1차카테고리값 찾기
     useEffect(()=>{
+        console.log(parents);
         if(parents.length > 0){
             const idList = parents.map((item)=>item.id);
             setMenuOn(idList[0]);

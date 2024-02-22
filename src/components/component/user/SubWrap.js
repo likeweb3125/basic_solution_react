@@ -67,6 +67,8 @@ const SubWrap = (props) => {
         //현재메뉴정보 가져오기
         if(menu_idx){
             getMenuData(); 
+        }else{
+            dispatch(currentMenuData({}));
         }
     },[menu_idx]);
 

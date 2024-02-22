@@ -79,6 +79,9 @@ const SubCategoryPop = () => {
             if(res.status === 200){
                 let data = res.data.data;
                     data.c_content_type = data.c_content_type[0];
+                if(!data.c_type){
+                    data.c_type = 1;
+                }
                 if(!data.b_read_lv){
                     data.b_read_lv = 0;
                 }
@@ -218,6 +221,20 @@ const SubCategoryPop = () => {
     //저장버튼 클릭시 필수입력 체크
     const saveBtnClickHandler = () => {
         const data = popup.adminSubCategoryPopData;
+        
+        //고객맞춤-수신문자
+        let sms;
+        if(data.sms){
+            sms = data.sms.replace(/[^0-9]/g, '').length;
+        }
+
+        //고객맞춤-수신메일
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/;
+        let email = '';
+        if(data.email){
+            email = data.email;
+        }
+        
 
         //공통 필수값 체크 (카테고리명, 카테고리종류) --------------
         if(!data || !data.c_name){
@@ -225,6 +242,40 @@ const SubCategoryPop = () => {
                 confirmPop:true,
                 confirmPopTit:'알림',
                 confirmPopTxt: '카테고리 명을 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }
+        //고객맞춤일때 필수값 체크 (파일경로, 관리자파일경로) && 수신문자,수신메일 입력시 값체크 ---------
+        else if(data.c_content_type == 3 && !data.file_path){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '파일 경로를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(data.c_content_type == 3 && !data.admin_file_path){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '관리자 파일 경로를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(data.c_content_type == 3 && data.sms && sms <= 10){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '문자 수신을 받을 휴대폰 번호를 입력해주세요.',
+                confirmPopBtn:1,
+            }));
+            setConfirm(true);
+        }else if(data.c_content_type == 3 && data.email && !emailRegex.test(email)){
+            dispatch(confirmPop({
+                confirmPop:true,
+                confirmPopTit:'알림',
+                confirmPopTxt: '올바른 이메일 형식이 아닙니다.',
                 confirmPopBtn:1,
             }));
             setConfirm(true);

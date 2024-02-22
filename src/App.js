@@ -15,6 +15,8 @@ import Login from './pages/user/Login';
 import SignUp from './pages/user/SignUp';
 import SubWrap from './components/component/user/SubWrap';
 import Html from './pages/user/Html';
+import Custom from './pages/user/Custom';
+import CustomTest from './pages/user/CustomTest';
 import Board from './pages/user/Board';
 import BoardDetail from './pages/user/BoardDetail';
 import BoardWrite from './pages/user/BoardWrite';
@@ -159,6 +161,11 @@ function App() {
                 <Route path="/sub" element={<Layout><SubWrap><Outlet /></SubWrap></Layout>}>
                     {/* 카테고리종류 HTML */}
                     <Route path="html/:menu_idx" element={<Html />}/>
+
+                    {/* 카테고리종류 고객맞춤 */}
+                    <Route path="custom/:menu_idx" element={<Custom />}/>
+
+                    <Route path="custom/about" element={<CustomTest />}/>
 
                     {/* 카테고리종류 일반게시판,갤러리게시판 */}
                     <Route path="board/:menu_idx" element={<Board />}/>                               {/* 리스트 */}                

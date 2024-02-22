@@ -60,6 +60,7 @@ const CategoryPop = () => {
     //팝업닫기
     const closePopHandler = () => {
         dispatch(adminCategoryPop({adminCategoryPop:false, adminCategoryPopIdx:null, adminCategoryPopLang:''}));
+        dispatch(checkedList([]));
     };
 
 
@@ -273,16 +274,19 @@ const CategoryPop = () => {
     
     //삭제버튼 클릭시
     const deltBtnClickHandler = (id) => {
+        const list = etc.cateMenuList;
         if(id){
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt:'해당 카테고리를 삭제하시겠습니까?',
-                confirmPopBtn:2,
-            }));
-            setDeltConfirm(true);
-        }else{
-            if(checkedNum > 0){
+            const findItem = list.find(item => item.id === id);
+            //하위카테고리가 있는지 체크
+            if(findItem.submenu && findItem.submenu.length > 0){
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt:'하위 카테고리가 있는 경우 삭제할 수 없습니다.',
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }else{    
                 dispatch(confirmPop({
                     confirmPop:true,
                     confirmPopTit:'알림',
@@ -290,6 +294,29 @@ const CategoryPop = () => {
                     confirmPopBtn:2,
                 }));
                 setDeltConfirm(true);
+            }
+        }else{
+            if(checkedNum > 0){
+                const filteredItems = list.filter(item => etc.checkedList.includes(item.id));
+                const itemsWithSubMenu = filteredItems.filter(item => item.submenu && item.submenu.length > 0);
+                //선택한 카테고리중 하위카테고리가 있는지 체크
+                if(itemsWithSubMenu.length > 0){
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'하위 카테고리가 있는 경우 삭제할 수 없습니다.',
+                        confirmPopBtn:1,
+                    }));
+                    setConfirm(true);
+                }else{
+                    dispatch(confirmPop({
+                        confirmPop:true,
+                        confirmPopTit:'알림',
+                        confirmPopTxt:'해당 카테고리를 삭제하시겠습니까?',
+                        confirmPopBtn:2,
+                    }));
+                    setDeltConfirm(true);
+                }
             }else if(checkedNum === 0){
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -481,7 +508,7 @@ const CategoryPop = () => {
                                         <span>총 <b>{CF.MakeIntComma(checkedNum)}</b>개</span>
                                     </div>
                                     <div className="util_right">
-                                        <button type="button" className="btn_type9" onClick={deltBtnClickHandler}>삭제</button>
+                                        <button type="button" className="btn_type9" onClick={()=>deltBtnClickHandler()}>삭제</button>
                                     </div>
                                 </div>
                                 <TableWrap 

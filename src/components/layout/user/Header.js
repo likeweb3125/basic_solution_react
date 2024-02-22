@@ -6,8 +6,9 @@ import axios from "axios";
 import * as CF from "../../../config/function";
 import { enum_api_uri } from "../../../config/enum";
 import { confirmPop } from "../../../store/popupSlice";
-import { headerMenuList } from "../../../store/commonSlice";
+import { headerMenuList, siteLang } from "../../../store/commonSlice";
 import { loginStatus, loginUser, siteId, maintName } from "../../../store/userSlice";
+import SelectBox from "../../component/SelectBox";
 import ConfirmPop from "../../popup/ConfirmPop";
 import logo from "../../../images/logo.png";
 
@@ -34,6 +35,8 @@ const Header = () => {
     const [moMenu2On, setMoMenu2On] = useState(null);
     const [moMenu3On, setMoMenu3On] = useState(null);
     const [login, setLogin] = useState(false);
+    const [langList, setLangList] = useState([]);
+    const [lang, setLang] = useState('');
 
 
     // Confirm팝업 닫힐때
@@ -48,6 +51,15 @@ const Header = () => {
     useEffect(()=>{
         setSiteInfo(common.siteInfo);
     },[common.siteInfo]);
+
+
+    useEffect(()=>{
+        setLangList(common.siteLangList);
+    },[common.siteLangList]);
+
+    useEffect(()=>{
+        setLang(common.siteLang);
+    },[common.siteLang]);
 
 
     //헤더메뉴 토글
@@ -120,12 +132,19 @@ const Header = () => {
 
     // 전체메뉴 가져오기
     const getMenuList = () => {
-        axios.get(menu_list)
+        let lang = 'KR';
+        if(common.siteLang){
+            lang = common.siteLang;
+        }
+
+        axios.get(`${menu_list}?c_lang=${lang}`)
         .then((res)=>{
             if(res.status === 200){
                 const data = res.data.data;
                 const list = data.filter(item => item.id != 0);
                 setMenuList(list);
+
+                navigate('/');
             }
         })
         .catch((error) => {
@@ -144,7 +163,7 @@ const Header = () => {
     //맨처음 전체메뉴 가져오기
     useEffect(()=>{
         getMenuList();
-    },[]);
+    },[common.siteLang]);
 
 
     //전체메뉴값 변경시 store에 저장
@@ -211,7 +230,7 @@ const Header = () => {
                 }
                 //카테고리종류 고객맞춤 일때
                 if(type === 3){
-
+                    url = '/sub/custom/'+data.submenu[0].id;
                 }
                 //카테고리종류 일반게시판 or 갤러리게시판 일때
                 if(type === 4 || type === 5){
@@ -249,7 +268,7 @@ const Header = () => {
                     }
                     //카테고리종류 고객맞춤 일때
                     if(type === 3){
-
+                        url = '/sub/custom/'+foundSubMenu.id;
                     }
                     //카테고리종류 일반게시판 or 갤러리게시판 일때
                     if(type === 4 || type === 5){
@@ -298,7 +317,7 @@ const Header = () => {
                 }
                 //카테고리종류 고객맞춤 일때
                 if(type === 3){
-
+                    url = '/sub/custom/'+data.id;
                 }
                 //카테고리종류 일반게시판 or 갤러리게시판 일때
                 if(type === 4 || type === 5){
@@ -338,7 +357,7 @@ const Header = () => {
                     }
                     //카테고리종류 고객맞춤 일때
                     if(type === 3){
-
+                        url = '/sub/custom/'+foundSubMenu.id;
                     }
                     //카테고리종류 일반게시판 or 갤러리게시판 일때
                     if(type === 4 || type === 5){
@@ -391,7 +410,7 @@ const Header = () => {
             }
             //카테고리종류 고객맞춤 일때
             if(type === 3){
-
+                url = '/sub/custom/'+id;
             }
             //카테고리종류 일반게시판 or 갤러리게시판 일때
             if(type === 4 || type === 5){
@@ -637,6 +656,19 @@ const Header = () => {
                             </>
                         }
                     </ul>
+                    <div className="lang_box">
+                        <SelectBox 
+                            className="select_type3"
+                            list={langList}
+                            selected={lang}
+                            onChangeHandler={(e)=>{
+                                const val = e.currentTarget.value;
+                                dispatch(siteLang(val));
+                            }}
+                            selHidden={true}
+                            objectSel={'lang'}
+                        />
+                    </div>
                     <button type="button" className={`btn_m${isMoMenuOpen ? ' on' : ''}`} onClick={toggleMoMenu}>
                         <span>모바일 메뉴</span>
                     </button>
@@ -690,6 +722,19 @@ const Header = () => {
                                 );
                             })}
                         </ul>
+                        <div className="lang_box">
+                            <SelectBox 
+                                className="select_type3"
+                                list={langList}
+                                selected={lang}
+                                onChangeHandler={(e)=>{
+                                    const val = e.currentTarget.value;
+                                    dispatch(siteLang(val));
+                                }}
+                                selHidden={true}
+                                objectSel={'lang'}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
