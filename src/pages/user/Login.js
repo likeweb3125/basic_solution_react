@@ -191,7 +191,7 @@ const Login = () => {
                                 />
                                 <label htmlFor="saveEmail">이메일 저장</label>
                             </div>
-                            <Link to="/" className="btn_type17">비밀번호 재설정</Link>
+                            <Link to="/reset_password_email" className="btn_type17">비밀번호 재설정</Link>
                         </div>
                         <div className="btn_wrap">
                             <button type="button" className="btn_type25" onClick={loginBtnClickHandler}>로그인</button>

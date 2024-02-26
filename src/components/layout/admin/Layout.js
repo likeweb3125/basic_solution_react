@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { adminNotiPop, confirmPop } from "../../../store/popupSlice";
-import { alarm, userLevelList } from "../../../store/commonSlice";
+import { alarm, userLevelList, siteLangList, siteInfo } from "../../../store/commonSlice";
 import { loginStatus, loginUser, siteId, maintName } from "../../../store/userSlice";
 import { checkedList, activeMenuId } from "../../../store/etcSlice";
 import { enum_api_uri } from "../../../config/enum";
@@ -24,9 +24,12 @@ const Layout = (props) => {
     const [locationList, setLocationList] = useState([]);
     const location = useLocation();
     const { board_category } = useParams();
+    const site_info = enum_api_uri.site_info;
     const alarm_list = enum_api_uri.alarm_list;
     const level_list = enum_api_uri.level_list;
     const navigate = useNavigate();
+    // const siteId = process.env.REACT_APP_SITE_ID;
+    const siteId = 'likeweb';
 
 
     // Confirm팝업 닫힐때
@@ -118,6 +121,40 @@ const Layout = (props) => {
     },[location, common.boardMenu]);
 
 
+    //사이트정보 가져오기
+    const getSiteInfo = () => {
+        axios.get(`${site_info.replace(":site_id",siteId).replace(":c_lang",'KR')}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
+        .then((res)=>{
+            if(res.status === 200){
+                let data = res.data.data;
+
+                //store 에 사이트정보저장
+                dispatch(siteInfo(data));
+
+                //store 에 사이트언어리스트 저장
+                const langList = data.c_site_lang;
+                dispatch(siteLangList(langList));
+            }
+        })
+        .catch((error) => {
+            const err_msg = CF.errorMsgHandler(error);
+            if(error.response.status === 401){//토큰에러시 관리자단 로그인페이지로 이동
+                navigate("/console/login");
+            }else{
+                dispatch(confirmPop({
+                    confirmPop:true,
+                    confirmPopTit:'알림',
+                    confirmPopTxt: err_msg,
+                    confirmPopBtn:1,
+                }));
+                setConfirm(true);
+            }
+        });
+    };
+
+
     //알림 가져오기
     const getAlarmList = () => {
         axios.get(`${alarm_list.replace(":follow","all")}`,
@@ -183,8 +220,9 @@ const Layout = (props) => {
     };
 
 
-    //맨처음 알림, 회원등급리스트 가져오기
+    //맨처음 사이트정보, 알림, 회원등급리스트 가져오기
     useEffect(()=>{
+        getSiteInfo();
         getAlarmList();
         getLevelList();
     },[]);

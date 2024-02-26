@@ -34,6 +34,7 @@ const popup = createSlice({
         //운영정책 상세 팝업
         adminPolicyPop: false,
         adminPolicyPopIdx: null,
+        adminPolicyPopLang: '',
         adminPolicyPopModify: false,
         adminPolicyPopWrite: false,
 
@@ -68,6 +69,7 @@ const popup = createSlice({
         adminPopupPop: false,
         adminPopupPopIdx: null,
         adminPopupPopType: null,
+        adminPopupPopLang: '',
         adminPopupPopModify: false,
         adminPopupPopWrite: false,
 
@@ -117,6 +119,7 @@ const popup = createSlice({
         adminPolicyPop: (state, action) => {
             state.adminPolicyPop = action.payload.adminPolicyPop;
             state.adminPolicyPopIdx = action.payload.adminPolicyPopIdx;
+            state.adminPolicyPopLang = action.payload.adminPolicyPopLang;
         },
         adminPolicyPopModify: (state, action) => {
             state.adminPolicyPopModify = action.payload;
@@ -173,6 +176,7 @@ const popup = createSlice({
             state.adminPopupPop = action.payload.adminPopupPop;
             state.adminPopupPopIdx = action.payload.adminPopupPopIdx;
             state.adminPopupPopType = action.payload.adminPopupPopType;
+            state.adminPopupPopLang = action.payload.adminPopupPopLang;
         },
         adminPopupPopModify: (state, action) => {
             state.adminPopupPopModify = action.payload;

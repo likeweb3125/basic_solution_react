@@ -52,14 +52,14 @@ const PolicyPop = () => {
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(adminPolicyPop({adminPolicyPop:false,adminPolicyPopIdx:null}));
+        dispatch(adminPolicyPop({adminPolicyPop:false,adminPolicyPopIdx:null,adminPolicyPopLang:''}));
         dispatch(adminPolicyPopWrite(false));
     };
 
 
     //상세정보 가져오기
     const getPolicyData = () => {
-        axios.get(`${policy_detail.replace(":idx",popup.adminPolicyPopIdx)}`,
+        axios.get(`${policy_detail.replace(":idx",popup.adminPolicyPopIdx)}?p_lang=${popup.adminPolicyPopLang}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{

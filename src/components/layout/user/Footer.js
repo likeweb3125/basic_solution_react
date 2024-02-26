@@ -1,14 +1,31 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 import f_logo from "../../../images/f_logo.png";
 
-const Footer = () => {
+const Footer = ({policyList}) => {
     const common = useSelector((state)=>state.common);
     const [info, setInfo] = useState({});
+    const [policyOn, setPolicyOn] = useState(null);
+    const { policy_idx } = useParams();
+
 
     useEffect(()=>{
         setInfo(common.siteInfo);
     },[common.siteInfo]);
+
+
+    //운영정책 페이지일때 li on
+    useEffect(()=>{
+        if(policy_idx){
+            setPolicyOn(policy_idx);
+        }else{
+            setPolicyOn(null);
+        }
+    },[policy_idx]);
+
+
+    
 
 
     return(<>
@@ -63,15 +80,13 @@ const Footer = () => {
                 </div>
                 <div className="f_util_wrap">
                     <ul className="f_util">
-                        <li className="on">
-                            <a href="#">개인정보처리방침</a>
-                        </li>
-                        <li>
-                            <a href="#">이용약관</a>
-                        </li>
-                        <li>
-                            <a href="#">이메일 무단수집 거부</a>
-                        </li>
+                        {policyList.map((cont,i)=>{
+                            return(
+                                <li key={i} className={policyOn == cont.idx ? 'on' : ''}>
+                                    <Link to={`/policy/${cont.idx}`}>{cont.p_title}</Link>
+                                </li>
+                            );
+                        })}
                     </ul>
                     <p className="copy">©2023 Lorem ipsum Co.,Ltd. All Rights Reserved.</p>
                 </div>

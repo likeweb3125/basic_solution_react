@@ -34,14 +34,9 @@ const MenuCategory = () => {
     const [checkedNum, setCheckedNum] = useState(0);
     const [unCheckedNum, setUnCheckedNum] = useState(0);
     const [parents, setParents] = useState([]);
-    const [tabList, setTabList] = useState([]);
-    const [tabOn, setTabOn] = useState(0);
+    const [langTabList, setLangTabList] = useState([]);
+    const [langTabOn, setLangTabOn] = useState(0);
     const [tabLang, setTabLang] = useState('');
-
-
-    useEffect(()=>{
-        console.log(currentMenu);
-    },[currentMenu])
 
 
     // Confirm팝업 닫힐때
@@ -53,9 +48,10 @@ const MenuCategory = () => {
     },[popup.confirmPop]);
 
 
+    //사이트 언어리스트 가져오기
     useEffect(()=>{
         const list = common.siteLangList;
-        setTabList(list);
+        setLangTabList(list);
     },[common.siteLangList]);
 
 
@@ -63,8 +59,8 @@ const MenuCategory = () => {
     // 전체카테고리 가져오기
     const getMenuList = () => {
         let lang = 'KR';
-        if(tabList.length > 1){
-            lang = tabList[tabOn].site_lang;
+        if(langTabList.length > 1){
+            lang = langTabList[langTabOn].site_lang;
         }
         
         axios.get(`${menu_list}?c_lang=${lang}`,
@@ -108,17 +104,17 @@ const MenuCategory = () => {
     useEffect(()=>{
         dispatch(activeMenuId(null));
         getMenuList();
-    },[tabOn]);
+    },[langTabOn]);
 
 
     //언어탭변경시 tabLang 값 변경
     useEffect(()=>{
         let lang = 'KR';
-        if(tabList.length > 0){
-            lang = tabList[tabOn].site_lang;
+        if(langTabList.length > 0){
+            lang = langTabList[langTabOn].site_lang;
         }
         setTabLang(lang);
-    },[tabOn, tabList]);
+    },[langTabOn, langTabList]);
 
 
     //카테고리수정,삭제시 전체카테고리 가져오기
@@ -485,9 +481,9 @@ const MenuCategory = () => {
     return(<>
         <div className="page_admin_category">
             <ul className="tab_type1">
-                {tabList.length > 1 && tabList.map((cont,i)=>
-                    <li key={i} className={tabOn === i ? 'on' : ''}>
-                        <button type="button" onClick={()=>setTabOn(i)}>{cont.site_lang_hangul}</button>
+                {langTabList.length > 1 && langTabList.map((cont,i)=>
+                    <li key={i} className={langTabOn === i ? 'on' : ''}>
+                        <button type="button" onClick={()=>setLangTabOn(i)}>{cont.site_lang_hangul}</button>
                     </li>
                 )}
             </ul>

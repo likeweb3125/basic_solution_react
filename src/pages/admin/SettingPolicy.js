@@ -19,6 +19,7 @@ const SettingPolicy = () => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);
+    const common = useSelector((state)=>state.common);
     const site_policy = enum_api_uri.site_policy;
     const policy_use = enum_api_uri.policy_use;
     const [confirm, setConfirm] = useState(false);
@@ -33,7 +34,10 @@ const SettingPolicy = () => {
     const [showBtn, setShowBtn] = useState(false);
     const [hideBtn, setHideBtn] = useState(false);
     const [use, setUse] = useState("");
-
+    const [firstRender, setFirstRender] = useState(false);
+    const [langTabList, setLangTabList] = useState([]);
+    const [langTabOn, setLangTabOn] = useState(0);
+    const [tabLang, setTabLang] = useState('');
 
 
     // Confirm팝업 닫힐때
@@ -46,8 +50,20 @@ const SettingPolicy = () => {
     },[popup.confirmPop]);
 
 
-     //게시판정보 가져오기
-     const getBoardData = (page) => {
+    //사이트 언어리스트 가져오기
+    useEffect(()=>{
+        const list = common.siteLangList;
+        setLangTabList(list);
+    },[common.siteLangList]);
+
+
+    //게시판정보 가져오기
+    const getBoardData = (page) => {
+        let lang = 'KR';
+        if(langTabList.length > 1){
+            lang = langTabList[langTabOn].site_lang;
+        }
+
         let search;
         if(searchType == "제목만"){
             search = "title";
@@ -55,13 +71,16 @@ const SettingPolicy = () => {
             search = "titlecontents";
         }
 
-        axios.get(`${site_policy.replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
+        axios.get(`${site_policy.replace(":limit",limit)}?page=${page ? page : 1}&p_lang=${lang}${searchTxt.length > 0 ? "&search="+search+"&searchtxt="+searchTxt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
                 setBoardData(data);
+
+                //store 에 저장된 checkedList 값 삭제
+                dispatch(checkedList([]));
             }
         })
         .catch((error) => {
@@ -79,6 +98,31 @@ const SettingPolicy = () => {
             }
         });
     };
+
+
+    useEffect(()=>{
+        if(!firstRender){
+            setFirstRender(true);
+        }
+    },[]);
+
+
+    //언어 탭변경시 운영정책리스트 가져오기
+    useEffect(()=>{
+        if(firstRender){
+            getBoardData();
+        }
+    },[langTabOn]);
+
+
+    //언어탭변경시 tabLang 값 변경
+    useEffect(()=>{
+        let lang = 'KR';
+        if(langTabList.length > 0){
+            lang = langTabList[langTabOn].site_lang;
+        }
+        setTabLang(lang);
+    },[langTabOn, langTabList]);
 
 
     //limit 값 변경시 게시판정보 가져오기
@@ -207,7 +251,7 @@ const SettingPolicy = () => {
     //작성하기 버튼클릭시 작성팝업 띄우기
     const writeBtnClickHandler = () => {
         dispatch(adminPolicyPopWrite(true));
-        dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:null}));
+        dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:null,adminPolicyPopLang:tabLang}));
     };
 
 
@@ -269,6 +313,13 @@ const SettingPolicy = () => {
 
     return(<>
         <div className="page_admin_setting">
+            <ul className="tab_type1">
+                {langTabList.length > 1 && langTabList.map((cont,i)=>
+                    <li key={i} className={langTabOn === i ? 'on' : ''}>
+                        <button type="button" onClick={()=>setLangTabOn(i)}>{cont.site_lang_hangul}</button>
+                    </li>
+                )}
+            </ul>
             <div className="content_box">
                 <div className="tit tit2">
                     <h3>
@@ -349,6 +400,7 @@ const SettingPolicy = () => {
                         thList={["","구분","제목","작성일시","사용여부"]}
                         tdList={boardData.policy_list}
                         type={"policy"}
+                        popLang={tabLang}
                     />
                     {boardData.policy_list && boardData.policy_list.length > 0 &&
                         <Pagination 

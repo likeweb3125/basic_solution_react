@@ -37,6 +37,7 @@ const Header = () => {
     const [login, setLogin] = useState(false);
     const [langList, setLangList] = useState([]);
     const [lang, setLang] = useState('');
+    const [firstRender, setFirstRender] = useState(false);
 
 
     // Confirm팝업 닫힐때
@@ -143,8 +144,6 @@ const Header = () => {
                 const data = res.data.data;
                 const list = data.filter(item => item.id != 0);
                 setMenuList(list);
-
-                navigate('/');
             }
         })
         .catch((error) => {
@@ -163,6 +162,19 @@ const Header = () => {
     //맨처음 전체메뉴 가져오기
     useEffect(()=>{
         getMenuList();
+
+        if(!firstRender){
+            setFirstRender(true);
+        }
+    },[]);
+
+
+    //사이트언어변경시 전체메뉴 가져오기
+    useEffect(()=>{
+        if(firstRender){
+            navigate('/');
+            getMenuList();
+        }
     },[common.siteLang]);
 
 

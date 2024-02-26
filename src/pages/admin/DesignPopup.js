@@ -21,6 +21,7 @@ const DesignPopup = () => {
     const popup = useSelector((state)=>state.popup);
     const user = useSelector((state)=>state.user);
     const etc = useSelector((state)=>state.etc);
+    const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
     const [useConfirm, setUseConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
@@ -34,6 +35,9 @@ const DesignPopup = () => {
     const [hideBtn, setHideBtn] = useState(false);
     const [use, setUse] = useState("");
     const [firstRender, setFirstRender] = useState(false);
+    const [langTabList, setLangTabList] = useState([]);
+    const [langTabOn, setLangTabOn] = useState(0);
+    const [tabLang, setTabLang] = useState('');
 
 
     // Confirm팝업 닫힐때
@@ -46,8 +50,20 @@ const DesignPopup = () => {
     },[popup.confirmPop]);
 
 
+    //사이트 언어리스트 가져오기
+    useEffect(()=>{
+        const list = common.siteLangList;
+        setLangTabList(list);
+    },[common.siteLangList]);
+
+
     //게시판정보 가져오기
     const getBoardData = (page, search) => {
+        let lang = 'KR';
+        if(langTabList.length > 1){
+            lang = langTabList[langTabOn].site_lang;
+        }
+
         let txt
         if(search){
             txt = "";
@@ -55,7 +71,7 @@ const DesignPopup = () => {
             txt = searchTxt;
         }
 
-        axios.get(`${popup_list.replace(":limit",limit)}?p_type=${tab}&page=${page ? page : 1}${txt.length > 0 ? "&searchtxt="+txt : ""}`,
+        axios.get(`${popup_list.replace(":limit",limit)}?p_type=${tab}&p_lang=${lang}&page=${page ? page : 1}${txt.length > 0 ? "&searchtxt="+txt : ""}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -89,6 +105,24 @@ const DesignPopup = () => {
             setFirstRender(true);
         }
     },[]);
+
+
+    //언어 탭변경시 팝업리스트 가져오기
+    useEffect(()=>{
+        if(firstRender){
+            getBoardData();
+        }
+    },[langTabOn]);
+
+
+    //언어탭변경시 tabLang 값 변경
+    useEffect(()=>{
+        let lang = 'KR';
+        if(langTabList.length > 0){
+            lang = langTabList[langTabOn].site_lang;
+        }
+        setTabLang(lang);
+    },[langTabOn, langTabList]);
 
 
     //탭 변경시 PC팝업 리스트, MO팝업 리스트 변경
@@ -225,7 +259,7 @@ const DesignPopup = () => {
     //팝업등록 버튼클릭시
     const writeBtnClickHandler = () => {
         dispatch(adminPopupPopWrite(true));
-        dispatch(adminPopupPop({adminPopupPop:true,adminPopupPopIdx:null,adminPopupPopType:tab}));
+        dispatch(adminPopupPop({adminPopupPop:true,adminPopupPopIdx:null,adminPopupPopType:tab,adminPopupPopLang:tabLang}));
     };
 
 
@@ -286,6 +320,13 @@ const DesignPopup = () => {
 
     return(<>
         <div className="page_admin_design">
+            <ul className="tab_type1">
+                {langTabList.length > 1 && langTabList.map((cont,i)=>
+                    <li key={i} className={langTabOn === i ? 'on' : ''}>
+                        <button type="button" onClick={()=>setLangTabOn(i)}>{cont.site_lang_hangul}</button>
+                    </li>
+                )}
+            </ul>
             <div className="top_txt">
                 <strong>팝업 등록시 노출될 기기와 이미지 사이즈, 팝업 이미지가 들어갈 자리를 고려하여 등록해주세요.</strong>
                 <button type="button" className="btn_type15" onClick={writeBtnClickHandler}>팝업 등록</button>
@@ -367,6 +408,7 @@ const DesignPopup = () => {
                         tdList={boardData.popup_list}
                         type={"popup"}
                         popType={tab}
+                        popLang={tabLang}
                     />
                     {boardData.popup_list && boardData.popup_list.length > 0 &&
                         <Pagination 

@@ -584,7 +584,7 @@ const TableWrap = (props) => {
                                             <td>
                                                 <button type="button" className="link" 
                                                     onClick={()=>{
-                                                        dispatch(adminPopupPop({adminPopupPop:true,adminPopupPopIdx:cont.idx,adminPopupPopType:props.popType}));
+                                                        dispatch(adminPopupPop({adminPopupPop:true,adminPopupPopIdx:cont.idx,adminPopupPopType:props.popType,adminPopupPopLang:props.popLang}));
                                                     }}>{cont.p_title}</button>
                                             </td>
                                             <td>{cont.p_s_date}{cont.p_e_date && " ~ "+cont.p_e_date}</td>
@@ -619,7 +619,7 @@ const TableWrap = (props) => {
                                             <td className="tx_l">
                                                 <button type="button" className="link" 
                                                     onClick={()=>{
-                                                        dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:cont.idx}));
+                                                        dispatch(adminPolicyPop({adminPolicyPop:true,adminPolicyPopIdx:cont.idx,adminPolicyPopLang:props.popLang}));
                                                     }}>
                                                     <span className="ellipsis">{cont.p_title}</span>
                                                 </button>

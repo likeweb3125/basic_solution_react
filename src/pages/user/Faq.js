@@ -89,7 +89,6 @@ const Faq = () => {
         if(tabOn > 0){
             tab = tabOn;
         }
-        console.log(tab)
 
         axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${page ? page : 1}${searchTxt.length > 0 ? "&search=title&searchtxt="+searchTxt : ""}&group_id=${tab}`)
         .then((res)=>{
@@ -136,6 +135,7 @@ const Faq = () => {
     useEffect(()=>{
         if(!firstTime){
             getBoardData();
+            setDetailData({});
         }
     },[tabOn]);
 

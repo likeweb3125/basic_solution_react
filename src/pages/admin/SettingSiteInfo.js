@@ -21,8 +21,8 @@ const SettingSiteInfo = () => {
     const [confirm, setConfirm] = useState(false);
     const [info, setInfo] = useState({});
     const [error, setError] = useState({});
-    const [tabList, setTabList] = useState([]);
-    const [tabOn, setTabOn] = useState(0);
+    const [langTabList, setLangTabList] = useState([]);
+    const [langTabOn, setLangTabOn] = useState(0);
 
 
     // Confirm팝업 닫힐때
@@ -47,7 +47,7 @@ const SettingSiteInfo = () => {
 
                 //사이트언어 리스트
                 const langList = data.c_site_lang;
-                setTabList(langList);
+                setLangTabList(langList);
             }
         })
         .catch((error) => {
@@ -70,11 +70,11 @@ const SettingSiteInfo = () => {
     //언어탭변경시 사이트정보 가져오기
     useEffect(()=>{
         let lang = 'KR';
-        if(tabList.length > 1){
-            lang = tabList[tabOn].site_lang;
+        if(langTabList.length > 1){
+            lang = langTabList[langTabOn].site_lang;
         }
         getInfo(lang);
-    },[tabOn]);
+    },[langTabOn]);
 
 
     //인풋값 변경시
@@ -121,8 +121,8 @@ const SettingSiteInfo = () => {
 
     //사이트정보 저장하기
     const saveHandler = () => {
-        const langList = tabList.map(item => item.site_lang);
-        const lang = tabList[tabOn].site_lang;
+        const langList = langTabList.map(item => item.site_lang);
+        const lang = langTabList[langTabOn].site_lang;
         const body = info;
         body.site_lang = langList;
         body.c_lang = lang;
@@ -136,7 +136,7 @@ const SettingSiteInfo = () => {
                 dispatch(siteInfo(body));
                 dispatch(siteInfoEdit(true));
 
-                setTabOn(0);
+                setLangTabOn(0);
 
                 dispatch(confirmPop({
                     confirmPop:true,
@@ -179,16 +179,16 @@ const SettingSiteInfo = () => {
     //취소하기 사이트정보 다시 가져오기
     const cancelHandler = () => {
         getInfo();
-        setTabOn(0);
+        setLangTabOn(0);
     };
     
 
     return(<>
         <div className="page_admin_setting">
             <ul className="tab_type1">
-                {tabList.length > 1 && tabList.map((cont,i)=>
-                    <li key={i} className={tabOn === i ? 'on' : ''}>
-                        <button type="button" onClick={()=>setTabOn(i)}>{cont.site_lang_hangul}</button>
+                {langTabList.length > 1 && langTabList.map((cont,i)=>
+                    <li key={i} className={langTabOn === i ? 'on' : ''}>
+                        <button type="button" onClick={()=>setLangTabOn(i)}>{cont.site_lang_hangul}</button>
                     </li>
                 )}
             </ul>

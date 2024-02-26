@@ -13,6 +13,8 @@ import Main from "./pages/user/Main";
 import OpenPopup from './pages/user/OpenPopup';
 import Login from './pages/user/Login';
 import SignUp from './pages/user/SignUp';
+import ResetPasswordEmail from './pages/user/ResetPasswordEmail';
+import ResetPassword from './pages/user/ResetPassword';
 import SubWrap from './components/component/user/SubWrap';
 import Html from './pages/user/Html';
 import Custom from './pages/user/Custom';
@@ -24,6 +26,7 @@ import Faq from './pages/user/Faq';
 import Inquiry from './pages/user/Inquiry';
 import InquiryWrite from './pages/user/InquiryWrite';
 import MyPage from './pages/user/MyPage';
+import Policy from './pages/user/Policy';
 
 
 import AdminLogin from './pages/admin/Login';
@@ -87,50 +90,50 @@ function App() {
 
 
     //사이트정보 가져오기
-    const getSiteInfo = () => {
-        axios.get(`${site_info.replace(":site_id",siteId).replace(":c_lang",common.siteLang)}`)
-        .then((res)=>{
-            if(res.status === 200){
-                let data = res.data.data;
-                    data.site_id = siteId;
-                setSiteInfoData(data);
+    // const getSiteInfo = () => {
+    //     axios.get(`${site_info.replace(":site_id",siteId).replace(":c_lang",common.siteLang)}`)
+    //     .then((res)=>{
+    //         if(res.status === 200){
+    //             let data = res.data.data;
+    //                 data.site_id = siteId;
+    //             setSiteInfoData(data);
 
-                //store 에 사이트정보저장
-                dispatch(siteInfo(data));
+    //             //store 에 사이트정보저장
+    //             dispatch(siteInfo(data));
 
-                //store 에 사이트언어 저장
-                const lang = data.c_lang;
-                const langList = data.c_site_lang;
-                dispatch(siteLang(lang));
-                dispatch(siteLangList(langList));
-            }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        });
-    };
-
-
-    //맨처음 사이트정보 가져오기
-    useEffect(()=>{
-        getSiteInfo();
-    },[]);
+    //             //store 에 사이트언어 저장
+    //             const lang = data.c_lang;
+    //             const langList = data.c_site_lang;
+    //             dispatch(siteLang(lang));
+    //             dispatch(siteLangList(langList));
+    //         }
+    //     })
+    //     .catch((error) => {
+    //         const err_msg = CF.errorMsgHandler(error);
+    //         dispatch(confirmPop({
+    //             confirmPop:true,
+    //             confirmPopTit:'알림',
+    //             confirmPopTxt: err_msg,
+    //             confirmPopBtn:1,
+    //         }));
+    //         setConfirm(true);
+    //     });
+    // };
 
 
-    //사이트정보 수정시 변경된 사이트정보 가져오기
-    useEffect(()=>{
-        if(common.siteInfoEdit){
-            getSiteInfo();
-            dispatch(siteInfoEdit(false));
-        }
-    },[common.siteInfoEdit]);
+    // //맨처음 사이트정보 가져오기
+    // useEffect(()=>{
+    //     getSiteInfo();
+    // },[]);
+
+
+    // //사이트정보 수정시 변경된 사이트정보 가져오기
+    // useEffect(()=>{
+    //     if(common.siteInfoEdit){
+    //         getSiteInfo();
+    //         dispatch(siteInfoEdit(false));
+    //     }
+    // },[common.siteInfoEdit]);
 
 
     
@@ -153,8 +156,16 @@ function App() {
                 {/* 회원가입 */}
                 <Route path="/signup" element={<Layout><SignUp /></Layout>} />
 
+                {/* 비밀번호 재설정 - 이메일전송 */}
+                <Route path="/reset_password_email" element={<Layout><ResetPasswordEmail /></Layout>} />
+                {/* 비밀번호 재설정 */}
+                <Route path="/reset_password" element={<Layout><ResetPassword /></Layout>} />
+
                 {/* 마이페이지 */}
                 <Route path="/mypage" element={<Layout><MyPage /></Layout>} />
+
+                {/* 약관페이지 */}
+                <Route path="/policy/:policy_idx" element={<Layout><Policy /></Layout>} />
 
 
                 {/* 서브페이지 */}

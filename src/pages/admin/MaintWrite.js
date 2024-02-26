@@ -17,6 +17,7 @@ const MaintWrite = () => {
     const maint_create = enum_api_uri.maint_create;
     const user = useSelector((state)=>state.user);
     const popup = useSelector((state)=>state.popup);
+    const common = useSelector((state)=>state.common);
     const [confirm, setConfirm] = useState(false);
     const [boardData, setBoardData] = useState({});
     const [content, setContent] = useState("");
@@ -24,6 +25,13 @@ const MaintWrite = () => {
     const [filesData, setFilesData] = useState(null);
     const [showRaw, setShowRaw] = useState(false);
     const [rawHtml, setRawHtml] = useState('');
+    // const siteId = process.env.REACT_APP_SITE_ID;
+    const siteId = 'likeweb';
+
+
+    useEffect(()=>{
+        console.log(common.siteInfo);
+    },[common.siteInfo]);
 
 
 
@@ -186,6 +194,8 @@ const MaintWrite = () => {
         formData.append("password", "");
         formData.append("subject", boardData.subject);
         formData.append("contents", contents);
+        formData.append("company", siteId);
+        formData.append("email", common.siteInfo.c_email || '');
 
         axios.post(maint_create, formData, {
             headers: {

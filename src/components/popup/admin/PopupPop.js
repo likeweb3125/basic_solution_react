@@ -35,8 +35,6 @@ const PopupPop = () => {
     const [endDate, setEndDate] = useState('');
     const [scrollCheck, setScrollCheck] = useState("Y");
     const [linkCheck, setLinkCheck] = useState("1");
-    const [langList, setLangList] = useState([]);
-    const [langCheck, setLangCheck] = useState('KR');
 
 
     // Confirm팝업 닫힐때
@@ -63,9 +61,13 @@ const PopupPop = () => {
 
     //팝업닫기
     const closePopHandler = () => {
-        dispatch(adminPopupPop({adminPopupPop:false,adminPopupPopIdx:null,adminPopupPopType:null}));
+        dispatch(adminPopupPop({adminPopupPop:false,adminPopupPopIdx:null,adminPopupPopType:null,adminPopupPopLang:''}));
         dispatch(adminPopupPopWrite(false));
     };
+
+    useEffect(()=>{
+        console.log(popup.adminPopupPopLang);
+    },[popup.adminPopupPopLang]);
 
 
     //상세정보 가져오기
@@ -160,13 +162,6 @@ const PopupPop = () => {
             }
         }
     },[info]);
-
-
-    //사이트 언어리스트 가져오기
-    useEffect(()=>{
-        const list = common.siteLangList;
-        setLangList(list);
-    },[common.siteLangList]);
 
 
     //인풋값 변경시
@@ -315,6 +310,7 @@ const PopupPop = () => {
                 p_link_target:linkCheck,
                 p_link_url:info.p_link_url,
                 p_content:cont,
+                p_lang:popup.adminPopupPopLang
             };
             axios.post(`${popup_list}`, body, 
                 {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
@@ -500,34 +496,6 @@ const PopupPop = () => {
                         <div className="con_box">
                             <div className="form_pop_inner">
                                 <div className="form_inner">
-                                    {langList.length > 1 &&
-                                        <div className="form_box2">
-                                            <div className="form_input">
-                                                <h6>언어 선택 <i>*</i></h6>
-                                                <div className="input_wrap">
-                                                    <div className="chk_rdo_wrap">
-                                                        {langList.map((cont,i)=>{
-                                                            return(
-                                                                <div className="rdo_box1" key={i}>
-                                                                    <input type="radio" id={`check_lang${i}`} className="blind"
-                                                                        onChange={(e)=>{
-                                                                            const checked = e.currentTarget.checked;
-                                                                            if(checked){
-                                                                                setLangCheck(cont.site_lang);
-                                                                            }
-                                                                        }}
-                                                                        checked={langCheck == cont.site_lang ? true : false}
-                                                                        name="check_lang"
-                                                                    />
-                                                                    <label htmlFor={`check_lang${i}`}>{cont.site_lang_hangul}</label>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
                                     <div className="form_box">
                                         <div className="form_input">
                                             <h6>제목 <i>*</i></h6>

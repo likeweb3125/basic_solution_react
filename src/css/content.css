@@ -15,8 +15,7 @@
 .sub_visual h2 b {display: block; font-size: 52px; font-weight: 600; color: #222; padding-bottom: 60px;}
 .sub_visual h2 strong {display: block; font-size: 32px; font-weight: 600; color: #222;}
 .sub_visual .section_inner {display: flex; justify-content: space-between; flex-direction: row-reverse; align-items: flex-end;}
-.sub_visual.sub_visual_terms:before {display: none;}
-.sub_visual.sub_visual_terms:after {display: none;}
+.sub_visual.sub_visual_terms{border-radius: 0;background: none;}
 
 
 /* 로케이션 */

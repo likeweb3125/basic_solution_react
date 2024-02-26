@@ -30,6 +30,8 @@ exports.enum_api_uri = {
     // 사용자단 ------------------------------------------
     //회원
     signup: `${api_uri}v1/auth/signup`,
+    email_password: `${api_uri}v1/auth/email-password`,
+    reset_password: `${api_uri}v1/auth/reset-password`,
 
     //게시판
     board_password: `${api_uri}v1/board/password`,
