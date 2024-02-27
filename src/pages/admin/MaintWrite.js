@@ -195,7 +195,7 @@ const MaintWrite = () => {
         formData.append("subject", boardData.subject);
         formData.append("contents", contents);
         formData.append("company", siteId);
-        formData.append("email", common.siteInfo.c_email || '');
+        formData.append("email", boardData.email);
 
         axios.post(maint_create, formData, {
             headers: {
