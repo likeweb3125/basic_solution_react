@@ -32,6 +32,8 @@ exports.enum_api_uri = {
     signup: `${api_uri}v1/auth/signup`,
     email_password: `${api_uri}v1/auth/email-password`,
     reset_password: `${api_uri}v1/auth/reset-password`,
+    user_info: `${api_uri}v1/auth/view`,
+    user_info_edti: `${api_uri}v1/auth/user`,
 
     //게시판
     board_password: `${api_uri}v1/board/password`,

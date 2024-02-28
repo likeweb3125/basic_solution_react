@@ -26,6 +26,9 @@ const popup = createSlice({
         commentPassCheckPopTxt: '',
         commentPassCheckPopDelt: false,
 
+        //마이페이지-비밀번호변경 팝업
+        changePasswordPop: false,
+
 
         // 관리자-------------------------------
         //알림 팝업
@@ -110,6 +113,9 @@ const popup = createSlice({
             state.commentPassCheckPopIdx = action.payload.commentPassCheckPopIdx;
             state.commentPassCheckPopTxt = action.payload.commentPassCheckPopTxt;
             state.commentPassCheckPopDelt = action.payload.commentPassCheckPopDelt;
+        },
+        changePasswordPop: (state, action) => {
+            state.changePasswordPop = action.payload;
         },
 
         // 관리자-------------------------------
@@ -207,6 +213,7 @@ export const {
     termsPop,
     passwordCheckPop,
     commentPassCheckPop,
+    changePasswordPop,
 
     adminNotiPop,
     adminPolicyPop,

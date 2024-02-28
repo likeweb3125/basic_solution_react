@@ -242,8 +242,8 @@
 .lnb_section .lnb_wrap h6 {font-size: 24px; font-weight: 700; color: #222; padding-bottom: 30px;}
 .lnb_section .lnb_wrap .lnb li {margin-top: 20px;}
 .lnb_section .lnb_wrap .lnb li:first-of-type {margin-top: 0;}
-.lnb_section .lnb_wrap .lnb li a {display: block; font-size: 20px; color: #666; line-height: 26px;}
-.lnb_section .lnb_wrap .lnb li.on a {font-weight: 700;}
+.lnb_section .lnb_wrap .lnb li > * {display: block; font-size: 20px; color: #666; line-height: 26px;}
+.lnb_section .lnb_wrap .lnb li.on > * {font-weight: 700;}
 .lnb_section .lnb_con {flex: 1; border-top: 1px solid #222;}
 .page_user_mypage .lnb_section .lnb_con .tbl_wrap4 td > div {max-width: 480px; width: 100%;}
 .page_user_mypage .lnb_section .lnb_con .tbl_wrap4 p.txt {font-size: 16px; color: #999;}

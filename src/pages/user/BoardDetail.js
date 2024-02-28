@@ -164,19 +164,24 @@ const BoardDetail = () => {
     },[common.currentMenuData]);
 
 
+    useEffect(()=>{
+        console.log(boardData);
+    },[boardData]);
+
+
     //게시글 수정,삭제 버튼 노출체크하기
     useEffect(()=>{
         //로그인시
         if(login){
             //내가작성한글일때만 수정,삭제버튼 노출
-            if(boardData.m_email === user.loginUser.m_email){
+            if(boardData.m_email === user.loginUser.m_email || common.secretPassCheckOk){
                 setMyPost(true);
             }else{
                 setMyPost(false);
             }
         }else{
             //비회원이 작성한비밀글일때만 수정,삭제버튼 노출
-            if(boardData.m_pwd && boardData.m_pwd.length > 0){
+            if(common.secretPassCheckOk){
                 setMyPost(true);
             }else{
                 setMyPost(false);
@@ -674,6 +679,7 @@ const BoardDetail = () => {
             }
         });
     };
+
 
 
 

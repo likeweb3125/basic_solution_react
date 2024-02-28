@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import TermsPop from "./user/TermsPop";
 import PasswordCheckPop from "./user/PasswordCheckPop";
 import CommentPassCheckPop from "./user/CommentPassCheckPop";
+import ChangePasswordPop from "./user/ChangePasswordPop";
 
 import AdminPoilicyPop from "./admin/PolicyPop";
 import AdminCategoryPop from "./admin/CategoryPop";
@@ -33,6 +34,8 @@ const Popup = () => {
             {/* 비회원댓글 비밀번호확인 팝업 */}
             {popup.commentPassCheckPop && <CommentPassCheckPop />}
 
+            {/* 마이페이지 - 비밀번호변경 팝업 */}
+            {popup.changePasswordPop && <ChangePasswordPop />}
 
 
             {/* 관리자 --------------------------------------*/}

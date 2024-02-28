@@ -164,9 +164,6 @@ const Inquiry = () => {
         }
     };
 
-    useEffect(()=>{
-        console.log(common.secretPassCheckOk);
-    },[common.secretPassCheckOk]);
 
     //글상세정보 가져오기
     const getDetailData = (idx) => {

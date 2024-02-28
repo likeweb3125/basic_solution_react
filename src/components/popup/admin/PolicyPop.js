@@ -188,6 +188,7 @@ const PolicyPop = () => {
                 p_title:info.p_title,
                 p_contents:cont,
                 p_use_yn:useBtn,
+                p_lang:popup.adminPolicyPopLang,
             };
             axios.post(`${site_policy}`, body, 
                 {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
@@ -221,6 +222,7 @@ const PolicyPop = () => {
                 p_title:info.p_title,
                 p_contents:cont,
                 p_use_yn:useBtn,
+                p_lang:info.p_lang,
             };
             axios.put(`${policy_modify}`, body, 
                 {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}

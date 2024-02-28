@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from "axios";
 import { enum_api_uri } from "../../../config/enum";
 import { siteInfo, siteInfoEdit, siteLangList } from "../../../store/commonSlice";
+import { commentPassCheck } from "../../../store/etcSlice";
 import { confirmPop } from "../../../store/popupSlice";
 import * as CF from "../../../config/function";
 import Header from "./Header";
@@ -23,6 +24,13 @@ const Layout = (props) => {
     const [confirm, setConfirm] = useState(false);
     const [siteInfoData, setSiteInfoData] = useState({});
     const [policyList, setPolicyList] = useState([]);
+
+
+    //페이지변경시
+    useEffect(()=>{
+        //게시글상세 - 댓글수정 열려있을수있으니 commentPassCheck값 초기화
+        dispatch(commentPassCheck({commentPassCheck:false, commentPassCheckIdx:null, commentPassCheckTxt:''}));
+    },[location]);
 
 
     //사이트정보 가져오기

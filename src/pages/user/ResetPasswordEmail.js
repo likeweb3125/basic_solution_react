@@ -7,6 +7,7 @@ import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import InputBox from "../../components/component/InputBox";
+import ic_send from "../../images/ic_send.svg";
 
 
 const ResetPasswordEmail = () => {
@@ -29,28 +30,52 @@ const ResetPasswordEmail = () => {
     },[popup.confirmPop]);
 
 
+    //재설정 버튼 클릭시
+    const resetBtnClickHandler = () => {
+        let newError = { ...error };
+
+        if(email.length > 0){
+            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/;
+            if (emailRegex.test(email)) {
+                newError.email = '';
+            } else {
+                newError.email = '올바른 이메일 형식이 아닙니다.';
+            }
+        }else{
+            newError.email = '이메일을 입력해주세요.';
+        }
+
+        setError(newError);
+
+        if (!newError.email || newError.email.length === 0) {
+            sendHandler();
+        }
+    };
+
+
     //이메일전송하기
     const sendHandler = () => {
+        setStep(2);
         const body = {
             m_email:'',
         };
 
-        axios.post(email_password,body)
-        .then((res)=>{
-            if(res.status === 200){
-
-            }
-        })
-        .catch((error) => {
-            const err_msg = CF.errorMsgHandler(error);
-            dispatch(confirmPop({
-                confirmPop:true,
-                confirmPopTit:'알림',
-                confirmPopTxt: err_msg,
-                confirmPopBtn:1,
-            }));
-            setConfirm(true);
-        });
+        // axios.post(email_password,body)
+        // .then((res)=>{
+        //     if(res.status === 200){
+        //         setStep(2);
+        //     }
+        // })
+        // .catch((error) => {
+        //     const err_msg = CF.errorMsgHandler(error);
+        //     dispatch(confirmPop({
+        //         confirmPop:true,
+        //         confirmPopTit:'알림',
+        //         confirmPopTxt: err_msg,
+        //         confirmPopBtn:1,
+        //     }));
+        //     setConfirm(true);
+        // });
     };
 
 
@@ -77,20 +102,23 @@ const ResetPasswordEmail = () => {
                                             onChangeHandler={(e)=>{
                                                 const val = e.currentTarget.value;
                                                 setEmail(val);
+
+                                                let newError = {...error};
                                                 if(val.length > 0){
-                                                    let newError = {...error};
-                                                        newError.email = false;
-                                                    setError(newError);
+                                                    newError.email = '';
+                                                }else{
+                                                    newError.email = '이메일을 입력해주세요.';
                                                 }
+                                                setError(newError);
                                             }} 
                                         />
-                                        {error.email && <em className="txt_err">이메일을 입력해주세요.</em>}
+                                       {error.email && error.email.length > 0 && <em className="txt_err">{error.email}</em>}
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="btn_wrap">
-                            <button type="button" className="btn_type25" onClick={sendHandler}>비밀번호 재설정</button>
+                            <button type="button" className="btn_type25" onClick={resetBtnClickHandler}>비밀번호 재설정</button>
                         </div>
                     </div>
                     : step === 2 &&
@@ -102,7 +130,7 @@ const ResetPasswordEmail = () => {
                             </h3>
                             <div className="con_txt">
                                 <div className="ic">
-                                    <img src="images/ic_send.svg" alt="icon"/>
+                                    <img src={ic_send} alt="icon"/>
                                 </div>
                                 <span>고객님께서 회원가입 시 입력했던 이메일로 <br/>비밀번호 재설정 링크를 전송하였습니다.</span>
                             </div>

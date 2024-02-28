@@ -9,6 +9,7 @@ const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGro
     const dispatch = useDispatch();
     const { menu_idx } = useParams();
     const user = useSelector((state)=>state.user);
+    const common = useSelector((state)=>state.common);
     const [detailOn, setDetailOn] = useState(false);
 
 
@@ -41,13 +42,13 @@ const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGro
 
                     //로그인시
                     if(login){
-                        if(user.loginUser.m_email === cont.m_email){
+                        if(user.loginUser.m_email === cont.m_email || common.secretPassCheckOk){
                             editBtnBox = true;
                         }
                     }
                     //미로그인시
                     else{
-                        if(cont.m_email.length === 0){
+                        if(common.secretPassCheckOk){
                             editBtnBox = true;
                         }
                     }

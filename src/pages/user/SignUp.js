@@ -266,7 +266,7 @@ const SignUp = () => {
                 newError.password2 = '비밀번호가 일치하지 않습니다.';
             }
         }else{
-            newError.password2 = '비밀번호를 다시 입력해주세요.';
+            newError.password2 = '비밀번호를 재 입력해 주세요.';
         }
 
         if(!phoneChek){
@@ -464,7 +464,7 @@ const SignUp = () => {
                                             if(val.length > 0){
                                                 newError.password2 = '';
                                             }else{
-                                                newError.password2 = '비밀번호를 다시 입력해주세요.';
+                                                newError.password2 = '비밀번호를 재 입력해 주세요.';
                                             }
                                             setError(newError);
                                         }} 
