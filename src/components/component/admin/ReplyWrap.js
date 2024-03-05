@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import 'moment/locale/ko';
-import WriteReplyWrap from "./WriteReplyWrap";
+import WriteReplyWrap from "../WriteReplyWrap";
 import TextareaBox from "../TextareaBox";
 
 const ReplyWrap = (

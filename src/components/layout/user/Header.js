@@ -642,7 +642,7 @@ const Header = () => {
                         {login ? 
                             <>
                                 <li>
-                                    <Link to="/mypage" className="btn_join">
+                                    <Link to="/mypage/profile" className="btn_join">
                                         <span>마이페이지</span>
                                     </Link>
                                 </li>

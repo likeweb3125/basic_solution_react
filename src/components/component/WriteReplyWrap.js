@@ -1,5 +1,5 @@
-import TextareaBox from "../TextareaBox";
-import InputBox from "../InputBox";
+import TextareaBox from "./TextareaBox";
+import InputBox from "./InputBox";
 
 const WriteReplyWrap = (
     {

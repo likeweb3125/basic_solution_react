@@ -1,20 +1,19 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { enum_api_uri } from "../../config/enum";
-import * as CF from "../../config/function";
-import { confirmPop, passwordCheckPop } from "../../store/popupSlice";
-import { pageNoChange, inquiryDetailIdx } from "../../store/etcSlice";
-import { boardSettingData, listPageData, detailPageBack } from "../../store/commonSlice";
-import { passOk } from "../../config/constants";
-import SearchInput from "../../components/component/SearchInput";
-import ListInquiry from "../../components/component/user/ListInquiry";
-import Pagination from "../../components/component/Pagination";
-import ConfirmPop from "../../components/popup/ConfirmPop";
+import { enum_api_uri } from "../../../config/enum";
+import * as CF from "../../../config/function";
+import { confirmPop } from "../../../store/popupSlice";
+import { pageNoChange, inquiryDetailIdx } from "../../../store/etcSlice";
+import { boardSettingData, listPageData, detailPageBack } from "../../../store/commonSlice";
+import { passOk } from "../../../config/constants";
+import SearchInput from "../../../components/component/SearchInput";
+import ListInquiry from "../../../components/component/user/ListInquiry";
+import Pagination from "../../../components/component/Pagination";
+import ConfirmPop from "../../../components/popup/ConfirmPop";
 
 
-const Inquiry = () => {
+const MyInquiry = () => {
     const dispatch = useDispatch();
     const board_list = enum_api_uri.board_list;
     const board_detail = enum_api_uri.board_detail;
@@ -23,18 +22,16 @@ const Inquiry = () => {
     const etc = useSelector((state)=>state.etc);
     const common = useSelector((state)=>state.common);
     const user = useSelector((state)=>state.user);
-    const { menu_idx } = useParams();
     const [confirm, setConfirm] = useState(false);
     const [deltConfirm, setDeltConfirm] = useState(false);
     const [searchTxt, setSearchTxt] = useState("");
-    const [menuData, setMenuData] = useState({});
     const [boardData, setBoardData] = useState({});
-    const [limit, setLimit] = useState(null);
     const [detailData, setDetailData] = useState({});
     const [scrollMove, setScrollMove] = useState(false);
     const [writeBtn, setWriteBtn] = useState(false);
-    const [login, setLogin] = useState(false);
     const [deltIdx, setDeltIdx] = useState(null);
+    const [tabList, setTabList] = useState([]);
+    const [tabOn, setTabOn] = useState(null);
 
 
     //상세->목록으로 뒤로가기시 저장되었던 스크롤위치로 이동
@@ -55,26 +52,43 @@ const Inquiry = () => {
     },[popup.confirmPop]);
 
 
-    //로그인했는지 체크
+    //헤더메뉴중 문의게시판 찾기
     useEffect(()=>{
-        if(user.loginStatus){
-            setLogin(true);
+        const data = common.headerMenuList;
+        const filteredData = [];
+
+        function findObjects(obj) {
+            if (obj.c_content_type && obj.c_content_type[0] === 7) {
+                filteredData.push(obj);
+            }
+            if (obj.submenu) {
+                obj.submenu.forEach(subItem => findObjects(subItem));
+            }
+        }
+        
+        data.forEach(item => findObjects(item));
+
+        setTabList(filteredData);
+
+    },[common.headerMenuList]);
+
+
+    //tabList 값 변경시
+    useEffect(()=>{
+        if(tabList.length > 0){
+            const id = tabList[0].id;
+            setTabOn(id);
         }else{
-            setLogin(false);
+            setTabOn(null);
         }
-    },[user.loginStatus]);
+    },[tabList]);
 
 
+    //탭변경시 문의글상세 on 초기화
     useEffect(()=>{
-        setMenuData(common.currentMenuData);
-    },[common.currentMenuData]);
-
-
-    useEffect(()=>{
-        if(menuData && menuData.b_list_cnt){
-            setLimit(menuData.b_list_cnt);
-        }
-    },[menuData]);
+        setDetailData({});
+        dispatch(inquiryDetailIdx(null));
+    },[tabOn])
 
 
     //게시판리스트정보 가져오기
@@ -92,7 +106,9 @@ const Inquiry = () => {
             searchText = searchTxt;
         }
 
-        axios.get(`${board_list.replace(":category",menu_idx).replace(":limit",limit)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search=title&searchtxt="+searchText : ""}&group_id=`)
+        axios.get(`${board_list.replace(":category",tabOn).replace(":limit",10)}?page=${pageNum ? pageNum : 1}${searchText.length > 0 ? "&search=title&searchtxt="+searchText : ""}&group_id=&m_email=${user.loginUser.m_email}`,
+            {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
+        )
         .then((res)=>{
             if(res.status === 200){
                 let data = res.data.data;
@@ -130,12 +146,12 @@ const Inquiry = () => {
     };
 
 
-    //게시판 상세정보 값 가져오고, limit 값이 변경되면 게시판리스트정보 가져오기
+    //게시판리스트정보 가져오기
     useEffect(()=>{
-        if(limit){
+        if(tabOn){
             getBoardData();
         }
-    },[limit, menu_idx]);
+    },[tabOn]);
 
 
     //페이지네이션 클릭으로 페이지변경시
@@ -153,27 +169,14 @@ const Inquiry = () => {
         if(show){
             setDetailData({});
         }else{
-            //비밀글일때
-            if(secret == 'Y'){
-                dispatch(passwordCheckPop({passwordCheckPop:true, passwordCheckPopCate:menu_idx, passwordCheckPopIdx:idx, passwordCheckPopMoveUrl:null}));
-            }
-            //비밀글 아닐때
-            else{
-                getDetailData(idx);
-            }
+            getDetailData(idx);
         }
     };
 
 
     //글상세정보 가져오기
     const getDetailData = (idx) => {
-        //비밀글일때 비밀번호체크했는지 확인
-        let pass = false;
-        if(common.secretPassCheckOk){
-            pass = true;
-        }
-
-        axios.get(`${board_detail.replace(":category",menu_idx).replace(":idx",idx)}${pass ? '?pass='+passOk : ''}`)
+        axios.get(`${board_detail.replace(":category",tabOn).replace(":idx",idx)}${'?pass='+passOk}`)
         .then((res)=>{
             if(res.status === 200){
                 const data = res.data.data;
@@ -202,44 +205,6 @@ const Inquiry = () => {
     },[etc.inquiryDetailIdx]);
 
 
-    //글작성 권한 체크하기
-    useEffect(()=>{
-        const level = boardData.b_write_lv;
-        const login = user.loginStatus;
-
-        //전체이용가능일때 작성가능
-        if(level === 0){
-            setWriteBtn(true);
-        }else{
-            //회원일때
-            if(login){
-                const mLevel = user.loginUser.m_level;
-
-                //관리자레벨 권한일때
-                if(level === 9){
-                    if(mLevel == 9){
-                        setWriteBtn(true);
-                    }else{
-                        setWriteBtn(false);
-                    }
-                }
-                //다른레벨 권한일때
-                else{
-                    if(mLevel >= level){
-                        setWriteBtn(true);
-                    }else{
-                        setWriteBtn(false);
-                    }
-                }
-            }
-            //비회원일때 작성불가능
-            else{
-                setWriteBtn(false);
-            }
-        }
-    },[boardData]);
-
-
     //삭제버튼 클릭시
     const deltBtnClickHandler = (idx) => {
         setDeltIdx(idx);
@@ -256,16 +221,10 @@ const Inquiry = () => {
 
     //게시글 삭제하기
     const deltHandler = () => {
-        //비밀글일때 비밀번호체크했는지 확인
-        let pass = '';
-        if(common.secretPassCheckOk){
-            pass = passOk;
-        }
-
         const body = {
             idx: deltIdx,
-            category: menu_idx,
-            pass: pass
+            category: tabOn,
+            pass: passOk
         };
         axios.delete(`${board_modify}`,
             {
@@ -291,12 +250,24 @@ const Inquiry = () => {
     };
 
 
-
     return(<>
-        <div className="page_user_board page_user_qna">
+        <div className="page_user_qna">
             <div className="section_inner">
                 <div className="board_section">
-                    <div className="search_wrap">
+                    {tabList.length > 0 &&
+                        <div className="tab_wrap tm15">
+                            <ul className="tab_type2">
+                                {tabList.map((cont,i)=>{
+                                    return(
+                                        <li key={i} className={tabOn === cont.id ? 'on' : ''}>
+                                            <button type="button" onClick={()=>setTabOn(cont.id)}>{cont.c_name}</button>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    }
+                    <div className="search_wrap tm24">
                         <div className="search_box">
                             <SearchInput 
                                 placeholder="검색어를 입력해주세요."
@@ -312,31 +283,19 @@ const Inquiry = () => {
                     <div className="list_board_wrap">
                         <div className="board_util">
                             <em className="txt_total">전체 {boardData.total_count ? CF.MakeIntComma(boardData.total_count) : 0}건</em>
-                            <ul className="board_tab">
-                                {writeBtn &&
-                                    <li>
-                                        <Link to={`/sub/inquiry/write/${menu_idx}`} className="btn_type21">문의 작성하기</Link>
-                                    </li>
-                                }
-                                {user.loginStatus && //로그인시 노출
-                                    <li>
-                                        <Link to='/mypage/inquiry' className="btn_type24">내 Q&amp;A 보기</Link>
-                                    </li>
-                                }
-                            </ul>
                         </div>
                         <ListInquiry
-                            columnTitle={boardData.b_column_title == 'Y' ? true : false}
-                            columnDate={boardData.b_column_date == 'Y' ? true : false}
-                            columnView={boardData.b_column_view == 'Y' ? true : false}
-                            columnFile={boardData.b_column_file == 'Y' ? true : false}
-                            columnGroup={boardData.b_group == 'Y' ? true : false}     //분류
+                            columnTitle={true}
+                            columnDate={true}
+                            columnView={true}
+                            columnFile={true}
+                            columnGroup={true}     //분류
                             list={boardData.board_list}
                             onDetailToggleHandler={onDetailToggleHandler}
                             detailData={detailData}
-                            login={login}
+                            login={true}
                             onDeltHandler={deltBtnClickHandler}
-                            category={menu_idx}
+                            category={tabOn}
                         />
                     </div>
                     {boardData.board_list && boardData.board_list.length > 0 &&
@@ -359,4 +318,4 @@ const Inquiry = () => {
     </>);
 };
 
-export default Inquiry;
+export default MyInquiry;

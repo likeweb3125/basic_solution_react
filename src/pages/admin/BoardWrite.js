@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { enum_api_uri } from "../../config/enum";
 import * as CF from "../../config/function";
 import { confirmPop } from "../../store/popupSlice";
+import { passOk } from "../../config/constants";
 import InputBox from "../../components/component/InputBox";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import Editor from "../../components/component/Editor";
@@ -35,6 +36,7 @@ const BoardWrite = (props) => {
     const [deltFiles, setDeltFiles] = useState([]);
     const [notice, setNotice] = useState(0);
     const [passwordOn, setPasswordOn] = useState(false);
+    const [password, setPassword] = useState('');
     const [showRaw, setShowRaw] = useState(false);
     const [rawHtml, setRawHtml] = useState('');
     const [thumbImg, setThumbImg] = useState(null);
@@ -67,7 +69,7 @@ const BoardWrite = (props) => {
 
     //게시글정보 가져오기
     const getBoardData = () => {
-        axios.get(`${board_detail.replace(":category",board_category).replace(":idx",board_idx)}`,
+        axios.get(`${board_detail.replace(":category",board_category).replace(":idx",board_idx)}?pass=${passOk}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{
@@ -131,6 +133,9 @@ const BoardWrite = (props) => {
         }
         if(boardData.m_pwd){
             setPasswordOn(true);
+        }
+        if(boardData.b_secret === 'Y'){
+            setSecret(true);
         }
     },[boardData]);
 
@@ -361,7 +366,7 @@ const BoardWrite = (props) => {
             setConfirm(true);
         }
         // 비밀글설정체크시 비밀번호입력 체크
-        else if(secret && !boardData.m_pwd){
+        else if(secret && !password){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -416,7 +421,7 @@ const BoardWrite = (props) => {
         formData.append("category", board_category);
         formData.append("m_email", user.loginUser.m_email);
         formData.append("m_name", user.loginUser.m_name);
-        formData.append("m_pwd", boardData.m_pw || '');
+        formData.append("m_pwd", password);
         formData.append("b_title", boardData.b_title);
         formData.append("b_contents", cont);
         formData.append("b_depth", 0);
@@ -679,9 +684,11 @@ const BoardWrite = (props) => {
                                                     className="input_box" 
                                                     type={`text`}
                                                     placeholder={`비밀번호를 설정해주세요.`}
-                                                    value={boardData.m_pwd || ""}
-                                                    onChangeHandler={onInputChangeHandler}
-                                                    id={`m_pwd`}
+                                                    value={password}
+                                                    onChangeHandler={(e)=>{
+                                                        const val = e.currentTarget.value;
+                                                        setPassword(val);
+                                                    }}
                                                 />
                                                 <div className="chk_box1">
                                                     <input type="checkbox" id="chkSecret" className="blind" 

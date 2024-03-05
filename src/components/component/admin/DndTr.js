@@ -7,7 +7,7 @@ import * as CF from "../../../config/function";
 import { adminBannerPop, adminSubCategoryPop } from '../../../store/popupSlice';
 
 
-const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu, menuDepth, onMappingHandler, onMenuClickHandler}) => {
+const DndTr = ({order, data, id, onCheckHandler, colgroup, popType, type, unMenu, menuDepth, onMappingHandler, onMenuClickHandler}) => {
     const etc = useSelector((state)=>state.etc);
     const dispatch = useDispatch();
     const api_uri = enum_api_uri.api_uri;
@@ -23,7 +23,7 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu, menuD
     // } = useSortable({id: id});
     } = useSortable({
         id: id,
-        data:{...data}
+        data:{...data,order: order}
     });
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -93,7 +93,8 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu, menuD
                             <label htmlFor={`check_${data.id}`}>선택</label>
                         </div>
                     </div>
-                    <div style={{'width':colgroup[1]}}>{data.c_num}</div>
+                    {/* <div style={{'width':colgroup[1]}}>{data.c_num}</div> */}
+                    <div style={{'width':colgroup[1]}}>{order}</div>
                     <div style={{'width':colgroup[2]}}>
                         <button type='button' className='link'
                             onClick={()=>{
@@ -145,7 +146,8 @@ const DndTr = ({data, id, onCheckHandler, colgroup, popType, type, unMenu, menuD
                             <label htmlFor={`menu_check_${data.id}`}>선택</label>
                         </div>
                     </div>
-                    <div style={{'width':colgroup[1]}}>{data.c_num}</div>
+                    {/* <div style={{'width':colgroup[1]}}>{data.c_num}</div> */}
+                    <div style={{'width':colgroup[1]}}>{order}</div>
                     <div style={{'width':colgroup[2]}}>{data.c_name}</div>
                     <div style={{'width':colgroup[3]}}>{data.submenu ? CF.MakeIntComma(data.submenu.length) : '-'}</div>
                     <div style={{'width':colgroup[4]}}><button type="button" className="btn_move" {...attributes} {...listeners}>카테고리 이동</button></div>

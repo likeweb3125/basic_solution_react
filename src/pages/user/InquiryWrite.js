@@ -156,7 +156,6 @@ const InquiryWrite = (props) => {
         }
         if(boardData.m_pwd){
             setPasswordOn(true);
-            setPassword(boardData.m_pwd);
         }
         if(boardData.b_secret === 'Y'){
             setSecret(true);
@@ -358,7 +357,7 @@ const InquiryWrite = (props) => {
             setConfirm(true);
         }
         // 비밀글설정체크시 비밀번호입력 체크
-        else if(secret && !boardData.m_pwd){
+        else if(secret && !password){
             dispatch(confirmPop({
                 confirmPop:true,
                 confirmPopTit:'알림',
@@ -617,8 +616,11 @@ const InquiryWrite = (props) => {
                                                         className="input_box" 
                                                         type={`text`}
                                                         placeholder={`비밀번호를 설정해주세요.`}
-                                                        value={boardData.m_pwd || ""}
-                                                        onChangeHandler={onInputChangeHandler}
+                                                        value={password}
+                                                        onChangeHandler={(e)=>{
+                                                            const val = e.currentTarget.value;
+                                                            setPassword(val);
+                                                        }}
                                                         id={`m_pwd`}
                                                     />
                                                 </div>

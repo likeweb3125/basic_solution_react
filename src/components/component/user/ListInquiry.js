@@ -5,9 +5,8 @@ import { scrollY } from "../../../store/commonSlice";
 import * as CF from "../../../config/function";
 
 
-const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGroup, list, onDetailToggleHandler, detailData, login, onDeltHandler}) => {
+const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGroup, list, onDetailToggleHandler, detailData, login, onDeltHandler, category}) => {
     const dispatch = useDispatch();
-    const { menu_idx } = useParams();
     const user = useSelector((state)=>state.user);
     const common = useSelector((state)=>state.common);
     const [detailOn, setDetailOn] = useState(false);
@@ -42,7 +41,7 @@ const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGro
 
                     //로그인시
                     if(login){
-                        if(user.loginUser.m_email === cont.m_email || common.secretPassCheckOk){
+                        if(user.loginUser.m_email == cont.m_email || common.secretPassCheckOk){
                             editBtnBox = true;
                         }
                     }
@@ -52,6 +51,8 @@ const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGro
                             editBtnBox = true;
                         }
                     }
+
+                    console.log(editBtnBox);
 
                     return(
                         <li key={i}>
@@ -86,7 +87,7 @@ const ListInquiry = ({columnTitle, columnDate, columnView, columnFile, columnGro
                                         {editBtnBox &&
                                             <div className="btn_util">
                                                 <Link 
-                                                    to={`/sub/inquiry/modify/${menu_idx}/${cont.idx}`} 
+                                                    to={`/sub/inquiry/modify/${category}/${cont.idx}`} 
                                                     className="btn_type11"
                                                     onClick={()=>{dispatch(scrollY(window.scrollY))}}
                                                 >수정</Link>

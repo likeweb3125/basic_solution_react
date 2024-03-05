@@ -7,7 +7,8 @@ import * as CF from "../../config/function";
 import history from "../../config/history";
 import { confirmPop } from "../../store/popupSlice";
 import { detailPageBack } from "../../store/commonSlice";
-import CommentWrap2 from "../../components/component/admin/CommentWrap2";
+import { passOk } from "../../config/constants";
+import CommentWrap2 from "../../components/component/CommentWrap2";
 import ConfirmPop from "../../components/popup/ConfirmPop";
 import InputBox from "../../components/component/InputBox";
 
@@ -87,7 +88,7 @@ const BoardDetail = () => {
 
     //게시글정보 가져오기
     const getBoardData = () => {
-        axios.get(`${board_detail.replace(":category",board_category).replace(":idx",board_idx)}`,
+        axios.get(`${board_detail.replace(":category",board_category).replace(":idx",board_idx)}?pass=${passOk}`,
             {headers:{Authorization: `Bearer ${user.loginUser.accessToken}`}}
         )
         .then((res)=>{

@@ -432,7 +432,7 @@
 
 
     /* QnA */
-    .page_user_qna .search_wrap {display: none;}
+    /* .page_user_qna .search_wrap {display: none;} */
     .page_user_qna .list_board_wrap .board_util {position: static; transform: none; padding-bottom: 25px;}
 
 
@@ -531,7 +531,17 @@
     .mypage_info .stat_box {padding: 25px 0 30px;}
     .mypage_info .stat_box strong {font-size: 40px;}
     .mypage_info .stat_box span {font-size: 16px;}
-    .lnb_section .lnb_wrap {display: none;}
+    .lnb_section{display: block;}
+    .lnb_section .lnb_wrap {margin-bottom: 24px;padding: 20px 15px;}
+    .lnb_section .lnb_wrap h6{font-size: 18px;padding-bottom: 20px;}
+    .lnb_section .lnb_wrap .lnb li{margin-top: 10px;}
+    .lnb_section .lnb_wrap .lnb li > *{font-size: 16px;}
+    .lnb_section .lnb_con .page_user_qna .section_inner{padding: 0;}
+    .lnb_section .lnb_con .page_user_qna .tab_wrap{margin-top: 0;overflow-y: hidden;overflow-x: auto;}
+    .lnb_section .lnb_con .page_user_qna .tab_wrap .tab_type2{flex-wrap: nowrap;}
+    .lnb_section .lnb_con .page_user_qna .tab_wrap .tab_type2 li{flex: 0 0 120px;}
+
+
     .page_user_mypage .lnb_section .lnb_con .tbl_wrap4 table {display: block;}
     .page_user_mypage .lnb_section .lnb_con .tbl_wrap4 table tbody {display: block;}
     .page_user_mypage .lnb_section .lnb_con .tbl_wrap4 table tr {display: flex;}

@@ -26,6 +26,8 @@ import Faq from './pages/user/Faq';
 import Inquiry from './pages/user/Inquiry';
 import InquiryWrite from './pages/user/InquiryWrite';
 import MyPage from './pages/user/MyPage';
+import MyProfile from './components/component/user/MyProfile';
+import MyInquiry from './components/component/user/MyInquiry';
 import Policy from './pages/user/Policy';
 
 
@@ -162,7 +164,13 @@ function App() {
                 <Route path="/reset_password" element={<Layout><ResetPassword /></Layout>} />
 
                 {/* 마이페이지 */}
-                <Route path="/mypage" element={<Layout><MyPage /></Layout>} />
+                <Route path="/mypage" element={<Layout><MyPage><Outlet /></MyPage></Layout>}>
+                    {/* 회원정보수정 */}
+                    <Route path="profile" element={<MyProfile />} />
+                    
+                    {/* 내가작성한문의내역 */}
+                    <Route path="inquiry" element={<MyInquiry />} />
+                </Route>
 
                 {/* 약관페이지 */}
                 <Route path="/policy/:policy_idx" element={<Layout><Policy /></Layout>} />

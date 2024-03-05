@@ -18,6 +18,7 @@
 .txt_color4 {font-weight: 500; color: var(--admin-color4) !important;}
 .ellipsis {display: block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%;}
 .tm15{margin-top: 15px;}
+.tm24{margin-top: 24px;}
 .tm30{margin-top: 30px;}
 .lm8{margin-left: 8px;}
 .bp5{padding-bottom: 5px;}
@@ -33,7 +34,7 @@
 .tab_type1 li a, .tab_type1 li button {width: 100%; display: block; font-size: 17px; font-weight: 500; color: #666; line-height: 28px; padding: 10px 0; transition: all .3s;}
 .tab_type1 li.on {background: #192030;}
 .tab_type1 li.on a, .tab_type1 li.on button {color: #fff;}
-.tab_type2 {display: flex; border-bottom: 1px solid #ddd;}
+.tab_type2 {display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap; border-bottom: 1px solid #ddd;}
 .tab_type2 li {flex: 0 0 160px; text-align: center; position: relative;}
 .tab_type2 li:after {content: ''; position: absolute; left: 0; bottom: -1px; width: 100%; height: 2px; background: #222; opacity: 0; transition: all .3s;}
 .tab_type2 li a, .tab_type2 li button {width: 100%; display: block; font-size: 16px; color: #999; line-height: 20px; padding: 10px 0; transition: all .3s;}

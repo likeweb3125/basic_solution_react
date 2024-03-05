@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import moment from "moment";
 import 'moment/locale/ko';
-import * as CF from "../../../config/function";
-import TextareaBox from "../TextareaBox";
-import InputBox from "../InputBox";
-import ReplyWrap from "./ReplyWrap";
-import ConfirmPop from "../../popup/ConfirmPop";
+import * as CF from "../../config/function";
+import TextareaBox from "./TextareaBox";
+import InputBox from "./InputBox";
+import ReplyWrap from "./admin/ReplyWrap";
+import ConfirmPop from "../popup/ConfirmPop";
 
 
 const CommentWrap2 = (

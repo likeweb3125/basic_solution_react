@@ -206,8 +206,9 @@ const TableWrap = (props) => {
             if(props.type === "menu"){
                 const c_depth = active.data.current.c_depth;
                 const c_depth_parent = active.data.current.c_depth_parent;
-                const moveTd = list.find((item) => item.id === over.id);
-                const moveNum = moveTd.c_num;
+                // const moveTd = list.find((item) => item.id === over.id);
+                // const moveNum = moveTd.c_num;
+                const moveNum = over.data.current.order;
 
                 const body = {
                     id: active.id,
@@ -323,6 +324,7 @@ const TableWrap = (props) => {
                                         {tdList.map((cont,i)=>(
                                             <tr key={i}>
                                                 <DndTr 
+                                                    order={i+1}
                                                     data={cont} 
                                                     id={cont.id}
                                                     onCheckHandler={checkHandler}

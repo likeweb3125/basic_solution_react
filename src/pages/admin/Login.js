@@ -52,10 +52,10 @@ const Login = () => {
     //로그인하기
     const loginHandler = () => {
         const body = {
-            // m_email:email,
-            // m_password:password,
-            m_email:"likeweb@likeweb.co.kr",
-            m_password:"test1!@#$",
+            m_email:email,
+            m_password:password,
+            // m_email:"likeweb@likeweb.co.kr",
+            // m_password:"test1!@#$",
         };
 
         axios.post(login,body)
